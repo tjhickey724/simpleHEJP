@@ -1,4 +1,6 @@
 //d3.json('js/data/forecast.json', function(d) {
+
+/*
 const selectElement = document.getElementById('instType');
   selectElement.addEventListener('change', event => {
     //setDataset(event);
@@ -7,7 +9,7 @@ const selectElement = document.getElementById('instType');
     inst = event.target.value
     update(personnel)
   });
-
+*/
 
 
 
@@ -34,11 +36,12 @@ const selectElement = document.getElementById('instType');
         tooltip,
         myChart,
         myBoxes,
-        inst = 'r1';
+        inst = 'r1',
+        role = 'faculty';
 
 d3.json('js/data/all_faculty.json', function(d) {
   for (var i = 1; i<d[0].length; i++) {
-    temperatures.push(d[3][i].faculty);
+    temperatures.push(d[3][i]['nonfaculty']);
     dates.push( new Date("9/1/"+d[0][i].Year) );
     personnel.push({r1:d[0][i],fourYear:d[1][i], twoYear:d[2][i], all:d[3][i]})
     years.push(d[0][i].Year)
@@ -106,7 +109,7 @@ console.log('b')
 
   colors = d3.scaleLinear()
     .domain([0, d3.max(temperatures)])
-    .range(['#FFFFFF', '#DA3637'])
+    .range(['#FF0000', '#0000FF'])
 
 
   tooltip = d3.select('body')
@@ -128,7 +131,7 @@ console.log('b')
         'translate(' + margin.left + ',' + margin.right + ')')
       .selectAll('rect').data(theData,d =>d.Year)
     .enter().append('rect')
-      .attr('fill', function(d) { return colors(d[inst].faculty)})
+      .attr('fill', function(d) { return colors(d[inst][role])})
       .attr('width', function(d) {
         console.dir(d)
         console.log(`xScale.bandwidth=`)
@@ -148,7 +151,7 @@ console.log('b')
           .style('opacity', .9)
         tooltip.html(
           '<div style="font-size: 2rem; font-weight: bold">' +
-            d[inst].faculty + '/'+d[inst].Year+'</div>'
+            d[inst][role] + '/'+d[inst].Year+'</div>'
         )
           .style('left', (d3.event.pageX -35) + 'px')
           .style('top', (d3.event.pageY -30) + 'px')
@@ -181,11 +184,11 @@ console.log('b')
     .attr('height', function(d) {
       console.log('in transition')
       console.dir(d)
-      console.log(`yScale=${d[inst].faculty}`)
-      return yScale(d[inst].faculty);
+      console.log(`yScale=${d[inst][role]}`)
+      return yScale(d[inst][role]);
     })
     .attr('y', function(d) {
-      return height - yScale(d[inst].faculty);
+      return height - yScale(d[inst][role]);
     })
     .delay(function(d, i) {
       return i * 20;
@@ -200,10 +203,10 @@ function update(newData){
      .data(newData)
      .transition().duration(100)
      .attr('y', function(d) {
-       return height - yScale(d[inst].faculty);
+       return height - yScale(d[inst][role]);
      })
-     .attr('fill', function(d) { return colors(d[inst].faculty)})
+     .attr('fill', function(d) { return colors(d[inst][role])})
      .attr('height', function(d) {
-       return yScale(d[inst].faculty)
+       return yScale(d[inst][role])
      })
 }
