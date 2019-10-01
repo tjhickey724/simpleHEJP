@@ -13,12 +13,27 @@
     <div class="container">
 
       <h2>Faculty by Year</h2>
-      <select id="instType">
-        <option>R1</option>
-        <option>4-year</option>
-        <option>2-year</option>
-        <option>all</option>
+      Institution Type: <select id="instType">
+        <option value="r1">R1</option>
+        <option value="fourYear">4-year</option>
+        <option value="twoYear">2-year</option>
+        <option value="all">all</option>
       </select>
+
+      or &nbsp;&nbsp;|&nbsp;
+      R1 <input type="radio" value="r1" name="inst"
+                onChange="inst='r1'; update(personnel)"
+                class="instType"> &nbsp;|&nbsp;
+      4 year <input type="radio" value="fourYear" name="inst"
+                onChange="inst='fourYear'; update(personnel)"
+                class="instType">&nbsp;|&nbsp;
+      2 year <input type="radio" value="twoYear" name="inst"
+                onChange="inst='twoYear'; update(personnel)"
+                class="instType">&nbsp;|&nbsp;
+      all <input type="radio" value="all" name="inst"
+                onChange="inst='all'; update(personnel)"
+                class="instType">&nbsp;|&nbsp;
+
 
       <div id="viz"></div>
 

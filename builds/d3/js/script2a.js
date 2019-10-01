@@ -5,13 +5,12 @@ const selectElement = document.getElementById('instType');
     console.log("changing event")
     console.dir(event.target.value)
     inst = event.target.value
-    update(personnel)
+    console.log("updating data")
+    myChart.data(personnel)
+    console.log("data updated")
   });
 
-
-
-
-
+d3.json('js/data/all_faculty.json', function(d) {
 
   var temperatures = [],
       personnel = [],
@@ -33,10 +32,8 @@ const selectElement = document.getElementById('instType');
         colors,
         tooltip,
         myChart,
-        myBoxes,
-        inst = 'r1';
+        inst = 'fourYear';
 
-d3.json('js/data/all_faculty.json', function(d) {
   for (var i = 1; i<d[0].length; i++) {
     temperatures.push(d[3][i].faculty);
     dates.push( new Date("9/1/"+d[0][i].Year) );
@@ -44,21 +41,11 @@ d3.json('js/data/all_faculty.json', function(d) {
     years.push(d[0][i].Year)
   }
   console.log('out of loop')
-  //  console.log(`temps = ${temperatures}`)
-  console.log('calling update')
-  update0(personnel)
-})
-
-console.log('defining update')
-
-
-function update0(theData) {
-
+//  console.log(`temps = ${temperatures}`)
 
   yScale = d3.scaleLinear()
     .domain([0, d3.max(temperatures)])
-    .range([0,height])
-
+    .range([0,height]);
 
   console.log(`yScale(2000)= ${yScale(2000)}`)
 
@@ -119,14 +106,13 @@ console.log('b')
     console.log("personnel =")
     console.dir(personnel)
 
-
-    myChart = d3.select('#viz').append('svg')
-      .attr('width', width + margin.left + margin.right)
-      .attr('height', height + margin.top + margin.bottom)
-      .append('g')
-      .attr('transform',
-        'translate(' + margin.left + ',' + margin.right + ')')
-      .selectAll('rect').data(theData,d =>d.Year)
+  myChart = d3.select('#viz').append('svg')
+    .attr('width', width + margin.left + margin.right)
+    .attr('height', height + margin.top + margin.bottom)
+    .append('g')
+    .attr('transform',
+      'translate(' + margin.left + ',' + margin.right + ')')
+    .selectAll('rect').data(personnel)
     .enter().append('rect')
       .attr('fill', function(d) { return colors(d[inst].faculty)})
       .attr('width', function(d) {
@@ -141,7 +127,6 @@ console.log('b')
         return xScale(d[inst].Year);
       })
       .attr('y', height)
-
 
       .on('mouseover', function(d) {
         tooltip.transition().duration(200)
@@ -161,10 +146,7 @@ console.log('b')
         tooltip.html('')
         d3.select(this)
           .style('fill', tempColor)
-      })
-
-
-
+      });
 
   console.log('myChart.data = '+myChart.data)
 
@@ -193,17 +175,4 @@ console.log('b')
     .duration(500)
     .ease(d3.easeBounceOut)
 
-}
-
-function update(newData){
-  d3.selectAll('rect')
-     .data(newData)
-     .transition().duration(100)
-     .attr('y', function(d) {
-       return height - yScale(d[inst].faculty);
-     })
-     .attr('fill', function(d) { return colors(d[inst].faculty)})
-     .attr('height', function(d) {
-       return yScale(d[inst].faculty)
-     })
-}
+}); // json import
