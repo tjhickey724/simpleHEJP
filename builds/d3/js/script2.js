@@ -1,5 +1,5 @@
 // Github doesn't have the data sets, you have to add them yourself
-// Don't push them 
+// Don't push them
 
 //d3.json('js/data/forecast.json', function(d) {
 
@@ -18,7 +18,7 @@ const selectElement = document.getElementById('instType');
 
 
 
-  var temperatures = [],
+  var
       personnel = [],
       dates = [],
       years=[],
@@ -39,16 +39,24 @@ const selectElement = document.getElementById('instType');
         tooltip,
         myChart,
         myBoxes,
+        maxYScale,
+        maxFac,
+        maxNonFac,
+        maxPostdoc,
         inst = 'r1',
         role = 'faculty';
 
 d3.json('js/data/all_faculty.json', function(d) {
   for (var i = 1; i<d[0].length; i++) {
-    temperatures.push(d[3][i]['nonfaculty']);
+
     dates.push( new Date("9/1/"+d[0][i].Year) );
     personnel.push({r1:d[0][i],fourYear:d[1][i], twoYear:d[2][i], all:d[3][i]})
     years.push(d[0][i].Year)
   }
+  maxFac=d3.max(personnel.map((x)=>x.all.faculty))
+  maxNonFac=d3.max(personnel.map((x)=>x.all.nonfaculty))
+  maxPostdoc=d3.max(personnel.map((x)=>x.all.postdoc))
+  maxYScale = maxFac
   console.log('out of loop')
   //  console.log(`temps = ${temperatures}`)
   console.log('calling update')
@@ -62,17 +70,12 @@ function update0(theData) {
 
 
   yScale = d3.scaleLinear()
-    .domain([0, d3.max(temperatures)])
+    .domain([0, maxYScale])
     .range([0,height])
 
-
-  console.log(`yScale(2000)= ${yScale(2000)}`)
-
   yAxisValues = d3.scaleLinear()
-    .domain([0, d3.max(temperatures)])
+    .domain([0, maxYScale])
     .range([height,0]);
-
-  console.dir(`yAxisValues(0)=${yAxisValues(1)}`)
 
   yAxisTicks = d3.axisLeft(yAxisValues)
   .ticks(10)
@@ -83,38 +86,11 @@ function update0(theData) {
     //.paddingOuter(2)
     .range([0, width])
 
-  console.log(`xScale(2010)= ${xScale(2010)}`)
-  console.log(`xScale(2017)= ${xScale(2017)}`)
-  console.log('a')
   xAxisValues = xScale
-  /*
-  d3.scaleLinear()
-    .domain([d3.min(years), d3.max(years)])
-    .range([0, width]);
-    */
-console.log('b')
   xAxisTicks = d3.axisBottom(xAxisValues).ticks(10)
-  console.log('c')
-
-  console.log("after xAxisTicks")
-/*
-  xScale = d3.scaleBand()
-    .domain(temperatures)
-    .paddingInner(.1)
-    .paddingOuter(.1)
-    .range([0, width])
-
-  xAxisValues = d3.scaleTime()
-    .domain([dates[0],dates[(dates.length-1)]])
-    .range([0, width])
-
-  xAxisTicks = d3.axisBottom(xAxisValues)
-    .ticks(d3.timeYear.every(1))
-*/
-
 
   colors = d3.scaleLinear()
-    .domain([0, d3.max(temperatures)])
+    .domain([0, maxYScale])
     .range(['#FF0000', '#0000FF'])
 
 
@@ -179,6 +155,7 @@ console.log('b')
 
   yGuide = d3.select('#viz svg').append('g')
             .attr('transform', 'translate(60,0)')
+            .attr("class", "yaxis")
             .call(yAxisTicks)
 
   xGuide = d3.select('#viz svg').append('g')
@@ -205,6 +182,38 @@ console.log('b')
 }
 
 function update(newData){
+  if (role=='faculty') {
+    maxYScale = maxFac
+  } else if (role=='nonfaculty'){
+    maxYScale = maxNonFac
+  } else {
+    maxYScale = maxPostdoc
+  }
+  yScale
+    .domain([0, maxYScale])
+    //.range([0,height])
+  console.log("before selection")
+  viz = d3.select("#viz svg")
+
+  viz.select(".yaxis")
+                  .transition().duration(1500).ease("sin-in-out")  // https://github.com/mbostock/d3/wiki/Transitions#wiki-d3_ease
+                  .call(yAxisTicks);
+                  
+  console.log("tried to select yaxis")
+/*
+  yAxisValues = d3.scaleLinear()
+    .domain([0, maxYScale])
+    .range([height,0]);
+
+  yAxisTicks = d3.axisLeft(yAxisValues)
+    .ticks(10)
+  */
+
+
+  colors = d3.scaleLinear()
+    .domain([0, maxYScale])
+    .range(['#FF0000', '#0000FF'])
+
   d3.selectAll('rect')
      .data(newData)
      .transition().duration(500)
