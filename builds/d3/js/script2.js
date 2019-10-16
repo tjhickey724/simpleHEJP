@@ -19,7 +19,7 @@ const selectElement = document.getElementById('instType');
       personnel = [],
       dates = [],
       years=[],
-      margin = { top: 0, right: 0, bottom: 30, left: 20 }
+      margin = { top: 0, right: 0, bottom: 30, left: 60 }
       height = 400 - margin.top - margin.bottom,
       width = 600 - margin.left - margin.right;
 
@@ -75,17 +75,20 @@ function update0(theData) {
   .ticks(10)
 
   xScale = d3.scaleBand()
-    .domain([2007,2010,2011,2012,2013,2014,2015,2016,2017])
-    .paddingInner(100)
-    .paddingOuter(100)
+    .domain([2010,2011,2012,2013,2014,2015,2016,2017])
+    //.paddingInner(2)
+    //.paddingOuter(2)
     .range([0, width])
 
   console.log(`xScale(2010)= ${xScale(2010)}`)
   console.log(`xScale(2017)= ${xScale(2017)}`)
   console.log('a')
-  xAxisValues = d3.scaleLinear()
+  xAxisValues = xScale
+  /*
+  d3.scaleLinear()
     .domain([d3.min(years), d3.max(years)])
     .range([0, width]);
+    */
 console.log('b')
   xAxisTicks = d3.axisBottom(xAxisValues).ticks(10)
   console.log('c')
@@ -136,7 +139,7 @@ console.log('b')
         console.dir(d)
         console.log(`xScale.bandwidth=`)
         console.log(xScale.bandwidth())
-        return 50 //xScale.bandwidth();
+        return 0.9*xScale.bandwidth();
       })
       .attr('height', 0)
       .attr('x', function(d) {
@@ -176,7 +179,7 @@ console.log('b')
             .call(yAxisTicks)
 
   xGuide = d3.select('#viz svg').append('g')
-            .attr('transform', 'translate(20,'+ height + ')')
+            .attr('transform', 'translate(60,'+ height + ')')
             .call(xAxisTicks)
 
 
@@ -201,7 +204,7 @@ console.log('b')
 function update(newData){
   d3.selectAll('rect')
      .data(newData)
-     .transition().duration(100)
+     .transition().duration(500)
      .attr('y', function(d) {
        return height - yScale(d[inst][role]);
      })
