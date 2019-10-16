@@ -1,5 +1,6 @@
 // Github doesn't have the data sets, you have to add them yourself
 // Don't push them
+// use this http://bl.ocks.org/phoebebright/3098488
 
 //d3.json('js/data/forecast.json', function(d) {
 
@@ -198,7 +199,7 @@ function update(newData){
   viz.select(".yaxis")
                   .transition().duration(1500).ease("sin-in-out")  // https://github.com/mbostock/d3/wiki/Transitions#wiki-d3_ease
                   .call(yAxisTicks);
-                  
+
   console.log("tried to select yaxis")
 /*
   yAxisValues = d3.scaleLinear()
