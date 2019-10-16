@@ -1,3 +1,6 @@
+// Github doesn't have the data sets, you have to add them yourself
+// Don't push them 
+
 //d3.json('js/data/forecast.json', function(d) {
 
 /*
