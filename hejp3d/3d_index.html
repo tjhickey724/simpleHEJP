@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<script src="https://d3js.org/d3.v4.min.js"></script>
+<script src="https://unpkg.com/d3-3d/build/d3-3d.min.js"></script>
+<body>
+
+    <div class="container">
+
+      <h2>College and University Personnel by Year</h2>
+
+
+  <small>
+      R1 <input type="radio" value="r1" name="inst"
+                onChange="inst='r1'; init()"
+                class="instType" checked> &nbsp;|&nbsp;
+      4 year <input type="radio" value="fourYear" name="inst"
+                onChange="inst='fourYear'; init()"
+                class="instType">&nbsp;|&nbsp;
+      2 year <input type="radio" value="twoYear" name="inst"
+                onChange="inst='twoYear'; init()"
+                class="instType">&nbsp;|&nbsp;
+      all <input type="radio" value="all" name="inst"
+                onChange="inst='all'; init()"
+                class="instType">&nbsp;&nbsp;&nbsp;||&nbsp;&nbsp;&nbsp;
+
+
+      faculty <input type="radio" value="r1" name="staff"
+                onChange="role='faculty'; init()"
+                class="staffType" checked> &nbsp;|&nbsp;
+      nonfaculty <input type="radio" value="fourYear" name="staff"
+                onChange="role='nonfaculty'; init()"
+                class="staffType">&nbsp;|&nbsp;
+      postdoc <input type="radio" value="twoYear" name="staff"
+                onChange="role='postdoc'; init()"
+                class="staffType">&nbsp;|&nbsp;
+
+      <br>
+      Life Sciences
+      <input type="radio" value="FS_Life_sciences" name="FS"
+	     onChange="fs='FS_Life_sciences'; init()"
+	     class="fs_type"> &nbsp; | &nbsp;
+      Math/CS
+      <input type="radio" value="FS_Mathematics_and_computer_sciences" name="FS"
+	     onChange="fs='FS_Mathematics_and_computer_sciences'; init()"
+	     class="fs_type"> &nbsp; | &nbsp;
+      Psych/SocSci
+      <input type="radio" value="FS_Psychology_and_social_sciences" name="FS"
+	     onChange="fs='FS_Psychology_and_social_sciences'; init()"
+	     class="fs_type"> &nbsp; | &nbsp;
+      Engineering
+      <input type="radio" value="FS_Engineering" name="FS"
+	     onChange="fs='FS_Engineering'; init()"
+	     class="fs_type"> &nbsp; | &nbsp;
+      Education
+      <input type="radio" value="FS_Education" name="FS"
+	     onChange="fs='FS_Education';"
+	     class="fs_type"> &nbsp; | &nbsp;
+      Humanities/Arts
+      <input type="radio" value="FS_Humanities_and_arts" name="FS"
+	     onChange="fs='FS_Humanities_and_arts'; init()"
+	     class="fs_type"> &nbsp; | &nbsp;
+      Others
+      <input type="radio" value="FS_Others" name="FS"
+	     onChange="fs='FS_Others'; init()"
+	     class="fs_type"> &nbsp; | &nbsp;
+      All
+      <input type="radio" value="Total" name="FS"
+	     onChange="fs='Total'; init()"
+	     class="fs_type"> &nbsp; | &nbsp;
+		 </small>
+      <hr>
+
+
+      <div id="viz"></div>
+
+    </div><!-- container -->
+<svg width="960" height="500"></svg>
+<style type="text/css">
+button {
+    position: absolute;
+    right: 10px;
+    top: 10px;
+}
+</style>
+<button>update</button>
+<script>
+    
+    var origin = [505, 400], scale = 20, j = 10, cubesData = [], alpha = 0, beta = 0, key = function(d){ return d.id; },startAngle = Math.PI/6;
+    var svg    = d3.select('svg').call(d3.drag().on('drag', dragged).on('start', dragStart).on('end', dragEnd)).append('g').attr("preserveAspectRatio", "xMinYMin meet").attr("viewBox", "0 0 600 400").classed("svg-content-responsive", true);
+    var color  = d3.scaleOrdinal(d3.schemeCategory20);
+    var cubesGroup = svg.append('g').attr('class', 'cubes');
+    var mx, my, mouseX, mouseY;
+    var datas;
+    var grid3d = d3._3d()
+        .shape('GRID', 20)
+        .origin(origin)
+        .rotateY( startAngle)
+        .rotateX(-startAngle)
+        .scale(scale);
+
+    var cubes3D = d3._3d()
+        .shape('CUBE')
+        .x(function(d){ return d.x; })
+        .y(function(d){ return d.y; })
+        .z(function(d){ return d.z; })
+        .rotateY( startAngle)
+        .rotateX(-startAngle)
+        .origin(origin)
+        .scale(scale);
+
+
+     //******************START OF PROCESSING JSON*********************
+    var dates = [],
+        personnel = [],
+        //yearData = {},
+        inst = 'all',
+        role = 'faculty',
+        fs = 'Total';
+    d3.json("data.json", function(d){
+
+        console.log("I'm in ")
+
+
+  years="2007 2010 2011 2012 2013 2014 2015 2016 2017".split(" ")
+
+  const numYears = years.length
+
+  console.log(numYears)
+  for (var i = 0; i<numYears; i++) {
+    if (i > 20) alert("stop")
+    const year = years[i]
+    const z = new Date("9/1/"+year)
+    dates.push( z );
+    yearData =
+    {r1:
+        {faculty:d[0][0][year],
+         nonfaculty:d[0][1][year],
+         postdoc:d[0][2][year]},
+     fourYear:
+       {faculty:d[1][0][year],
+        nonfaculty:d[1][1][year],
+        postdoc:d[1][2][year]},
+     twoYear:
+       {faculty:d[2][0][year],
+        nonfaculty:d[2][1][year],
+        postdoc:d[2][2][year]},
+     all:
+       {faculty:d[3][0][year],
+        nonfaculty:d[3][1][year],
+        postdoc:d[3][2][year]},
+      Year:year
+    }
+    personnel.push(yearData)
+  }
+        
+    console.log(yearData.r1.faculty)
+
+    var something = "all";
+    //var inst = yearData[something];
+        
+    console.log("my year data is:", inst);
+        
+    //console.log(inst.faculty.Total)
+
+
+
+  maxFac=d3.max(personnel.map((x)=>x.all.faculty.Total))
+  console.log(maxFac)
+        console.log(personnel.map((x)=>x.all.faculty.Total))
+  maxNonFac=d3.max(personnel.map((x)=>x.all.nonfaculty.Total))
+  maxPostdoc=d3.max(personnel.map((x)=>x.all.postdoc.Total))
+  maxYScale = maxFac
+ //******************Defining Datas*********************
+console.log("Trying out the variables", yearData[inst][role][fs])
+  datas = personnel.map((x)=>x[inst][role][fs]);
+
+
+        //so far i have info for 1 year, 1 institution.
+        //check datas. Fix the update data.
+  //this works now.
+  console.log("Trying out the variables", yearData[inst][role][fs])
+  console.log("I'm out")
+    })
+
+    //******************END OF PROCESSING JSON*********************
+    //so with the updata, change whatever datas holds.
+
+    //******************END OF something else entirely*********************
+
+        function init(){
+            //console.log(personnel)
+            console.log("Here are my numbers", datas)
+            //*******CREATE THE CUBES AND PUSH THEM********
+        cubesData = [];
+        var cnt = 0,
+            one = "2007";
+
+        var i = -1;
+        for(var z = -j/2; z <= j/2; z = z + 5){
+            for(var x = -j; x <= j; x = x + 5){
+            var i = i +1;
+            if(i<9){
+            var h = parseFloat((-1*(datas[i])/10000).toFixed(5));
+            //var h = d3.randomUniform(-2, -10)();
+            //var h = -10;
+            var _cube = makeCube(h, x, z);
+                _cube.id = 'cube_' + cnt++;
+                _cube.height = h;
+                cubesData.push(_cube);
+            }
+
+            }
+
+        }
+
+
+            //lmao push each cube.
+        processData(cubes3D(cubesData), 1000);
+        //tryChange();
+    }
+
+    function processData(data, tt){
+                /* ----------- GRID ----------- */
+
+    var yScale3d = d3._3d()
+        .shape('LINE_STRIP')
+        .origin(origin)
+        .rotateY( startAngle)
+        .rotateX(-startAngle)
+        .scale(scale);
+
+        var xGrid = svg.selectAll('path.grid');
+
+        xGrid
+            .enter()
+            .append('path')
+            .attr('class', '_3d grid')
+            .merge(xGrid)
+            .attr('stroke', 'black')
+            .attr('stroke-width', 0.3)
+            .attr('fill', function(d){ return d.ccw ? 'lightgrey' : '#717171'; })
+            .attr('fill-opacity', 0.9)
+            .attr('d', grid3d.draw);
+
+        xGrid.exit().remove();
+
+        /* --------- CUBES ---------*/
+
+        var cubes = cubesGroup.selectAll('g.cube').data(data, function(d){ return d.id });
+
+        var ce = cubes
+            .enter()
+            .append('g')
+            .attr('class', 'cube')
+            .attr('fill', function(d){ return color(d.id); })
+            .attr('stroke', function(d){ return d3.color(color(d.id)).darker(2); })
+            .merge(cubes)
+            .sort(cubes3D.sort);
+
+        cubes.exit().remove();
+
+        /* --------- FACES ---------*/
+
+        var faces = cubes.merge(ce).selectAll('path.face').data(function(d){ return d.faces; }, function(d){ return d.face; });
+
+        faces.enter()
+            .append('path')
+            .attr('class', 'face')
+            .attr('fill-opacity', 0.95)
+            .classed('_3d', true)
+            .merge(faces)
+            .transition().duration(tt)
+            .attr('d', cubes3D.draw);
+
+        faces.exit().remove();
+
+        /* --------- TEXT ---------*/
+
+        var texts = cubes.merge(ce).selectAll('text.text').data(function(d){
+            var _t = d.faces.filter(function(d){
+                return d.face === 'top';
+            });
+            return [{height: d.height, centroid: _t[0].centroid}];
+        });
+
+        texts
+            .enter()
+            .append('text')
+            .attr('class', 'text')
+            .attr('dy', '-.7em')
+            .attr('text-anchor', 'middle')
+            .attr('font-family', 'sans-serif')
+            .attr('font-weight', 'bolder')
+            .attr('x', function(d){ return origin[0] + scale * d.centroid.x })
+            .attr('y', function(d){ return origin[1] + scale * d.centroid.y })
+            .classed('_3d', true)
+            .merge(texts)
+            .transition().duration(tt)
+            .attr('fill', 'black')
+            .attr('stroke', 'none')
+            .attr('x', function(d){ return origin[0] + scale * d.centroid.x })
+            .attr('y', function(d){ return origin[1] + scale * d.centroid.y })
+            .tween('text', function(d){
+                var that = d3.select(this);
+                var i = d3.interpolateNumber(+that.text(), Math.abs(d.height));
+                return function(t){
+                    that.text(~~(i(t)*10000));
+                };
+            });
+
+        texts.exit().remove();
+
+        /* --------- SORT TEXT & FACES ---------*/
+
+        ce.selectAll('._3d').sort(d3._3d().sort);
+
+    }
+
+
+    function dragStart(){
+        mx = d3.event.x;
+        my = d3.event.y;
+    }
+
+    function dragged(){
+        mouseX = mouseX || 0;
+        mouseY = mouseY || 0;
+        beta   = (d3.event.x - mx + mouseX) * Math.PI / 230 ;
+        alpha  = (d3.event.y - my + mouseY) * Math.PI / 230  * (-1);
+        processData(cubes3D.rotateY(beta + startAngle).rotateX(alpha - startAngle)(cubesData), 0);
+    }
+
+    function dragEnd(){
+        mouseX = d3.event.x - mx + mouseX;
+        mouseY = d3.event.y - my + mouseY;
+    }
+
+    function makeCube(h, x, z){
+        return [
+            {x: x - 1, y: h, z: z + 1}, // FRONT TOP LEFT
+            {x: x - 1, y: 0, z: z + 1}, // FRONT BOTTOM LEFT
+            {x: x + 1, y: 0, z: z + 1}, // FRONT BOTTOM RIGHT
+            {x: x + 1, y: h, z: z + 1}, // FRONT TOP RIGHT
+            {x: x - 1, y: h, z: z - 1}, // BACK  TOP LEFT
+            {x: x - 1, y: 0, z: z - 1}, // BACK  BOTTOM LEFT
+            {x: x + 1, y: 0, z: z - 1}, // BACK  BOTTOM RIGHT
+            {x: x + 1, y: h, z: z - 1}, // BACK  TOP RIGHT
+        ];
+    }
+    
+    d3.selectAll('button').on('click', init);
+    init();
+    
+</script>
+</body>
