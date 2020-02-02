@@ -6,7 +6,7 @@ const selectElement = document.getElementById('instType');
     console.dir(event.target.value)
   });
 
-d3.json('js/data/all_faculty.json', function(d) {
+d3.json('js/all_faculty.json', function(d) {
 
   var temperatures = [],
       personnel = [],
