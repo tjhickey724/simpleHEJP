@@ -47,7 +47,7 @@ const selectElement = document.getElementById('instType');
         inst = 'r1',
         role = 'faculty';
 
-d3.json('js/data/all_faculty.json', function(d) {
+d3.json('js/all_faculty.json', function(d) {
   for (var i = 1; i<d[0].length; i++) {
 
     dates.push( new Date("9/1/"+d[0][i].Year) );
