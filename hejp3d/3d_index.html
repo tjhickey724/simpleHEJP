@@ -6,6 +6,10 @@
 <!-- FOR SOME REASON, THE COORDINATE PLANE IS UPSIDE DOWN -->
 <!-- CHANGE CREATION OF CUBES AND DATA TO BE MORE FLEXIBLE -->
 
+
+<!-- ********** BUGS ********** -->
+<!-- TOOLTIP REMAINS IN VIEW IF MOUSE SCROLLS OVER CUBES WHILE ROTATING VISUAL -->
+
 <!DOCTYPE html>
 <meta charset="utf-8">
 
@@ -107,7 +111,7 @@
                 type="radio" 
                 value="FS_Education" 
                 name="FS"
-                onChange="fs='FS_Education';"
+                onChange="fs='FS_Education'; init()"
                 class="fs_type"
                 > &nbsp; | &nbsp;
             Humanities/Arts <input 
@@ -169,7 +173,7 @@
     <script>
     
         var origin = [505, 400], // THE LOCATION OF THE CENTER OF THE 3D IMAGE
-            scale = 20, // USED TO SCALE THE OBJECT TO SIZE OF IMAGE
+            scale = 10, // USED TO SCALE THE OBJECT TO SIZE OF IMAGE: CHANGED FROM 20 TO 10
             // VARIABLES USED IN ROTATION AND DRAG EVENTS
             alpha = 0,
             beta = 0,
@@ -217,6 +221,7 @@
 
 
      //******************START OF PROCESSING JSON*********************
+        
         var dates = [], // AN ARRAY OF DATES
             personnel = [], // AN ARRAY CONTAINING INFORMATION/YEAR
             yearData = {}, // CREATES AN OBJECT YEARDATA (NOT AN ARRAY)
@@ -224,6 +229,18 @@
             inst = 'all',
             role = 'faculty',
             fs = 'Total';
+        
+        // VARIABLES FOR LOOP
+        // CAN BE FOUND IN PROCESS DATA FOR MORE FLEXIBILITY
+        var yearnum;
+        var facnum = 3,
+            fsnum = 8,
+            instnum = 4;
+        
+        var fields = ['r1',
+                      'fourYear',
+                      'twoYear',
+                      'all'];
         
         d3.json("data.json", function(d){ // DATA.JSON IS PASSED INTO FUNCTION THROUGH PARAM d
 
@@ -300,17 +317,20 @@
         * IT CREATES THE CUBE AND DRAWS THE SVG
         **/
         function init(){
-            datas = personnel.map((x)=>x[inst][role][fs]); // MAPS EVERY YEAR TO A SINGLE SPECIFIED DATA POINT
-            console.log("Here are my numbers", datas)
+            // datas = personnel.map((x)=>x[inst][role][fs]); // MAPS EVERY YEAR TO A SINGLE SPECIFIED DATA POINT
+            // console.log("Here are my numbers", datas)
             
             //*******CREATE THE CUBES AND PUSH THEM********
             
             cubesData = []; // AN ARRAY OF CUBES WHERE EACH CUBES IS DEFINED BY 8 VERTICES
 
-            var i = -1, // NUMBER OF CUBES MADE
-                j = 10, // NUMBER OF CUBES TO MAKE
+            // var i = -1 // NUMBER OF CUBES MADE, USED IN PREVIOUS VERSION
+            
+            var j = 10, // NUMBER OF CUBES TO MAKE
                 cnt = 0; // CUBE ID NUMBER
             
+            // ------------------ OLD VISUAL -----------------------
+            /**
             for(var z = -j/2; z <= j/2; z = z + 5){
                 for(var x = -j; x <= j; x = x + 5){
                     i = i +1;
@@ -322,7 +342,27 @@
                         cubesData.push(_cube); // ADDS CUBE TO ARRAY
                     }
                 }
+            }**/
+            
+            // ---------------------- NEW VISUAL -----------------------
+            // USES INSTITUTION TYPE CURRENTLY
+            
+            for(var z=0; z<4; z++){
+                datas = personnel.map((x)=>x[fields[z]][role][fs]);
+                console.log("ITS OVER HERE")
+                console.log(datas)
+                for(var x=0; x<9; x++){
+                    var y = parseFloat((-1*(datas[x])/10000).toFixed(5)); // NUMBER OF DIGITS TO APPEAR AFTER DECIMAL POINT = 5
+                    var a = 5*x-10
+                    var b = 5*z-5
+                    var _cube = makeCube(a, y, b);
+                    _cube.id = 'cube_' + cnt++; // THE NAME OF THE CUBE i.e cube_1
+                    _cube.height = y; // RECORDS THE HEIGHT OF THE CUBE
+                    cubesData.push(_cube); // ADDS CUBE TO ARRAY
+                }
             }
+            console.log(cubesData.length)
+            
             processData(cubes3D(cubesData), 1000); // DRAW THE SVG
         }
 
@@ -433,6 +473,7 @@
                 return [{height: d.height, centroid: _t[0].centroid}];
             });
 
+            /**
             texts
                 .enter()
                 .append('text')
@@ -459,6 +500,7 @@
                 });
 
             texts.exit().remove();
+            **/
 
             /* --------- SORT TEXT & FACES ---------*/
 
