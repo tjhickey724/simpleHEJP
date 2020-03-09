@@ -423,6 +423,8 @@
                 .merge(cubes)
                 .sort(cubes3D.sort)
             /*****************  MOUSEOVER ********************/
+            // Essentially, for the mouse, you don't want it to activate
+            // when the mouse is being cliked as the viz is rotated. 
             
                 .on('mouseover', function(d) {
                     tooltip
@@ -473,8 +475,7 @@
                 return [{height: d.height, centroid: _t[0].centroid}];
             });
 
-            /**
-            texts
+         
                 .enter()
                 .append('text')
                 .attr('class', 'text')
@@ -500,7 +501,7 @@
                 });
 
             texts.exit().remove();
-            **/
+         
 
             /* --------- SORT TEXT & FACES ---------*/
 
