@@ -1,14 +1,19 @@
+<!-- ********** TO DO LIST **************** -->
 <!-- GRID IS NOT DRAWN YET AND THEREFORE DOES NOT APPEAR IN VISUALIZATION -->
 <!-- GRID NEEDS VERTICES IN ORDER TO APPEAR -->
 <!-- MOUSEOVER NEEDS TO SHOW INFO ABOUT DATA AND NOT JUST ID -->
-<!-- NEED TO REARRANGE CUBES IN VISUALIZATION -->
 <!-- NEED TO ADD LABELS TO DATA -->
 <!-- FOR SOME REASON, THE COORDINATE PLANE IS UPSIDE DOWN -->
 <!-- CHANGE CREATION OF CUBES AND DATA TO BE MORE FLEXIBLE -->
+<!-- QUERIES -->
 
+
+<!-- *********** SUGGESTIONS ***************** -->
+<!-- REPLACE TOOLTIP WITH SOME OTHER TOOL TO DISPLAY DATA ON THE SIDE OF SCREEN INSTEAD OF AS A POP UP -->
 
 <!-- ********** BUGS ********** -->
 <!-- TOOLTIP REMAINS IN VIEW IF MOUSE SCROLLS OVER CUBES WHILE ROTATING VISUAL -->
+<!-- TEXT PRODUCES ERROR AND EITHER PRODUCES BROKEN VISUAL OR NONE AT ALL -->
 
 <!DOCTYPE html>
 <meta charset="utf-8">
@@ -468,7 +473,7 @@
 
             /* --------- TEXT ---------*/
 
-            var texts = cubes.merge(ce).selectAll('text.text').data(function(d){
+            /**var texts = cubes.merge(ce).selectAll('text.text').data(function(d){
                 var _t = d.faces.filter(function(d){
                     return d.face === 'top';
                 });
@@ -500,7 +505,7 @@
                     };
                 });
 
-            texts.exit().remove();
+            texts.exit().remove(); **/
          
 
             /* --------- SORT TEXT & FACES ---------*/
