@@ -472,7 +472,8 @@
             faces.exit().remove();
 
             /* --------- TEXT ---------*/
-
+            
+            
             /**var texts = cubes.merge(ce).selectAll('text.text').data(function(d){
                 var _t = d.faces.filter(function(d){
                     return d.face === 'top';
@@ -480,7 +481,7 @@
                 return [{height: d.height, centroid: _t[0].centroid}];
             });
 
-         
+            texts
                 .enter()
                 .append('text')
                 .attr('class', 'text')
