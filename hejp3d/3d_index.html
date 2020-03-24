@@ -6,6 +6,9 @@
 <!-- FOR SOME REASON, THE COORDINATE PLANE IS UPSIDE DOWN -->
 <!-- CHANGE CREATION OF CUBES AND DATA TO BE MORE FLEXIBLE -->
 <!-- QUERIES -->
+<!-- NEED TO CREATE FLEXIBLE SCALING AND GRAPH CENTERING -->
+<!-- NEED TO CREATE SECOND DROP DOWN FOR CHOOSING SECOND AXIS -->
+<!-- NEED TO CHANGE UP RADIO BUTTONS DEPENDING ON CHOICES -->
 
 
 <!-- *********** SUGGESTIONS ***************** -->
@@ -13,7 +16,6 @@
 
 <!-- ********** BUGS ********** -->
 <!-- TOOLTIP REMAINS IN VIEW IF MOUSE SCROLLS OVER CUBES WHILE ROTATING VISUAL -->
-<!-- TEXT PRODUCES ERROR AND EITHER PRODUCES BROKEN VISUAL OR NONE AT ALL -->
 
 <!DOCTYPE html>
 <meta charset="utf-8">
@@ -29,119 +31,133 @@
         <h2>College and University Personnel by Year</h2>
 
         <small>
-            R1 <input 
-                type="radio" 
-                value="r1" 
-                name="inst"
-                onChange="inst='r1'; init()"
-                class="instType"
-                > &nbsp;|&nbsp;
-            4 year <input 
-                type="radio" 
-                value="fourYear" 
-                name="inst"
-                onChange="inst='fourYear'; init()"
-                class="instType"
-                >&nbsp;|&nbsp;
-            2 year <input 
-                type="radio" 
-                value="twoYear" 
-                name="inst"
-                onChange="inst='twoYear'; init()"
-                class="instType"
-                >&nbsp;|&nbsp;
-            all <input 
-                type="radio" 
-                value="all" 
-                name="inst"
-                onChange="inst='all'; init()"
-                class="instType"
-                checked
-                >&nbsp;&nbsp;&nbsp;||&nbsp;&nbsp;&nbsp;
+            
+            <label for="x-axis">Choose a variable for the x-axis:</label>
+                <select id="x-axis">
+                    <option value="institution">Institution</option>
+                    <option value="staff">Staff</option>
+                    <option value="fields">Fields</option>
+                    <option value="years">Years</option>
+                </select>
+            
+            <div id="some" style="visibility: visible">
+                R1 <input 
+                    type="radio" 
+                    value="r1" 
+                    name="inst"
+                    onChange="inst='r1'; init()"
+                    class="instType"
+                    > &nbsp;|&nbsp;
+                4 year <input 
+                    type="radio" 
+                    value="fourYear" 
+                    name="inst"
+                    onChange="inst='fourYear'; init()"
+                    class="instType"
+                    >&nbsp;|&nbsp;
+                2 year <input 
+                    type="radio" 
+                    value="twoYear" 
+                    name="inst"
+                    onChange="inst='twoYear'; init()"
+                    class="instType"
+                    >&nbsp;|&nbsp;
+                all <input 
+                    type="radio" 
+                    value="all" 
+                    name="inst"
+                    onChange="inst='all'; init()"
+                    class="instType"
+                    checked
+                    >&nbsp;&nbsp;&nbsp;||&nbsp;&nbsp;&nbsp;
 
 
-            faculty <input 
-                type="radio" 
-                value="r1" 
-                name="staff"
-                onChange="role='faculty'; init()"
-                class="staffType" 
-                checked
-                > &nbsp;|&nbsp;
-            nonfaculty <input 
-                type="radio" 
-                value="fourYear" 
-                name="staff"
-                onChange="role='nonfaculty'; init()"
-                class="staffType"
-                >&nbsp;|&nbsp;
-            postdoc <input 
-                type="radio" 
-                value="twoYear" 
-                name="staff"
-                onChange="role='postdoc'; init()"
-                class="staffType"
-                >&nbsp;|&nbsp;
+                faculty <input 
+                    type="radio" 
+                    value="r1" 
+                    name="staff"
+                    onChange="role='faculty'; init()"
+                    class="staffType" 
+                    checked
+                    > &nbsp;|&nbsp;
+                nonfaculty <input 
+                    type="radio" 
+                    value="fourYear" 
+                    name="staff"
+                    onChange="role='nonfaculty'; init()"
+                    class="staffType"
+                    >&nbsp;|&nbsp;
+                postdoc <input 
+                    type="radio" 
+                    value="twoYear" 
+                    name="staff"
+                    onChange="role='postdoc'; init()"
+                    class="staffType"
+                    >&nbsp;|&nbsp;
 
-            <br>
-            Life Sciences <input 
-                type="radio" 
-                value="FS_Life_sciences" 
-                name="FS"
-                onChange="fs='FS_Life_sciences'; init()"
-                class="fs_type"
-                > &nbsp; | &nbsp;
-            Math/CS <input 
-                type="radio" 
-                value="FS_Mathematics_and_computer_sciences" 
-                name="FS"
-                onChange="fs='FS_Mathematics_and_computer_sciences'; init()"
-                class="fs_type"
-                > &nbsp; | &nbsp;
-            Psych/SocSci <input 
-                type="radio" 
-                value="FS_Psychology_and_social_sciences" 
-                name="FS"
-                onChange="fs='FS_Psychology_and_social_sciences'; init()"
-                class="fs_type"
-                > &nbsp; | &nbsp;
-            Engineering <input 
-                type="radio" 
-                value="FS_Engineering" 
-                name="FS"
-                onChange="fs='FS_Engineering'; init()"
-                class="fs_type"
-                > &nbsp; | &nbsp;
-            Education <input 
-                type="radio" 
-                value="FS_Education" 
-                name="FS"
-                onChange="fs='FS_Education'; init()"
-                class="fs_type"
-                > &nbsp; | &nbsp;
-            Humanities/Arts <input 
-                type="radio" 
-                value="FS_Humanities_and_arts" 
-                name="FS"
-                onChange="fs='FS_Humanities_and_arts'; init()"
-                class="fs_type"
-                > &nbsp; | &nbsp;
-            Others <input 
-                type="radio" 
-                value="FS_Others" 
-                name="FS"
-                onChange="fs='FS_Others'; init()"
-                class="fs_type"
-                > &nbsp; | &nbsp;
-            All <input 
-                type="radio" 
-                value="Total" 
-                name="FS"
-                onChange="fs='Total'; init()"
-                class="fs_type"
-                checked
-                > &nbsp; | &nbsp;
+                <br>
+                Life Sciences <input 
+                    type="radio" 
+                    value="FS_Life_sciences" 
+                    name="FS"
+                    onChange="fs='FS_Life_sciences'; init()"
+                    class="fs_type"
+                    > &nbsp; | &nbsp;
+                Math/CS <input 
+                    type="radio" 
+                    value="FS_Mathematics_and_computer_sciences" 
+                    name="FS"
+                    onChange="fs='FS_Mathematics_and_computer_sciences'; init()"
+                    class="fs_type"
+                    > &nbsp; | &nbsp;
+                Psych/SocSci <input 
+                    type="radio" 
+                    value="FS_Psychology_and_social_sciences" 
+                    name="FS"
+                    onChange="fs='FS_Psychology_and_social_sciences'; init()"
+                    class="fs_type"
+                    > &nbsp; | &nbsp;
+                Engineering <input 
+                    type="radio" 
+                    value="FS_Engineering" 
+                    name="FS"
+                    onChange="fs='FS_Engineering'; init()"
+                    class="fs_type"
+                    > &nbsp; | &nbsp;
+                Education <input 
+                    type="radio" 
+                    value="FS_Education" 
+                    name="FS"
+                    onChange="fs='FS_Education'; init()"
+                    class="fs_type"
+                    > &nbsp; | &nbsp;
+                Humanities/Arts <input 
+                    type="radio" 
+                    value="FS_Humanities_and_arts" 
+                    name="FS"
+                    onChange="fs='FS_Humanities_and_arts'; init()"
+                    class="fs_type"
+                    > &nbsp; | &nbsp;
+                Others <input 
+                    type="radio" 
+                    value="FS_Others" 
+                    name="FS"
+                    onChange="fs='FS_Others'; init()"
+                    class="fs_type"
+                    > &nbsp; | &nbsp;
+                All <input 
+                    type="radio" 
+                    value="Total" 
+                    name="FS"
+                    onChange="fs='Total'; init()"
+                    class="fs_type"
+                    checked
+                    > &nbsp; | &nbsp;
+            </div>
+            
+                
         </small>
+        <button class = "button2" onClick = "choices()">Try</button>
         <hr>
         
         <div id="viz">
@@ -157,18 +173,18 @@
     <!-- THIS BUTTON MAY NOT BE NEEDED -->
     <style type="text/css">
     
-        button {
+        .button {
             position: absolute;
             right: 10px;
             top: 10px;
-        }  
+        }
         
         div.tooltip{
             pointer-events: none;
         }
         
     </style>
-    <button>update</button>
+    <button class = "button" onClick = "init()">update</button>
     <!-- END OF THE UPDATE BUTTON IN THE CORNER -->
     
     
@@ -176,13 +192,8 @@
     
     <!-- start of the javascript to create the cubes themselves and work with data -->
     <script>
-    
-        var origin = [505, 400], // THE LOCATION OF THE CENTER OF THE 3D IMAGE
-            scale = 10, // USED TO SCALE THE OBJECT TO SIZE OF IMAGE: CHANGED FROM 20 TO 10
-            // VARIABLES USED IN ROTATION AND DRAG EVENTS
-            alpha = 0,
-            beta = 0,
-            startAngle = Math.PI/6;
+        
+        // ---------------------- IMAGE VARIABLES -------------------------
     
         var svg    = d3.select('svg') // SELECTS IN HTML LOCATION OF IMAGE
             .call(d3.drag() // ENVOKES FUNCTION EXACTLY ONCE IN THIS CASE, THE DRAG FUNCTION WHICH CREATES NEW DRAG BEHAVIOR
@@ -195,21 +206,17 @@
             .attr("viewBox", "0 0 600 400") // VIEWBOX ATTRIBUTE MAKES SVG SCALABLE WITH ORIGIN AT 0,0 AND WIDTH 600, HEIGHT 400
             .classed("svg-content-responsive", true); // INSURES THE SVG IS CONTAINED WITHIN THE DIV
         
-        var color  = d3.scaleOrdinal(d3.schemeCategory20); // AN ARRAY OF 20 COLORS REPRESENTED AS HEX NUMBERS WITHIN AN ORDINAL SCALE OBJECT
-        var cubesGroup = svg.append('g').attr('class', 'cubes'); // ASSIGNS ATTRIBUTE TO G OBJECT, IN THIS CASE CLASS=CUBES
+        var origin = [505, 400], // THE LOCATION OF THE CENTER OF THE 3D IMAGE
+            scale = 10, // USED TO SCALE THE OBJECT TO SIZE OF IMAGE: CHANGED FROM 20 TO 10
+            startAngle = Math.PI/6;
+            
+        // ------------------------ DATA VARIABLES ---------------------------
         
-        // THE VARIABLES USED IN THE DRAG FUNCTIONS
-        var mx, // X POSITION OF MOUSE
-            my, // Y POSITION OF MOUSE
-            mouseX, // X PSOITION OF DRAGGED MOUSE
-            mouseY; // Y POSITION OF DRAGGED MOUSE
-    
         var datas; // THE DATA TO BE USED IN VISUALIZATION
         
         var grid3d = d3._3d()
             .shape('GRID', 20) // TYPE OF SHAPE AND HOW MANY POINTS PER ROW
             .origin(origin) // WHERE THE SHAPE IS LOCATED
-        // ******* ROTATION OF GRID, NOT CERTAIN IF NEEDED *********
             //.rotateY( startAngle)
             //.rotateX(-startAngle)
             .scale(scale); //NOT SURE IF SCALE IS NEEDED FOR GRID (GRID NOT VISIBLE)
@@ -223,6 +230,19 @@
             .rotateX(-startAngle) // ROTATION OF CUBES ON Y-AXIS
             .origin(origin) // POSITIONS OBJECT IN 3D AREA AROUND ORIGIN
             .scale(scale); // FITS SIZE OF SHAPE TO IMAGE
+        
+        // ------------------------ OTHER VARIABLES ---------------------------
+        
+        var color  = d3.scaleOrdinal(d3.schemeCategory20); // AN ARRAY OF 20 COLORS REPRESENTED AS HEX NUMBERS WITHIN AN ORDINAL SCALE OBJECT
+        var cubesGroup = svg.append('g').attr('class', 'cubes'); // ASSIGNS ATTRIBUTE TO G OBJECT, IN THIS CASE CLASS=CUBES
+        
+        // THE VARIABLES USED IN THE DRAG FUNCTIONS
+        var mx, // X POSITION OF MOUSE
+            my, // Y POSITION OF MOUSE
+            mouseX, // X PSOITION OF DRAGGED MOUSE
+            mouseY, // Y POSITION OF DRAGGED MOUSE
+            alpha = 0,
+            beta = 0;
 
 
      //******************START OF PROCESSING JSON*********************
@@ -241,11 +261,31 @@
         var facnum = 3,
             fsnum = 8,
             instnum = 4;
+        var yearBool = false,
+            facBool = false,
+            fsBool = true,
+            instBool = false;
+            
         
-        var fields = ['r1',
+        var fields = ['FS_Life_sciences',
+                      'FS_Mathematics_and_computer_sciences',
+                      'FS_Psychology_and_social_sciences',
+                      'FS_Engineering',
+                      'FS_Education',
+                      'FS_Humanities_and_arts',
+                      'FS_Others',
+                      'Total'];
+        var institution = ['r1',
                       'fourYear',
                       'twoYear',
                       'all'];
+        var faculty = ['faculty',
+                      'nonfaculty',
+                      'postdoc'];
+        var axisType1,
+            axisType2,
+            axisType3;
+        
         
         d3.json("data.json", function(d){ // DATA.JSON IS PASSED INTO FUNCTION THROUGH PARAM d
 
@@ -306,7 +346,7 @@
         
             console.log("I'm out")
             
-            init();
+            //init();
         })
 
         
@@ -322,38 +362,23 @@
         * IT CREATES THE CUBE AND DRAWS THE SVG
         **/
         function init(){
-            // datas = personnel.map((x)=>x[inst][role][fs]); // MAPS EVERY YEAR TO A SINGLE SPECIFIED DATA POINT
-            // console.log("Here are my numbers", datas)
             
             //*******CREATE THE CUBES AND PUSH THEM********
             
             cubesData = []; // AN ARRAY OF CUBES WHERE EACH CUBES IS DEFINED BY 8 VERTICES
-
-            // var i = -1 // NUMBER OF CUBES MADE, USED IN PREVIOUS VERSION
             
             var j = 10, // NUMBER OF CUBES TO MAKE
                 cnt = 0; // CUBE ID NUMBER
             
-            // ------------------ OLD VISUAL -----------------------
-            /**
-            for(var z = -j/2; z <= j/2; z = z + 5){
-                for(var x = -j; x <= j; x = x + 5){
-                    i = i +1;
-                    if(i<9){
-                        var y = parseFloat((-1*(datas[i])/10000).toFixed(5)); // NUMBER OF DIGITS TO APPEAR AFTER DECIMAL POINT = 5
-                        var _cube = makeCube(x, y, z);
-                        _cube.id = 'cube_' + cnt++; // THE NAME OF THE CUBE i.e cube_1
-                        _cube.height = y; // RECORDS THE HEIGHT OF THE CUBE
-                        cubesData.push(_cube); // ADDS CUBE TO ARRAY
-                    }
-                }
-            }**/
+            var x = document.getElementById("x-axis");
+            var result = x.options[x.selectedIndex].value;
             
-            // ---------------------- NEW VISUAL -----------------------
+            n = getLength(result);
+            
             // USES INSTITUTION TYPE CURRENTLY
             
-            for(var z=0; z<4; z++){
-                datas = personnel.map((x)=>x[fields[z]][role][fs]);
+            for(var z=0; z<n; z++){
+                datas = convert(result, z);
                 console.log("ITS OVER HERE")
                 console.log(datas)
                 for(var x=0; x<9; x++){
@@ -369,6 +394,55 @@
             console.log(cubesData.length)
             
             processData(cubes3D(cubesData), 1000); // DRAW THE SVG
+        }
+        
+        
+        
+        
+        function choices(){
+            var x = document.getElementById("x-axis");
+            var result = x.options[x.selectedIndex].value;
+            console.log(result)
+            if(result.localeCompare("fields")==0) console.log("IT WORKED")
+            console.log(fields.length)
+        }
+        
+        
+        function something(){
+            x = document.getElementById("id").innerHTML()
+        }
+        
+        function getLength(result){
+            if(result.localeCompare("institution")==0){
+                return institution.length;
+            }
+            if(result.localeCompare("staff")==0){
+                return faculty.length;
+            }
+            if(result.localeCompare("fields")==0){
+                return fields.length;
+            }
+            if(result.localeCompare("years")==0){
+                return years.length;
+            }
+        }
+        
+        
+        
+        
+        function convert(result, z){
+            if(result.localeCompare("institution")==0){
+                return personnel.map((x)=>x[institution[z]][role][fs]);
+            }
+            if(result.localeCompare("staff")==0){
+                return personnel.map((x)=>x[inst][faculty[z]][fs]);
+            }
+            if(result.localeCompare("fields")==0){
+                return personnel.map((x)=>x[inst][role][fields[z]]);
+            }
+            if(result.localeCompare("years")==0){
+                return personnel.map((x)=>x[axisType1[z]][axisType2][axisType3]);
+            }
         }
 
         
@@ -472,7 +546,6 @@
             faces.exit().remove();
 
             /* --------- TEXT ---------*/
-            
             
             /**var texts = cubes.merge(ce).selectAll('text.text').data(function(d){
                 var _t = d.faces.filter(function(d){
@@ -581,7 +654,7 @@
             ];
         }
     
-        d3.selectAll('button').on('click', init); // RERUNS INIT WITH BUTTON PRESS
+        //d3.selectAll('button').on('click', init); // RERUNS INIT WITH BUTTON PRESS
     
     </script>
 </body>
