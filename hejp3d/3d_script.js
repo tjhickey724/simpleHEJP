@@ -320,7 +320,7 @@
             // when the mouse is being cliked as the viz is rotated. 
                 .on('click', function(d) {
                                         // IF NOTHING IS SELECTED and not dragged?
-                    if(arraySize == 0 && times_dragged<1){
+                    if(arraySize == 0){
                         tempColor = this.style.fill;
                         temp_colors[0] = tempColor;
                         console.log("This cube color is selected", temp_colors[0]);
