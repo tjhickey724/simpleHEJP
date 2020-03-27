@@ -21,6 +21,7 @@
         var selected = [];
         var arraySize = 0;
         var temp_colors = [];
+        var times_dragged = 0;
         
             
         // ------------------------ DATA VARIABLES ---------------------------
@@ -318,8 +319,8 @@
             // Essentially, for the mouse, you don't want it to activate
             // when the mouse is being cliked as the viz is rotated. 
                 .on('click', function(d) {
-                                        // IF NOTHING IS SELECTED
-                    if(arraySize == 0){
+                                        // IF NOTHING IS SELECTED and not dragged?
+                    if(arraySize == 0 && times_dragged<1){
                         tempColor = this.style.fill;
                         temp_colors[0] = tempColor;
                         console.log("This cube color is selected", temp_colors[0]);
@@ -331,8 +332,8 @@
                             .style('fill', 'yellow')
             
                     tooltip
-                        .transition()
-                        .duration(500)
+                      //  .transition()
+                      //  .duration(500)
                         .style('opacity', .9)
                     tooltip.html('<div style="font-size: 2rem; font-weight: bold">'+ d.id +'</div>')
                     .style('left', (400) + 'px')
@@ -356,6 +357,7 @@
                         tempColor = this.style.fill;
                         console.log("another cube is selected", selected[0]);
                         var tempCube = selected[0]
+                        
                         tooltip.html('')
                         d3.select(tempCube)
                         .style('fill', tempColor)
@@ -367,8 +369,8 @@
                         
                       
                     tooltip
-                        .transition()
-                        .duration(500)
+                       // .transition()
+                       // .duration(500)
                         .style('opacity', .9)
                     tooltip.html('<div style="font-size: 2rem; font-weight: bold">'+ d.id +'</div>')
                     .style('left', (400) + 'px')
@@ -474,6 +476,7 @@
             beta   = (d3.event.x - mx + mouseX) * Math.PI / 230 ;
             alpha  = (d3.event.y - my + mouseY) * Math.PI / 230  * (-1);
             processData(cubes3D.rotateY(beta + startAngle).rotateX(alpha - startAngle)(cubesData), 0);
+
         }
         
         
@@ -487,6 +490,8 @@
         function dragEnd(){
             mouseX = d3.event.x - mx + mouseX;
             mouseY = d3.event.y - my + mouseY;
+            times_dragged++;
+            console.log(times_dragged)
         }
 
         
