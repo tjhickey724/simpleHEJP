@@ -16,6 +16,12 @@
         var origin = [505, 400], // THE LOCATION OF THE CENTER OF THE 3D IMAGE
             scale = 10, // USED TO SCALE THE OBJECT TO SIZE OF IMAGE: CHANGED FROM 20 TO 10
             startAngle = Math.PI/6;
+
+        var toggleSelected = true; // USED FOR CLICK EVENTS
+        var selected = [];
+        var arraySize = 0;
+        var temp_colors = [];
+        
             
         // ------------------------ DATA VARIABLES ---------------------------
         
@@ -311,25 +317,70 @@
             /*****************  MOUSEOVER ********************/
             // Essentially, for the mouse, you don't want it to activate
             // when the mouse is being cliked as the viz is rotated. 
+                .on('click', function(d) {
+                                        // IF NOTHING IS SELECTED
+                    if(arraySize == 0){
+                        tempColor = this.style.fill;
+                        temp_colors[0] = tempColor;
+                        console.log("This cube color is selected", temp_colors[0]);
+                        selected[0] = this
+                        arraySize = 1;
+                        console.log("This cube is selected", selected);
+                       //SELECT THE CURRENT CUBE
+                        d3.select(this)
+                            .style('fill', 'yellow')
             
-                .on('mouseover', function(d) {
                     tooltip
                         .transition()
                         .duration(500)
                         .style('opacity', .9)
                     tooltip.html('<div style="font-size: 2rem; font-weight: bold">'+ d.id +'</div>')
-                    .style('left', (450) + 'px')
+                    .style('left', (400) + 'px')
                     .style('top', (89) + 'px')
-                    tempColor = this.style.fill;
-                    d3.select(this)
-                        .style('fill', 'yellow')
-                })
-
-                .on('mouseout', function(d) {
-                    tooltip.html('')
-                    d3.select(this)
+                    
+                    }
+                    // SELECTED AGAIN
+                    else if(arraySize == 1 && Object.is(this, selected[0])){
+                        tooltip.html('')
+                        d3.select(this)
                         .style('fill', tempColor)
-                });
+                        arraySize = 0;
+                        console.log("This is the temporary color", tempColor)
+                        console.log("This cube is selected again", selected[0]);
+                        
+                    }
+                    
+
+                    //IF ANOTHER CUBE IS SELECTED
+                    else if(!Object.is(this, selected[0])){
+                        tempColor = this.style.fill;
+                        console.log("another cube is selected", selected[0]);
+                        var tempCube = selected[0]
+                        tooltip.html('')
+                        d3.select(tempCube)
+                        .style('fill', tempColor)
+                        
+                        //SELECT THE CURRENT CUBE 
+                        selected[0] = this;
+                            d3.select(this)
+                            .style('fill', 'yellow')
+                        
+                      
+                    tooltip
+                        .transition()
+                        .duration(500)
+                        .style('opacity', .9)
+                    tooltip.html('<div style="font-size: 2rem; font-weight: bold">'+ d.id +'</div>')
+                    .style('left', (400) + 'px')
+                    .style('top', (89) + 'px')
+                    
+                       
+                    }
+
+        
+                    
+                })
+            
 
             cubes.exit().remove();
 
@@ -406,6 +457,7 @@
         function dragStart(){
             mx = d3.event.x;
             my = d3.event.y;
+            
         }
 
         
