@@ -1,6 +1,4 @@
-
-        
-        // ---------------------- IMAGE VARIABLES -------------------------
+    // ---------------------- IMAGE VARIABLES -------------------------
         console.log("Starting the script")
         var svg    = d3.select('svg') // SELECTS IN HTML LOCATION OF IMAGE
             .call(d3.drag() // ENVOKES FUNCTION EXACTLY ONCE IN THIS CASE, THE DRAG FUNCTION WHICH CREATES NEW DRAG BEHAVIOR
@@ -20,8 +18,8 @@
         // USED FOR CLICK EVENTS
         var selected = [];
         var arraySize = 0;
-        var temp_colors = [];
-        var times_dragged = 0;
+
+        var times_dragged = 0; //WAS USED FOR DEBUGGING DRAGGING AND SELECTIONS
         
         
             
@@ -169,9 +167,6 @@
         
         //******************END OF PROCESSING JSON*********************
 
-        
-        
-        
         /**
         * THIS IS A FUNCTION CALLED INIT
         * IT CREATES THE CUBE AND DRAWS THE SVG
@@ -299,9 +294,6 @@
 
             xGrid.exit().remove();
             
-                         /* --------- FACES ---------*/
-
-
 
             /* --------- CUBES ---------*/
 
@@ -316,25 +308,16 @@
                 .merge(cubes)
                 .sort(cubes3D.sort)
 
-
-          
-
-            
-            
-            
-          /**
+                /** THIS IS THE INFO ON THE PREVIOUS TOOLTIP
                     .html('<div style="font-size: 2rem; font-weight: bold">'+ d.id +'</div>')
                     .style('left', (origin[0]-400) + 'px')
                     .style('top', (300) + 'px') ***/
             
-            /*****************  MOUSEOVER ********************/
-            // Essentially, for the mouse, you don't want it to activate
-            // when the mouse is being cliked as the viz is rotated. 
+            /*****************  NEW ON-CLICK OPTIONS ********************/
 
-            //add other printing functions here 
                 .on('click', function(d) {
 
-                // IF NOTHING IS SELECTED and not dragged?
+                    // IF NOTHING IS SELECTED 
                     if(arraySize == 0){
                         tempColor = this.style.fill;
                         temp_colors[0] = tempColor;
@@ -343,66 +326,57 @@
                         arraySize = 1;
                         console.log("This cube is selected", selected);
                         
-            //SELECT THE CURRENT CUBE
+                        //SELECT THE CURRENT CUBE
                         d3.select(this)
                             .style('fill', 'yellow')
             
-                        //display the text 
+                        //DISPLAY THE TEXT
                         draw_information(d, "visible");
-                        
-                        
-                        
-                        
                     }
                         
                     // IF SELECTED AGAIN
-                else if(arraySize == 1 && Object.is(this, selected[0])){
-                    //remove the tooltip.
+                    else if(arraySize == 1 && Object.is(this, selected[0])){
                     
-                    //remove the text 
-                     draw_information(d, "hidden");
+                        //REMOVE THE TEXT OF THE TOOLTIP
+                        draw_information(d, "hidden");
                        
-                        //And restore the color 
+                        //AND RESTORE THE COLOR 
                         d3.select(this)
                         .style('fill', tempColor)
                         arraySize = 0;
-                        console.log("This is the temporary color", tempColor)
                         console.log("This cube is selected again", selected[0]);
-                        
                     }
-                    
-
+        
                     //IF ANOTHER CUBE IS SELECTED
                     else if(!Object.is(this, selected[0])){
                         tempColor = this.style.fill;
                         console.log("another cube is selected", selected[0]);
                         var tempCube = selected[0]
                         
-                //hide the text 
+                        //the text is hidden automatically 
                         
-                        
+                        //AND RESTORE THE COLOR 
                         d3.select(tempCube)
                         .style('fill', tempColor)
                         
                         //SELECT THE CURRENT CUBE 
                         selected[0] = this;
-                            d3.select(this)
+            
+                        d3.select(this)
                             .style('fill', 'yellow')
                         
                       
-                    //add new text 
+                    //ADD NEW TEXT TO THE TOOLTIP
                         draw_information(d, "visible");
-                        
-                        
-                    
-                       
-                    }
-                  
 
-        
-                    
+                    }
+
                 })
-                        var faces = cubes
+            
+            
+            /* --------- FACES ---------*/
+            
+            var faces = cubes
                 .merge(ce)
                 .selectAll('path.face')
                 .data(function(d){ return d.faces; }, function(d){ return d.face; });
@@ -417,14 +391,13 @@
                 .transition().duration(tt)
                 .attr('d', cubes3D.draw);
             
-            
-
             faces.exit().remove();
-            //draw_information("test");
+            
+            
+            /** THIS IS THE NEW TOOLTIP THAT DRAWS INFO ABOUT EACH CUBE **/
             
             function draw_information(clicked_cube, visibility){
                 var texts = cubes.merge(ce).selectAll('text.text').data(function(d){
-                console.log("WHY NOO WORK", clicked_cube.faces[0].centroid)
                 //var _t = clicked_cube.faces.filter(function(d){
                 //    return clicked_cube.face === 'top';
                 //});
@@ -451,39 +424,30 @@
                 .attr('y', function(d){ return (300) + 'px' })
                 .tween('text', function(d){
                     var that = d3.select(this);
+                    //THE INTERPOLATION ADDS A DYNAMIC EFFECT BEFORE IT LANDS ON THE CURRENT INFO
                     var i = d3.interpolateNumber(+that.text(), Math.abs(clicked_cube.height));
                     return function(t){
                         that.text(clicked_cube.id + " " + ~~(i(t)*10000))
-                        //.html('<div style="font-size: 2rem; font-weight: //bold">'+ ~~(i(t)*10000) +'</div>')
-                        .attr("visibility", visibility)
-                        .attr("fill", "red")
+                        .attr("visibility", visibility) //CHANGE VISIBILITY 
+                        .attr("fill", "red") //COLOR OF THE TEXT
 
                     };
                 });
-                console.log("trying to display text")
+                console.log("tried to display the text")
             texts.exit().remove(); 
             }
             console.log("exiting the svg")
-        
-            
-//my theory is that the tooltip is not exited().
- //it is not removed.something about the drag just imprints it into the svg. 
-            
-            cubes.exit().remove();
-           
-            //d3.selectAll('svg > g > *').remove();
-            
 
-           
-         
+            //my theory is that the tooltip is not exited().
+            //it is not removed.something about the drag just imprints it into the svg. 
+            
+            cubes.exit().remove(); //VERY IMPORTANT STEP
 
             /* --------- SORT TEXT & FACES ---------*/
 
-            //ce.selectAll('._3d').sort(d3._3d().sort);
+            ce.selectAll('._3d').sort(d3._3d().sort);
             
             console.log("The very last step")
-            
-
 
         }
 
