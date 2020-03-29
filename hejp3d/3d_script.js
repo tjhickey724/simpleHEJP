@@ -12,16 +12,17 @@
             .attr("preserveAspectRatio", "xMinYMin meet") // ALLOWS UNIFORM SCALING FOR BOTH X AND Y USING VALUES IN VIEWBOX AS A BASE
             .attr("viewBox", "0 0 600 400") // VIEWBOX ATTRIBUTE MAKES SVG SCALABLE WITH ORIGIN AT 0,0 AND WIDTH 600, HEIGHT 400
             .classed("svg-content-responsive", true); // INSURES THE SVG IS CONTAINED WITHIN THE DIV
-        
+      
         var origin = [505, 400], // THE LOCATION OF THE CENTER OF THE 3D IMAGE
             scale = 10, // USED TO SCALE THE OBJECT TO SIZE OF IMAGE: CHANGED FROM 20 TO 10
             startAngle = Math.PI/6;
 
-        var toggleSelected = true; // USED FOR CLICK EVENTS
+        // USED FOR CLICK EVENTS
         var selected = [];
         var arraySize = 0;
         var temp_colors = [];
         var times_dragged = 0;
+        
         
             
         // ------------------------ DATA VARIABLES ---------------------------
@@ -177,6 +178,7 @@
         **/
         function init(){
             
+            
             //*******CREATE THE CUBES AND PUSH THEM********
             
             cubesData = []; // AN ARRAY OF CUBES WHERE EACH CUBES IS DEFINED BY 8 VERTICES
@@ -269,9 +271,11 @@
         * PARAM tt THE DURATION OF TRANSITIONS
         **/
         function processData(data, tt){
+            console.log("Is this processed?")
             
             /* ----------- GRID ----------- */
             // GRID IS NOT DRAWN AND DOES NOT APPEAR
+             
 
             var yScale3d = d3._3d()
                 .shape('LINE_STRIP')
@@ -294,19 +298,15 @@
                 .attr('d', grid3d.draw);
 
             xGrid.exit().remove();
+            
+                         /* --------- FACES ---------*/
+
+
 
             /* --------- CUBES ---------*/
 
             var cubes = cubesGroup.selectAll('g.cube').data(data, function(d){ return d.id });
             
-            var tooltip = d3.select('body')
-                .append('div')
-                .attr("class", "tooltip")
-                .style('position', 'absolute')
-                .style('padding', '0 10px')
-                .style('background', 'white')
-                .style('opacity', 0);
-
             var ce = cubes
                 .enter()
                 .append('g')
@@ -315,11 +315,26 @@
                 .attr('stroke', function(d){ return d3.color(color(d.id)).darker(2); })
                 .merge(cubes)
                 .sort(cubes3D.sort)
+
+
+          
+
+            
+            
+            
+          /**
+                    .html('<div style="font-size: 2rem; font-weight: bold">'+ d.id +'</div>')
+                    .style('left', (origin[0]-400) + 'px')
+                    .style('top', (300) + 'px') ***/
+            
             /*****************  MOUSEOVER ********************/
             // Essentially, for the mouse, you don't want it to activate
             // when the mouse is being cliked as the viz is rotated. 
+
+            //add other printing functions here 
                 .on('click', function(d) {
-                                        // IF NOTHING IS SELECTED and not dragged?
+
+                // IF NOTHING IS SELECTED and not dragged?
                     if(arraySize == 0){
                         tempColor = this.style.fill;
                         temp_colors[0] = tempColor;
@@ -327,22 +342,27 @@
                         selected[0] = this
                         arraySize = 1;
                         console.log("This cube is selected", selected);
-                       //SELECT THE CURRENT CUBE
+                        
+            //SELECT THE CURRENT CUBE
                         d3.select(this)
                             .style('fill', 'yellow')
             
-                    tooltip
-                      //  .transition()
-                      //  .duration(500)
-                        .style('opacity', .9)
-                    tooltip.html('<div style="font-size: 2rem; font-weight: bold">'+ d.id +'</div>')
-                    .style('left', (400) + 'px')
-                    .style('top', (89) + 'px')
-                    
+                        //display the text 
+                        draw_information(d, "visible");
+                        
+                        
+                        
+                        
                     }
-                    // SELECTED AGAIN
-                    else if(arraySize == 1 && Object.is(this, selected[0])){
-                        tooltip.html('')
+                        
+                    // IF SELECTED AGAIN
+                else if(arraySize == 1 && Object.is(this, selected[0])){
+                    //remove the tooltip.
+                    
+                    //remove the text 
+                     draw_information(d, "hidden");
+                       
+                        //And restore the color 
                         d3.select(this)
                         .style('fill', tempColor)
                         arraySize = 0;
@@ -358,7 +378,9 @@
                         console.log("another cube is selected", selected[0]);
                         var tempCube = selected[0]
                         
-                        tooltip.html('')
+                //hide the text 
+                        
+                        
                         d3.select(tempCube)
                         .style('fill', tempColor)
                         
@@ -368,27 +390,19 @@
                             .style('fill', 'yellow')
                         
                       
-                    tooltip
-                       // .transition()
-                       // .duration(500)
-                        .style('opacity', .9)
-                    tooltip.html('<div style="font-size: 2rem; font-weight: bold">'+ d.id +'</div>')
-                    .style('left', (400) + 'px')
-                    .style('top', (89) + 'px')
+                    //add new text 
+                        draw_information(d, "visible");
+                        
+                        
                     
                        
                     }
+                  
 
         
                     
                 })
-            
-
-            cubes.exit().remove();
-
-            /* --------- FACES ---------*/
-
-            var faces = cubes
+                        var faces = cubes
                 .merge(ce)
                 .selectAll('path.face')
                 .data(function(d){ return d.faces; }, function(d){ return d.face; });
@@ -402,16 +416,19 @@
                 .merge(faces)
                 .transition().duration(tt)
                 .attr('d', cubes3D.draw);
+            
+            
 
             faces.exit().remove();
-
-            /* --------- TEXT ---------*/
+            //draw_information("test");
             
-            /**var texts = cubes.merge(ce).selectAll('text.text').data(function(d){
-                var _t = d.faces.filter(function(d){
-                    return d.face === 'top';
-                });
-                return [{height: d.height, centroid: _t[0].centroid}];
+            function draw_information(clicked_cube, visibility){
+                var texts = cubes.merge(ce).selectAll('text.text').data(function(d){
+                console.log("WHY NOO WORK", clicked_cube.faces[0].centroid)
+                //var _t = clicked_cube.faces.filter(function(d){
+                //    return clicked_cube.face === 'top';
+                //});
+                return [{height: clicked_cube.height, centroid: clicked_cube.faces[4].centroid}];
             });
 
             texts
@@ -422,29 +439,51 @@
                 .attr('text-anchor', 'middle')
                 .attr('font-family', 'sans-serif')
                 .attr('font-weight', 'bolder')
-                .attr('x', function(d){ return origin[0] + scale * d.centroid.x })
-                .attr('y', function(d){ return origin[1] + scale * d.centroid.y })
+                .attr("font-size", "25px")
+                .attr('x', function(d){ return (origin[0]-400) + 'px' })
+                .attr('y', function(d){ return (300) + 'px' })
                 .classed('_3d', true)
                 .merge(texts)
                 .transition().duration(tt)
                 .attr('fill', 'black')
                 .attr('stroke', 'none')
-                .attr('x', function(d){ return origin[0] + scale * d.centroid.x })
-                .attr('y', function(d){ return origin[1] + scale * d.centroid.y })
+                .attr('x', function(d){ return (origin[0]-400) + 'px'})
+                .attr('y', function(d){ return (300) + 'px' })
                 .tween('text', function(d){
                     var that = d3.select(this);
-                    var i = d3.interpolateNumber(+that.text(), Math.abs(d.height));
+                    var i = d3.interpolateNumber(+that.text(), Math.abs(clicked_cube.height));
                     return function(t){
-                        that.text(~~(i(t)*10000));
+                        that.text(clicked_cube.id + " " + ~~(i(t)*10000))
+                        //.html('<div style="font-size: 2rem; font-weight: //bold">'+ ~~(i(t)*10000) +'</div>')
+                        .attr("visibility", visibility)
+                        .attr("fill", "red")
+
                     };
                 });
+                console.log("trying to display text")
+            texts.exit().remove(); 
+            }
+            console.log("exiting the svg")
+        
+            
+//my theory is that the tooltip is not exited().
+ //it is not removed.something about the drag just imprints it into the svg. 
+            
+            cubes.exit().remove();
+           
+            //d3.selectAll('svg > g > *').remove();
+            
 
-            texts.exit().remove(); **/
+           
          
 
             /* --------- SORT TEXT & FACES ---------*/
 
-            ce.selectAll('._3d').sort(d3._3d().sort);
+            //ce.selectAll('._3d').sort(d3._3d().sort);
+            
+            console.log("The very last step")
+            
+
 
         }
 
@@ -476,6 +515,9 @@
             beta   = (d3.event.x - mx + mouseX) * Math.PI / 230 ;
             alpha  = (d3.event.y - my + mouseY) * Math.PI / 230  * (-1);
             processData(cubes3D.rotateY(beta + startAngle).rotateX(alpha - startAngle)(cubesData), 0);
+            times_dragged++;
+            console.log(times_dragged)
+            //d3.selectAll('svg > g > *').remove();
 
         }
         
@@ -490,8 +532,7 @@
         function dragEnd(){
             mouseX = d3.event.x - mx + mouseX;
             mouseY = d3.event.y - my + mouseY;
-            times_dragged++;
-            console.log(times_dragged)
+
         }
 
         
