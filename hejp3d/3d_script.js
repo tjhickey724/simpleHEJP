@@ -320,8 +320,8 @@
                     // IF NOTHING IS SELECTED 
                     if(arraySize == 0){
                         tempColor = this.style.fill;
-                        temp_colors[0] = tempColor;
-                        console.log("This cube color is selected", temp_colors[0]);
+                        //temp_colors[0] = tempColor;
+                       // console.log("This cube color is selected", temp_colors[0]);
                         selected[0] = this
                         arraySize = 1;
                         console.log("This cube is selected", selected);
