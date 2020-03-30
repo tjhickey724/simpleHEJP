@@ -4,10 +4,8 @@
 <!-- MOUSEOVER NEEDS TO SHOW INFO ABOUT DATA AND NOT JUST ID -->
 <!-- NEED TO ADD LABELS TO DATA -->
 <!-- FOR SOME REASON, THE COORDINATE PLANE IS UPSIDE DOWN -->
-<!-- CHANGE CREATION OF CUBES AND DATA TO BE MORE FLEXIBLE -->
 <!-- QUERIES -->
 <!-- NEED TO CREATE FLEXIBLE SCALING AND GRAPH CENTERING -->
-<!-- NEED TO CREATE SECOND DROP DOWN FOR CHOOSING SECOND AXIS -->
 <!-- NEED TO CHANGE UP RADIO BUTTONS DEPENDING ON CHOICES -->
 
 
@@ -33,13 +31,11 @@
 
         <small>
             
-            <label for="x-axis">Choose a variable for the x-axis:</label>
-                <select id="x-axis">
-                    <option value="institution">Institution</option>
-                    <option value="staff">Staff</option>
-                    <option value="fields">Fields</option>
-                    <option value="years">Years</option>
-                </select>
+            <label for="x-axis">Choose two variables:</label>
+                <input type="checkbox" name="variable" onclick = "return limitCheck()" value="years">Years
+                <input type="checkbox" name="variable" onclick = "return limitCheck()" value="institution">Institution
+                <input type="checkbox" name="variable" onclick = "return limitCheck()" value="staff">Staff
+                <input type="checkbox" name="variable" onclick = "return limitCheck()" value="fields">Fields
             
             <div id="some" style="visibility: visible">
                 R1 <input 
@@ -152,6 +148,72 @@
                     name="FS"
                     onChange="fs='Total'; init()"
                     class="fs_type"
+                    checked
+                    > &nbsp; | &nbsp;
+                
+                <br>
+                2007 <input 
+                    type="radio" 
+                    value="2007" 
+                    name="Year"
+                    onChange="year=0; init()"
+                    class="year_type"
+                    > &nbsp; | &nbsp;
+                2010 <input 
+                    type="radio" 
+                    value="2010" 
+                    name="Year"
+                    onChange="year=1; init()"
+                    class="year_type"
+                    > &nbsp; | &nbsp;
+                2011 <input 
+                    type="radio" 
+                    value="2011" 
+                    name="Year"
+                    onChange="year=2; init()"
+                    class="year_type"
+                    > &nbsp; | &nbsp;
+                2012 <input 
+                    type="radio" 
+                    value="2012" 
+                    name="Year"
+                    onChange="year=3; init()"
+                    class="year_type"
+                    > &nbsp; | &nbsp;
+                2013 <input 
+                    type="radio" 
+                    value="2013" 
+                    name="Year"
+                    onChange="year=4; init()"
+                    class="year_type"
+                    > &nbsp; | &nbsp;
+                2014 <input 
+                    type="radio" 
+                    value="2014" 
+                    name="Year"
+                    onChange="year=5; init()"
+                    class="year_type"
+                    > &nbsp; | &nbsp;
+                2015 <input 
+                    type="radio" 
+                    value="2015" 
+                    name="Year"
+                    onChange="year=6; init()"
+                    class="year_type"
+                    > &nbsp; | &nbsp;
+                2016 <input 
+                    type="radio" 
+                    value="2016" 
+                    name="Year"
+                    onChange="year=7; init()"
+                    class="year_type"
+                    > &nbsp; | &nbsp;
+                2017 <input 
+                    type="radio" 
+                    value="2017" 
+                    name="Year"
+                    onChange="year=8; init()"
+                    class="year_type"
                     checked
                     > &nbsp; | &nbsp;
             </div>
