@@ -2,10 +2,24 @@
     THIS IS THE SCRIPT FOR THE 3D VISUAL.
     ------ FUNCTIONS ------
     INIT()
-    CHOICES()
-    SOMETHING()
-    CONVERT(RESULT, Z)
+    GETRESULT() RETURN STRING[]
+    LIMITCHECK()
+    SETUP()
+    GETLENGTH(STRING) RETURN NUMBER
+    FIRST(STRING[], INT) RETURN DATA
+    SECOND(DATA, STRING, INT) RETURN NUMBER
+    PROCESSDATA(DATA, NUMBER)
+    DRAGSTART()
+    DRAGGED()
+    DRAGEND()
+    MAKECUBE(NUMBER, NUMBER, NUMBER) RETURN VERTICE[]
 **/
+
+
+
+
+
+
         // ---------------------- IMAGE VARIABLES -------------------------
         console.log("Starting the script")
         var svg    = d3.select('svg') // SELECTS IN HTML LOCATION OF IMAGE
@@ -31,6 +45,9 @@
 
 
 
+
+
+
         // ------------------------ DATA VARIABLES ---------------------------
 
         var datas; // THE DATA TO BE USED IN VISUALIZATION
@@ -52,6 +69,11 @@
             .origin(origin) // POSITIONS OBJECT IN 3D AREA AROUND ORIGIN
             .scale(scale); // FITS SIZE OF SHAPE TO IMAGE
 
+
+
+
+
+
         // ------------------------ OTHER VARIABLES ---------------------------
 
         var color  = d3.scaleOrdinal(d3.schemeCategory20); // AN ARRAY OF 20 COLORS REPRESENTED AS HEX NUMBERS WITHIN AN ORDINAL SCALE OBJECT
@@ -66,28 +88,24 @@
             beta = 0;
 
 
+
+
+
+
      //******************START OF PROCESSING JSON*********************
 
+    // ------------------------ VARIABLES ---------------------------
         var dates = [], // AN ARRAY OF DATES
             personnel = [], // AN ARRAY CONTAINING INFORMATION/YEAR
             yearData = {}, // CREATES AN OBJECT YEARDATA (NOT AN ARRAY)
             // DATA IDENTIFIERS
             inst = 'all',
             role = 'faculty',
-            fs = 'Total';
+            fs = 'Total',
             year = 8;
 
         // VARIABLES FOR LOOP
         // CAN BE FOUND IN PROCESS DATA FOR MORE FLEXIBILITY
-        var yearnum;
-        var facnum = 3,
-            fsnum = 8,
-            instnum = 4;
-        var yearBool = false,
-            facBool = false,
-            fsBool = true,
-            instBool = false;
-
         var years;
         var fields = ['FS_Life_sciences',
                       'FS_Mathematics_and_computer_sciences',
@@ -104,9 +122,10 @@
         var faculty = ['faculty',
                       'nonfaculty',
                       'postdoc'];
-        var axisType1,
-            axisType2,
-            axisType3;
+     // ------------------------ VARIABLES ---------------------------
+
+
+
 
 
         d3.json("data.json", function(d){ // DATA.JSON IS PASSED INTO FUNCTION THROUGH PARAM d
@@ -171,65 +190,66 @@
             //init();
         })
 
+    //******************END OF PROCESSING JSON*************************
 
 
 
-        //******************END OF PROCESSING JSON*********************
+
+
 
         /**
         * THIS IS A FUNCTION CALLED INIT
         * IT CREATES THE CUBE AND DRAWS THE SVG
         **/
         function init(){
-
-
             //*******CREATE THE CUBES AND PUSH THEM********
 
             cubesData = []; // AN ARRAY OF CUBES WHERE EACH CUBES IS DEFINED BY 8 VERTICES
 
-            var j = 10, // NUMBER OF CUBES TO MAKE
-                cnt = 0; // CUBE ID NUMBER
+            var cnt = 0; // CUBE ID NUMBER
 
-            var x = document.getElementById("x-axis");
-            //var result = x.options[x.selectedIndex].value;
-
-            //n = getLength(result);
-
-            var results = getResult();
+            var results = getResult(); // OBTAINS VARIABLES CHOOSEN BY USER AS ARRAY
+            // GETS THE SIZE OF THE DATA FOR EACH CHOOSEN VARIABLE
             var q = getLength(results[0]);
             var p = getLength(results[1]);
 
-            // USES INSTITUTION TYPE CURRENTLY
-
             for(var z=0; z<q; z++){
-                //datas = convert(result, z);
-                thing = first(results, z);
+                firstData = first(results, z); // OBTAIN FIRST VARIABLE'S DATA
                 console.log("ITS OVER HERE")
                 for(var x=0; x<p; x++){
-                    other = second(thing, results[1], x);
+                    secData = second(firstData, results[1], x); // OBTAIN SECOND VARIABLE'S DATA
 
-                    var y = parseFloat((-1*(other)/10000).toFixed(5)); // NUMBER OF DIGITS TO APPEAR AFTER DECIMAL POINT = 5
-                    var a = 5*x-10
-                    var b = 5*z-5
-                    var _cube = makeCube(a, y, b);
+                    var y = parseFloat((-1*(secData)/10000).toFixed(5)); // NUMBER OF DIGITS TO APPEAR AFTER DECIMAL POINT = 5
+                    var a = 5*x-10 // ADJUST SIZE
+                    var b = 5*z-5 // ADJUST SIZE
+                    var _cube = makeCube(a, y, b); // MAKE THE CUBE USING BASE (X,Y,Z)
                     _cube.id = 'cube_' + cnt++; // THE NAME OF THE CUBE i.e cube_1
                     _cube.height = y; // RECORDS THE HEIGHT OF THE CUBE
                     cubesData.push(_cube); // ADDS CUBE TO ARRAY
                 }
             }
             console.log(cubesData.length)
-
             processData(cubes3D(cubesData), 1000); // DRAW THE SVG
         }
 
 
+
+
+
+
+        /**
+        * THIS IS A FUNCTION CALLED GETRESULT
+        * IT OBTAINS THE USER INPUT FROM CHECKBOXES
+        * IT RETURNS AN ARRAY OF STRINGS OF TWO VARIABLES
+        * OR NULL IF TWO CHOICES WERE NOT MADE
+        **/
         function getResult(){
-            var x = document.getElementsByName('variable');
-            var res = [];
-            var g = 0;
+            var x = document.getElementsByName('variable'); // GET THE HTML OBJECT
+            var res = []; // ARRAY TO HOLD RESPONSES
+            var g = 0; // COUNTS BOXES THAT HAVE BEEN CHECKED
             for(var i=0; i<x.length; i++){
-                if(x[i].checked==true){
-                    res[g] = x[i].value;
+                if(x[i].checked==true){ // IF THE CHECKBOX IS CHECKED
+                    res[g] = x[i].value; // ADD IT TO THE ARRAY
                     g++;
                 }
             }
@@ -243,24 +263,17 @@
 
 
 
-        function choices(){
-            var x = document.getElementsByName('variable');
-            var res = [];
-            var g = 0;
-            for(var i=0; i<x.length; i++){
-                if(x[i].checked==true){
-                    res[g] = x[i].value;
-                    g++;
-                }
-            }
-        }
 
 
+        /**
+        * THIS IS A FUNCTION CALLED LIMIT CHECK
+        * IT LIMITS THE NUMBER OF CHECKBOXES THAT CAN BE CHECKED AT A TIME
+        * ONLY 2 BOXES CAN BE CHECKED
+        **/
         function limitCheck(){
-            var a = document.getElementsByName('variable');
+            var a = document.getElementsByName('variable'); // GET HTML OBJECT
             var newvar = 0;
-            var count;
-            for(count=0; count<a.length; count++){
+            for(var count=0; count<a.length; count++){
                 if(a[count].checked==true){
                     newvar=newvar+1;
                 }
@@ -272,6 +285,52 @@
 
 
 
+
+
+
+        /**
+        * THIS IS A FUNCTION CALLED SETUP
+        * IT MAKES CERTAIN RADIOBOXES VISIBLE DEPENDING ON INPUT
+        **/
+        function setUp(){
+            var d1 = document.getElementById("instbuttons");
+            var d2 = document.getElementById("staffbuttons");
+            var d3 = document.getElementById("fieldbuttons");
+            var d4 = document.getElementById("yearbuttons");
+            var x = document.getElementsByName('variable');
+            
+            if(x[0].checked==false){ //years
+                d4.style.display = "block"
+            } else{
+                d4.style.display = "none"
+            }
+            if(x[1].checked==false){ //inst
+                d1.style.display = "block"
+            } else{
+                d1.style.display = "none"
+            }
+            if(x[2].checked==false){ //staff
+                d2.style.display = "block"
+            } else{
+                d2.style.display = "none"
+            }
+            if(x[3].checked==false){ //fields
+                d3.style.display = "block"
+            } else{
+                d3.style.display = "none"
+            }
+        }
+
+
+
+
+
+
+        /**
+        * THIS IS A FUNCTION CALLED GETLENGTH
+        * IT TAKES A STRING NAME OF DATA AS INPUT
+        * AND RETURNS THE SIZE OF THE DATA
+        **/
         function getLength(result){
             if(result.localeCompare("institution")==0){
                 return institution.length;
@@ -290,21 +349,15 @@
 
 
 
-        function convert(result, z){
-            if(result.localeCompare("institution")==0){
-                return personnel.map((x)=>x[institution[z]][role][fs]);
-            }
-            if(result.localeCompare("staff")==0){
-                return personnel.map((x)=>x[inst][faculty[z]][fs]);
-            }
-            if(result.localeCompare("fields")==0){
-                return personnel.map((x)=>x[inst][role][fields[z]]);
-            }
-            if(result.localeCompare("years")==0){
-                return personnel.map((x)=>x[axisType1[z]][axisType2][axisType3]);
-            }
-        }
 
+
+        /**
+        * THIS IS A FUNCTION CALLED FIRST
+        * IT FINDS THE DATA ASSOCIATED WITH THE FIRST CHOSEN VARIABLE
+        * AND RETURNS IT BASED ON THE SECOND VARIABLE
+        * IT TAKES A STRING ARRAY OF VARIABLE NAMES
+        * AND A NUMBER Z
+        **/
         function first(result, z){
             if(result[0].localeCompare("years")==0){
                 if(result[1].localeCompare("staff")==0){
@@ -326,6 +379,18 @@
             }
         }
 
+
+
+
+
+
+        /**
+        * THIS IS A FUNCTION CALLED SECOND
+        * IT TAKES A DATA OBJECT
+        * A STRING NAME OF DATA
+        * AND A NUMBER Z AS INPUT
+        * AND RETURNS A NUMBER
+        **/
         function second(first, result, z){
             if(result.localeCompare("institution")==0){
                 return first[institution[z]][role][fs]
@@ -337,6 +402,8 @@
                 return first[fields[z]]
             }
         }
+
+
 
 
 
@@ -480,43 +547,43 @@
 
             function draw_information(clicked_cube, visibility){
                 var texts = cubes.merge(ce).selectAll('text.text').data(function(d){
-                //var _t = clicked_cube.faces.filter(function(d){
-                //    return clicked_cube.face === 'top';
-                //});
-                return [{height: clicked_cube.height, centroid: clicked_cube.faces[4].centroid}];
-            });
-
-            texts
-                .enter()
-                .append('text')
-                .attr('class', 'text')
-                .attr('dy', '-.7em')
-                .attr('text-anchor', 'middle')
-                .attr('font-family', 'sans-serif')
-                .attr('font-weight', 'bolder')
-                .attr("font-size", "25px")
-                .attr('x', function(d){ return (origin[0]-400) + 'px' })
-                .attr('y', function(d){ return (300) + 'px' })
-                .classed('_3d', true)
-                .merge(texts)
-                .transition().duration(tt)
-                .attr('fill', 'black')
-                .attr('stroke', 'none')
-                .attr('x', function(d){ return (origin[0]-400) + 'px'})
-                .attr('y', function(d){ return (300) + 'px' })
-                .tween('text', function(d){
-                    var that = d3.select(this);
-                    //THE INTERPOLATION ADDS A DYNAMIC EFFECT BEFORE IT LANDS ON THE CURRENT INFO
-                    var i = d3.interpolateNumber(+that.text(), Math.abs(clicked_cube.height));
-                    return function(t){
-                        that.text(clicked_cube.id + " " + ~~(i(t)*10000))
-                        .attr("visibility", visibility) //CHANGE VISIBILITY
-                        .attr("fill", "red") //COLOR OF THE TEXT
-
-                    };
+                    //var _t = clicked_cube.faces.filter(function(d){
+                    //    return clicked_cube.face === 'top';
+                    //});
+                    return [{height: clicked_cube.height, centroid: clicked_cube.faces[4].centroid}];
                 });
-                console.log("tried to display the text")
-            texts.exit().remove();
+
+                texts
+                    .enter()
+                    .append('text')
+                    .attr('class', 'text')
+                    .attr('dy', '-.7em')
+                    .attr('text-anchor', 'middle')
+                    .attr('font-family', 'sans-serif')
+                    .attr('font-weight', 'bolder')
+                    .attr("font-size", "25px")
+                    .attr('x', function(d){ return (origin[0]-400) + 'px' })
+                    .attr('y', function(d){ return (300) + 'px' })
+                    .classed('_3d', true)
+                    .merge(texts)
+                    .transition().duration(tt)
+                    .attr('fill', 'black')
+                    .attr('stroke', 'none')
+                    .attr('x', function(d){ return (origin[0]-400) + 'px'})
+                    .attr('y', function(d){ return (300) + 'px' })
+                    .tween('text', function(d){
+                        var that = d3.select(this);
+                        //THE INTERPOLATION ADDS A DYNAMIC EFFECT BEFORE IT LANDS ON THE CURRENT INFO
+                        var i = d3.interpolateNumber(+that.text(), Math.abs(clicked_cube.height));
+                        return function(t){
+                            that.text(clicked_cube.id + " " + ~~(i(t)*10000))
+                            .attr("visibility", visibility) //CHANGE VISIBILITY
+                            .attr("fill", "red") //COLOR OF THE TEXT
+
+                        };
+                    });
+                    console.log("tried to display the text")
+                texts.exit().remove();
             }
             console.log("exiting the svg")
 
@@ -530,8 +597,8 @@
             ce.selectAll('._3d').sort(d3._3d().sort);
 
             console.log("The very last step")
-
         }
+
 
 
 
@@ -546,6 +613,7 @@
             my = d3.event.y;
 
         }
+
 
 
 
@@ -566,6 +634,7 @@
             //d3.selectAll('svg > g > *').remove();
 
         }
+
 
 
 
