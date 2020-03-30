@@ -18,22 +18,23 @@
             .attr("preserveAspectRatio", "xMinYMin meet") // ALLOWS UNIFORM SCALING FOR BOTH X AND Y USING VALUES IN VIEWBOX AS A BASE
             .attr("viewBox", "0 0 600 400") // VIEWBOX ATTRIBUTE MAKES SVG SCALABLE WITH ORIGIN AT 0,0 AND WIDTH 600, HEIGHT 400
             .classed("svg-content-responsive", true); // INSURES THE SVG IS CONTAINED WITHIN THE DIV
-        
+
         var origin = [505, 300], // THE LOCATION OF THE CENTER OF THE 3D IMAGE
             scale = 10, // USED TO SCALE THE OBJECT TO SIZE OF IMAGE: CHANGED FROM 20 TO 10
             startAngle = Math.PI/6;
 
-        var toggleSelected = true; // USED FOR CLICK EVENTS
+        // USED FOR CLICK EVENTS
         var selected = [];
         var arraySize = 0;
-        var temp_colors = [];
-        var times_dragged = 0;
-        
-            
+
+        var times_dragged = 0; //WAS USED FOR DEBUGGING DRAGGING AND SELECTIONS
+
+
+
         // ------------------------ DATA VARIABLES ---------------------------
-        
+
         var datas; // THE DATA TO BE USED IN VISUALIZATION
-        
+
         var grid3d = d3._3d()
             .shape('GRID', 20) // TYPE OF SHAPE AND HOW MANY POINTS PER ROW
             .origin(origin) // WHERE THE SHAPE IS LOCATED
@@ -50,12 +51,12 @@
             .rotateX(-startAngle) // ROTATION OF CUBES ON Y-AXIS
             .origin(origin) // POSITIONS OBJECT IN 3D AREA AROUND ORIGIN
             .scale(scale); // FITS SIZE OF SHAPE TO IMAGE
-        
+
         // ------------------------ OTHER VARIABLES ---------------------------
-        
+
         var color  = d3.scaleOrdinal(d3.schemeCategory20); // AN ARRAY OF 20 COLORS REPRESENTED AS HEX NUMBERS WITHIN AN ORDINAL SCALE OBJECT
         var cubesGroup = svg.append('g').attr('class', 'cubes'); // ASSIGNS ATTRIBUTE TO G OBJECT, IN THIS CASE CLASS=CUBES
-        
+
         // THE VARIABLES USED IN THE DRAG FUNCTIONS
         var mx, // X POSITION OF MOUSE
             my, // Y POSITION OF MOUSE
@@ -66,7 +67,7 @@
 
 
      //******************START OF PROCESSING JSON*********************
-        
+
         var dates = [], // AN ARRAY OF DATES
             personnel = [], // AN ARRAY CONTAINING INFORMATION/YEAR
             yearData = {}, // CREATES AN OBJECT YEARDATA (NOT AN ARRAY)
@@ -75,7 +76,7 @@
             role = 'faculty',
             fs = 'Total';
             year = 8;
-        
+
         // VARIABLES FOR LOOP
         // CAN BE FOUND IN PROCESS DATA FOR MORE FLEXIBILITY
         var yearnum;
@@ -86,7 +87,7 @@
             facBool = false,
             fsBool = true,
             instBool = false;
-            
+
         var years;
         var fields = ['FS_Life_sciences',
                       'FS_Mathematics_and_computer_sciences',
@@ -106,8 +107,8 @@
         var axisType1,
             axisType2,
             axisType3;
-        
-        
+
+
         d3.json("data.json", function(d){ // DATA.JSON IS PASSED INTO FUNCTION THROUGH PARAM d
 
             console.log("I'm in ")
@@ -116,15 +117,15 @@
             const numYears = years.length // SIZE OF YEARS
 
             console.log(numYears)
-            
+
             for (var i = 0; i<numYears; i++) { // LOOPS THROUGH THE ARRAY YEARS
-                
+
                 if (i > 20) alert("stop")
-                
+
                 const year = years[i] // CURRENT YEAR
                 const z = new Date("9/1/"+year) // CREATES A DATE USING THE CURRENT YEAR
                 dates.push( z ); // CURRENT DATE ADDED
-                
+
                 // OBTAIN INFORMATION FROM JSON
                 yearData = {
                     r1: {
@@ -151,7 +152,7 @@
                 }
                 personnel.push(yearData)
             }
-        
+
             console.log(yearData.r1.faculty)
             console.log("my year data is:", inst);
 
@@ -160,55 +161,53 @@
             maxNonFac=d3.max(personnel.map((x)=>x.all.nonfaculty.Total)) // NON-FACULTY DATA
             maxPostdoc=d3.max(personnel.map((x)=>x.all.postdoc.Total)) // POSTDOC DATA
             maxYScale = maxFac
-        
+
             //******************Defining Datas*********************
-        
+
             console.log("Trying out the variables", yearData[inst][role][fs])
-        
+
             console.log("I'm out")
-            
+
             //init();
         })
 
-        
-        
-        
+
+
+
         //******************END OF PROCESSING JSON*********************
 
-        
-        
-        
         /**
         * THIS IS A FUNCTION CALLED INIT
         * IT CREATES THE CUBE AND DRAWS THE SVG
         **/
         function init(){
-            
+
+
             //*******CREATE THE CUBES AND PUSH THEM********
-            
+
             cubesData = []; // AN ARRAY OF CUBES WHERE EACH CUBES IS DEFINED BY 8 VERTICES
-            
+
             var j = 10, // NUMBER OF CUBES TO MAKE
                 cnt = 0; // CUBE ID NUMBER
-            
+
             var x = document.getElementById("x-axis");
             //var result = x.options[x.selectedIndex].value;
-            
+
             //n = getLength(result);
-            
+
             var results = getResult();
             var q = getLength(results[0]);
             var p = getLength(results[1]);
-            
+
             // USES INSTITUTION TYPE CURRENTLY
-            
+
             for(var z=0; z<q; z++){
                 //datas = convert(result, z);
                 thing = first(results, z);
                 console.log("ITS OVER HERE")
                 for(var x=0; x<p; x++){
                     other = second(thing, results[1], x);
-                    
+
                     var y = parseFloat((-1*(other)/10000).toFixed(5)); // NUMBER OF DIGITS TO APPEAR AFTER DECIMAL POINT = 5
                     var a = 5*x-10
                     var b = 5*z-5
@@ -219,7 +218,7 @@
                 }
             }
             console.log(cubesData.length)
-            
+
             processData(cubes3D(cubesData), 1000); // DRAW THE SVG
         }
 
@@ -240,10 +239,10 @@
                 return null;
             }
         }
-        
-        
-        
-        
+
+
+
+
         function choices(){
             var x = document.getElementsByName('variable');
             var res = [];
@@ -270,9 +269,9 @@
                 return false;
             }
         }
-        
-        
-        
+
+
+
         function getLength(result){
             if(result.localeCompare("institution")==0){
                 return institution.length;
@@ -287,10 +286,10 @@
                 return years.length;
             }
         }
-        
-        
-        
-        
+
+
+
+
         function convert(result, z){
             if(result.localeCompare("institution")==0){
                 return personnel.map((x)=>x[institution[z]][role][fs]);
@@ -326,7 +325,7 @@
                 return personnel[year][inst][role]
             }
         }
-        
+
         function second(first, result, z){
             if(result.localeCompare("institution")==0){
                 return first[institution[z]][role][fs]
@@ -339,9 +338,9 @@
             }
         }
 
-        
-        
-        
+
+
+
         /**
         * THIS IS A FUNCTION CALLED PROCESSDATA
         * THIS FUNCTION DRAWS THE SVG AND DECIDES APPEARANCE
@@ -349,9 +348,11 @@
         * PARAM tt THE DURATION OF TRANSITIONS
         **/
         function processData(data, tt){
-            
+            console.log("Is this processed?")
+
             /* ----------- GRID ----------- */
             // GRID IS NOT DRAWN AND DOES NOT APPEAR
+
 
             var yScale3d = d3._3d()
                 .shape('LINE_STRIP')
@@ -375,17 +376,10 @@
 
             xGrid.exit().remove();
 
+
             /* --------- CUBES ---------*/
 
             var cubes = cubesGroup.selectAll('g.cube').data(data, function(d){ return d.id });
-            
-            var tooltip = d3.select('body')
-                .append('div')
-                .attr("class", "tooltip")
-                .style('position', 'absolute')
-                .style('padding', '0 10px')
-                .style('background', 'white')
-                .style('opacity', 0);
 
             var ce = cubes
                 .enter()
@@ -395,11 +389,17 @@
                 .attr('stroke', function(d){ return d3.color(color(d.id)).darker(2); })
                 .merge(cubes)
                 .sort(cubes3D.sort)
-            /*****************  MOUSEOVER ********************/
-            // Essentially, for the mouse, you don't want it to activate
-            // when the mouse is being cliked as the viz is rotated. 
+
+                /** THIS IS THE INFO ON THE PREVIOUS TOOLTIP
+                    .html('<div style="font-size: 2rem; font-weight: bold">'+ d.id +'</div>')
+                    .style('left', (origin[0]-400) + 'px')
+                    .style('top', (300) + 'px') ***/
+
+            /*****************  NEW ON-CLICK OPTIONS ********************/
+
                 .on('click', function(d) {
-                                        // IF NOTHING IS SELECTED and not dragged?
+
+                    // IF NOTHING IS SELECTED
                     if(arraySize == 0){
                         tempColor = this.style.fill;
                         temp_colors[0] = tempColor;
@@ -407,64 +407,54 @@
                         selected[0] = this
                         arraySize = 1;
                         console.log("This cube is selected", selected);
-                       //SELECT THE CURRENT CUBE
+
+                        //SELECT THE CURRENT CUBE
                         d3.select(this)
                             .style('fill', 'yellow')
-            
-                    tooltip
-                      //  .transition()
-                      //  .duration(500)
-                        .style('opacity', .9)
-                    tooltip.html('<div style="font-size: 2rem; font-weight: bold">'+ d.id +'</div>')
-                    .style('left', (400) + 'px')
-                    .style('top', (89) + 'px')
-                    
+
+                        //DISPLAY THE TEXT
+                        draw_information(d, "visible");
                     }
-                    // SELECTED AGAIN
+
+                    // IF SELECTED AGAIN
                     else if(arraySize == 1 && Object.is(this, selected[0])){
-                        tooltip.html('')
+
+                        //REMOVE THE TEXT OF THE TOOLTIP
+                        draw_information(d, "hidden");
+
+                        //AND RESTORE THE COLOR
                         d3.select(this)
                         .style('fill', tempColor)
                         arraySize = 0;
-                        console.log("This is the temporary color", tempColor)
                         console.log("This cube is selected again", selected[0]);
-                        
                     }
-                    
 
                     //IF ANOTHER CUBE IS SELECTED
                     else if(!Object.is(this, selected[0])){
                         tempColor = this.style.fill;
                         console.log("another cube is selected", selected[0]);
                         var tempCube = selected[0]
-                        
-                        tooltip.html('')
+
+                        //the text is hidden automatically
+
+                        //AND RESTORE THE COLOR
                         d3.select(tempCube)
                         .style('fill', tempColor)
-                        
-                        //SELECT THE CURRENT CUBE 
+
+                        //SELECT THE CURRENT CUBE
                         selected[0] = this;
-                            d3.select(this)
+
+                        d3.select(this)
                             .style('fill', 'yellow')
-                        
-                      
-                    tooltip
-                       // .transition()
-                       // .duration(500)
-                        .style('opacity', .9)
-                    tooltip.html('<div style="font-size: 2rem; font-weight: bold">'+ d.id +'</div>')
-                    .style('left', (400) + 'px')
-                    .style('top', (89) + 'px')
-                    
-                       
+
+
+                    //ADD NEW TEXT TO THE TOOLTIP
+                        draw_information(d, "visible");
+
                     }
 
-        
-                    
                 })
-            
 
-            cubes.exit().remove();
 
             /* --------- FACES ---------*/
 
@@ -485,13 +475,15 @@
 
             faces.exit().remove();
 
-            /* --------- TEXT ---------*/
-            
-            /**var texts = cubes.merge(ce).selectAll('text.text').data(function(d){
-                var _t = d.faces.filter(function(d){
-                    return d.face === 'top';
-                });
-                return [{height: d.height, centroid: _t[0].centroid}];
+
+            /** THIS IS THE NEW TOOLTIP THAT DRAWS INFO ABOUT EACH CUBE **/
+
+            function draw_information(clicked_cube, visibility){
+                var texts = cubes.merge(ce).selectAll('text.text').data(function(d){
+                //var _t = clicked_cube.faces.filter(function(d){
+                //    return clicked_cube.face === 'top';
+                //});
+                return [{height: clicked_cube.height, centroid: clicked_cube.faces[4].centroid}];
             });
 
             texts
@@ -502,36 +494,49 @@
                 .attr('text-anchor', 'middle')
                 .attr('font-family', 'sans-serif')
                 .attr('font-weight', 'bolder')
-                .attr('x', function(d){ return origin[0] + scale * d.centroid.x })
-                .attr('y', function(d){ return origin[1] + scale * d.centroid.y })
+                .attr("font-size", "25px")
+                .attr('x', function(d){ return (origin[0]-400) + 'px' })
+                .attr('y', function(d){ return (300) + 'px' })
                 .classed('_3d', true)
                 .merge(texts)
                 .transition().duration(tt)
                 .attr('fill', 'black')
                 .attr('stroke', 'none')
-                .attr('x', function(d){ return origin[0] + scale * d.centroid.x })
-                .attr('y', function(d){ return origin[1] + scale * d.centroid.y })
+                .attr('x', function(d){ return (origin[0]-400) + 'px'})
+                .attr('y', function(d){ return (300) + 'px' })
                 .tween('text', function(d){
                     var that = d3.select(this);
-                    var i = d3.interpolateNumber(+that.text(), Math.abs(d.height));
+                    //THE INTERPOLATION ADDS A DYNAMIC EFFECT BEFORE IT LANDS ON THE CURRENT INFO
+                    var i = d3.interpolateNumber(+that.text(), Math.abs(clicked_cube.height));
                     return function(t){
-                        that.text(~~(i(t)*10000));
+                        that.text(clicked_cube.id + " " + ~~(i(t)*10000))
+                        .attr("visibility", visibility) //CHANGE VISIBILITY
+                        .attr("fill", "red") //COLOR OF THE TEXT
+
                     };
                 });
+                console.log("tried to display the text")
+            texts.exit().remove();
+            }
+            console.log("exiting the svg")
 
-            texts.exit().remove(); **/
-         
+            //my theory is that the tooltip is not exited().
+            //it is not removed.something about the drag just imprints it into the svg.
+
+            cubes.exit().remove(); //VERY IMPORTANT STEP
 
             /* --------- SORT TEXT & FACES ---------*/
 
             ce.selectAll('._3d').sort(d3._3d().sort);
 
+            console.log("The very last step")
+
         }
 
 
-        
-        
-        
+
+
+
         /**
         * THIS IS A FUNCTION CALLED DRAGSTART
         * IT DETERMINES WHAT HAPPENS IN EVENT START
@@ -539,13 +544,13 @@
         function dragStart(){
             mx = d3.event.x;
             my = d3.event.y;
-            
+
         }
 
-        
-        
-        
-        
+
+
+
+
         /**
         * THIS IS A FUNCTION CALLED DRAGGED
         * IT DETERMINES WHAT HAPPENS WHEN THE EVENT DRAG OCCURS
@@ -556,13 +561,16 @@
             beta   = (d3.event.x - mx + mouseX) * Math.PI / 230 ;
             alpha  = (d3.event.y - my + mouseY) * Math.PI / 230  * (-1);
             processData(cubes3D.rotateY(beta + startAngle).rotateX(alpha - startAngle)(cubesData), 0);
+            times_dragged++;
+            console.log(times_dragged)
+            //d3.selectAll('svg > g > *').remove();
 
         }
-        
-        
-        
-        
-        
+
+
+
+
+
         /**
         * THIS IS A FUNCTION CALLED DRAGEND
         * IT DETERMINES WHAT HAPPENS IN EVENT END
@@ -570,15 +578,14 @@
         function dragEnd(){
             mouseX = d3.event.x - mx + mouseX;
             mouseY = d3.event.y - my + mouseY;
-            times_dragged++;
-            console.log(times_dragged)
+
         }
 
-        
-        
-        
-        
-        
+
+
+
+
+
         /**
         * THIS IS A FUNCTION CALLED MAKECUBE
         * IT CREATES THE VERTICES OF A SINGLE CUBE
@@ -597,6 +604,5 @@
                 {x: x + 1, y: y, z: z - 1}, // BACK  TOP RIGHT
             ];
         }
-    
+
         //d3.selectAll('button').on('click', init); // RERUNS INIT WITH BUTTON PRESS
-    
