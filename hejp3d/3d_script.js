@@ -1,5 +1,11 @@
-
-        
+/**
+    THIS IS THE SCRIPT FOR THE 3D VISUAL.
+    ------ FUNCTIONS ------
+    INIT()
+    CHOICES()
+    SOMETHING()
+    CONVERT(RESULT, Z)
+**/
         // ---------------------- IMAGE VARIABLES -------------------------
         console.log("Starting the script")
         var svg    = d3.select('svg') // SELECTS IN HTML LOCATION OF IMAGE
@@ -13,7 +19,7 @@
             .attr("viewBox", "0 0 600 400") // VIEWBOX ATTRIBUTE MAKES SVG SCALABLE WITH ORIGIN AT 0,0 AND WIDTH 600, HEIGHT 400
             .classed("svg-content-responsive", true); // INSURES THE SVG IS CONTAINED WITHIN THE DIV
         
-        var origin = [505, 400], // THE LOCATION OF THE CENTER OF THE 3D IMAGE
+        var origin = [505, 300], // THE LOCATION OF THE CENTER OF THE 3D IMAGE
             scale = 10, // USED TO SCALE THE OBJECT TO SIZE OF IMAGE: CHANGED FROM 20 TO 10
             startAngle = Math.PI/6;
 
@@ -68,6 +74,7 @@
             inst = 'all',
             role = 'faculty',
             fs = 'Total';
+            year = 8;
         
         // VARIABLES FOR LOOP
         // CAN BE FOUND IN PROCESS DATA FOR MORE FLEXIBILITY
@@ -80,7 +87,7 @@
             fsBool = true,
             instBool = false;
             
-        
+        var years;
         var fields = ['FS_Life_sciences',
                       'FS_Mathematics_and_computer_sciences',
                       'FS_Psychology_and_social_sciences',
@@ -185,18 +192,24 @@
                 cnt = 0; // CUBE ID NUMBER
             
             var x = document.getElementById("x-axis");
-            var result = x.options[x.selectedIndex].value;
+            //var result = x.options[x.selectedIndex].value;
             
-            n = getLength(result);
+            //n = getLength(result);
+            
+            var results = getResult();
+            var q = getLength(results[0]);
+            var p = getLength(results[1]);
             
             // USES INSTITUTION TYPE CURRENTLY
             
-            for(var z=0; z<n; z++){
-                datas = convert(result, z);
+            for(var z=0; z<q; z++){
+                //datas = convert(result, z);
+                thing = first(results, z);
                 console.log("ITS OVER HERE")
-                console.log(datas)
-                for(var x=0; x<9; x++){
-                    var y = parseFloat((-1*(datas[x])/10000).toFixed(5)); // NUMBER OF DIGITS TO APPEAR AFTER DECIMAL POINT = 5
+                for(var x=0; x<p; x++){
+                    other = second(thing, results[1], x);
+                    
+                    var y = parseFloat((-1*(other)/10000).toFixed(5)); // NUMBER OF DIGITS TO APPEAR AFTER DECIMAL POINT = 5
                     var a = 5*x-10
                     var b = 5*z-5
                     var _cube = makeCube(a, y, b);
@@ -209,22 +222,56 @@
             
             processData(cubes3D(cubesData), 1000); // DRAW THE SVG
         }
+
+
+        function getResult(){
+            var x = document.getElementsByName('variable');
+            var res = [];
+            var g = 0;
+            for(var i=0; i<x.length; i++){
+                if(x[i].checked==true){
+                    res[g] = x[i].value;
+                    g++;
+                }
+            }
+            if(res.length==2){
+                return res;
+            }else{
+                return null;
+            }
+        }
         
         
         
         
         function choices(){
-            var x = document.getElementById("x-axis");
-            var result = x.options[x.selectedIndex].value;
-            console.log(result)
-            if(result.localeCompare("fields")==0) console.log("IT WORKED")
-            console.log(fields.length)
+            var x = document.getElementsByName('variable');
+            var res = [];
+            var g = 0;
+            for(var i=0; i<x.length; i++){
+                if(x[i].checked==true){
+                    res[g] = x[i].value;
+                    g++;
+                }
+            }
+        }
+
+
+        function limitCheck(){
+            var a = document.getElementsByName('variable');
+            var newvar = 0;
+            var count;
+            for(count=0; count<a.length; count++){
+                if(a[count].checked==true){
+                    newvar=newvar+1;
+                }
+            }
+            if(newvar>2){
+                return false;
+            }
         }
         
         
-        function something(){
-            x = document.getElementById("id").innerHTML()
-        }
         
         function getLength(result){
             if(result.localeCompare("institution")==0){
@@ -256,6 +303,39 @@
             }
             if(result.localeCompare("years")==0){
                 return personnel.map((x)=>x[axisType1[z]][axisType2][axisType3]);
+            }
+        }
+
+        function first(result, z){
+            if(result[0].localeCompare("years")==0){
+                if(result[1].localeCompare("staff")==0){
+                    return personnel[z][inst]
+                }
+                if(result[1].localeCompare("fields")==0){
+                    return personnel[z][inst][role]
+                }
+                return personnel[z];
+            }
+            if(result[0].localeCompare("institution")==0){
+                if(result[1].localeCompare("fields")==0){
+                    return personnel[year][institution[z]][role]
+                }
+                return personnel[year][institution[z]]
+            }
+            if(result[0].localeCompare("staff")==0){
+                return personnel[year][inst][role]
+            }
+        }
+        
+        function second(first, result, z){
+            if(result.localeCompare("institution")==0){
+                return first[institution[z]][role][fs]
+            }
+            if(result.localeCompare("staff")==0){
+                return first[faculty[z]][fs]
+            }
+            if(result.localeCompare("fields")==0){
+                return first[fields[z]]
             }
         }
 
