@@ -86,6 +86,7 @@
             mouseY, // Y POSITION OF DRAGGED MOUSE
             alpha = 0,
             beta = 0;
+        var checkinput = 0;
 
 
 
@@ -281,6 +282,7 @@
             if(newvar>2){
                 return false;
             }
+            checkinput = newvar;
         }
 
 
@@ -297,27 +299,40 @@
             var d2 = document.getElementById("staffbuttons");
             var d3 = document.getElementById("fieldbuttons");
             var d4 = document.getElementById("yearbuttons");
+            var d5 = document.getElementById("warning");
+            var d6 = document.getElementById("image");
             var x = document.getElementsByName('variable');
             
-            if(x[0].checked==false){ //years
-                d4.style.display = "block"
+            if(checkinput==2){
+               if(x[0].checked==false){ //years
+                    d4.style.display = "block"
+                } else{
+                    d4.style.display = "none"
+                }
+                if(x[1].checked==false){ //inst
+                    d1.style.display = "block"
+                } else{
+                    d1.style.display = "none"
+                }
+                if(x[2].checked==false){ //staff
+                    d2.style.display = "block"
+                } else{
+                    d2.style.display = "none"
+                }
+                if(x[3].checked==false){ //fields
+                    d3.style.display = "block"
+                } else{
+                    d3.style.display = "none"
+                }
+                d6.style.display = "block";
+                init();
             } else{
-                d4.style.display = "none"
-            }
-            if(x[1].checked==false){ //inst
-                d1.style.display = "block"
-            } else{
+                d5.style.display = "block"
                 d1.style.display = "none"
-            }
-            if(x[2].checked==false){ //staff
-                d2.style.display = "block"
-            } else{
                 d2.style.display = "none"
-            }
-            if(x[3].checked==false){ //fields
-                d3.style.display = "block"
-            } else{
                 d3.style.display = "none"
+                d4.style.display = "none"
+                d6.style.display = "none"
             }
         }
 

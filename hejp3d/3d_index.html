@@ -221,7 +221,11 @@
                     class="year_type"
                     checked
                     > &nbsp; | &nbsp;
-            </div>   
+            </div>
+            <div id="warning" style="display: none; color: crimson">
+                <br>
+                <b>You must choose two variables!</b>
+            </div>
         </small>
         <hr>
         
@@ -230,7 +234,9 @@
         
     </div><!-- container -->
     
-    <svg width="960" height="500"></svg>
+    <div id="image" style="display: block">
+        <svg width="960" height="500"></svg>
+    </div>
     
     <!-- trying to commit under my github account: sunnyako>
     <!--   THIS IS THE UPDATE BUTTON IN THE CORNER -->
@@ -248,7 +254,7 @@
         
     </style>
     <div id="s" style="visibility: visible">
-    <button class = "button" onClick = "setUp(); init()">update</button>
+    <button class = "button" onClick = "setUp();">update</button>
     <!-- END OF THE UPDATE BUTTON IN THE CORNER -->
 
     
