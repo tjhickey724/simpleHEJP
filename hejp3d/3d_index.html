@@ -4,16 +4,20 @@
 <!-- MOUSEOVER NEEDS TO SHOW INFO ABOUT DATA AND NOT JUST ID -->
 <!-- NEED TO ADD LABELS TO DATA -->
 <!-- FOR SOME REASON, THE COORDINATE PLANE IS UPSIDE DOWN -->
-<!-- CHANGE CREATION OF CUBES AND DATA TO BE MORE FLEXIBLE -->
 <!-- QUERIES -->
+<!-- NEED TO CREATE FLEXIBLE SCALING AND GRAPH CENTERING -->
+<!-- PREVENT USER FROM CHOOSING LESS THAN TWO VARIABLES -->
 
 
 <!-- *********** SUGGESTIONS ***************** -->
 <!-- REPLACE TOOLTIP WITH SOME OTHER TOOL TO DISPLAY DATA ON THE SIDE OF SCREEN INSTEAD OF AS A POP UP -->
 
 <!-- ********** BUGS ********** -->
-<!-- TOOLTIP REMAINS IN VIEW IF MOUSE SCROLLS OVER CUBES WHILE ROTATING VISUAL -->
-<!-- TEXT PRODUCES ERROR AND EITHER PRODUCES BROKEN VISUAL OR NONE AT ALL -->
+<!-- TOOLTIP CANNOT BE SEEN. VARIABLE TEMPCOLORS IS NOT DEFINED -->
+<!-- ERROR OCCURS IF USER CHOOSES LESS THAN TWO VARIABLES -->
+<!-- LABLES: YEARS x INSTITUTION DOES NOT WORK AS EXPECTED -->
+<!-- LABLES: INSTITUTION x FIELDS DOES NOT WORK AS EXPECTED -->
+
 
 <!DOCTYPE html>
 <meta charset="utf-8">
@@ -21,17 +25,11 @@
 <!-- IMPORTED SCRIPTS -->
 <script src="https://d3js.org/d3.v4.min.js"></script>
 <script src="https://unpkg.com/d3-3d/build/d3-3d.min.js"></script>
-<script src="https://x3dom.org/download/dev/x3dom-full.js"></script>
-<link rel="stylesheet" href="https://x3dom.org/download/dev/x3dom.css" />
-<script src="https://raw.githack.com/jamesleesaunders/d3-x3d/master/dist/d3-x3d.js"></script>
-<script src="http://x3dom.org/download/1.7/x3dom.js"></script>
-<script src="d3-x3dom-axis.min.js"></script>
-<link rel="stylesheet" href="http://x3dom.org/download/1.7/x3dom.css" type="text/css" inline> 
-
 
 
 <body>
-    <div id="chartholder" class="container">
+
+    <div class="container">
 
         <h2>College and University Personnel by Year</h2>
 
@@ -251,7 +249,7 @@
     <button class = "button" onClick = "setUp(); init()">update</button>
     <!-- END OF THE UPDATE BUTTON IN THE CORNER -->
 
+    
     <!-- start of the javascript to create the cubes themselves and work with data -->
     <script src="3d_script.js"></script>
-
 </body>
