@@ -452,11 +452,6 @@ function getResult() {
             }
             checkinput = newvar;
         }
-    }
-    if (newvar > 2) {
-        return false;
-    }
-}
 
 /**
 * THIS IS A FUNCTION CALLED SETUP
