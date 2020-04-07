@@ -183,7 +183,158 @@ d3.json("data.json", function (d) { // DATA.JSON IS PASSED INTO FUNCTION THROUGH
 
     //******************Defining Datas*********************
 
-    console.log("Trying out the variables", yearData[inst][role][fs])
+        // ---------------------- IMAGE VARIABLES -------------------------
+        console.log("Starting the script")
+        var svg    = d3.select('svg') // SELECTS IN HTML LOCATION OF IMAGE
+            .call(d3.drag() // ENVOKES FUNCTION EXACTLY ONCE IN THIS CASE, THE DRAG FUNCTION WHICH CREATES NEW DRAG BEHAVIOR
+            // EVENTS: ON START OF DRAG, DRAGGING, AND END OF DRAG
+                .on('drag', dragged)
+                .on('start', dragStart)
+                .on('end', dragEnd))
+            .append('g') // APPENDS G ELEMENT TO SVG (G ELEMENT USED TO GROUP SVG SHAPES TOGETHER)
+            .attr("preserveAspectRatio", "xMinYMin meet") // ALLOWS UNIFORM SCALING FOR BOTH X AND Y USING VALUES IN VIEWBOX AS A BASE
+            .attr("viewBox", "0 0 600 400") // VIEWBOX ATTRIBUTE MAKES SVG SCALABLE WITH ORIGIN AT 0,0 AND WIDTH 600, HEIGHT 400
+            .classed("svg-content-responsive", true); // INSURES THE SVG IS CONTAINED WITHIN THE DIV
+
+        var origin = [505, 300], // THE LOCATION OF THE CENTER OF THE 3D IMAGE
+            scale = 10, // USED TO SCALE THE OBJECT TO SIZE OF IMAGE: CHANGED FROM 20 TO 10
+            startAngle = Math.PI/6;
+
+        // USED FOR CLICK EVENTS
+        var selected = [];
+        var arraySize = 0;
+
+        var times_dragged = 0; //WAS USED FOR DEBUGGING DRAGGING AND SELECTIONS
+
+
+
+
+
+
+        // ------------------------ DATA VARIABLES ---------------------------
+
+        var datas; // THE DATA TO BE USED IN VISUALIZATION
+
+        var grid3d = d3._3d()
+            .shape('GRID', 20) // TYPE OF SHAPE AND HOW MANY POINTS PER ROW
+            .origin(origin) // WHERE THE SHAPE IS LOCATED
+            //.rotateY( startAngle)
+            //.rotateX(-startAngle)
+            .scale(scale); //NOT SURE IF SCALE IS NEEDED FOR GRID (GRID NOT VISIBLE)
+
+        var cubes3D = d3._3d()
+            .shape('CUBE') // TYPE OF SHAPE IN THIS CASE A CUBE
+            .x(function(d){ return d.x; }) // LOCATION OF POINT ON X-AXIS
+            .y(function(d){ return d.y; }) // LOCATION OF POINT ON Y-AXIS
+            .z(function(d){ return d.z; }) // LOCATION OF POINT ON Z-AXIS
+            .rotateY( startAngle) // ROTATION OF CUBES ON X-AXIS
+            .rotateX(-startAngle) // ROTATION OF CUBES ON Y-AXIS
+            .origin(origin) // POSITIONS OBJECT IN 3D AREA AROUND ORIGIN
+            .scale(scale); // FITS SIZE OF SHAPE TO IMAGE
+
+
+
+
+
+
+        // ------------------------ OTHER VARIABLES ---------------------------
+
+        var color  = d3.scaleOrdinal(d3.schemeCategory20); // AN ARRAY OF 20 COLORS REPRESENTED AS HEX NUMBERS WITHIN AN ORDINAL SCALE OBJECT
+        var cubesGroup = svg.append('g').attr('class', 'cubes'); // ASSIGNS ATTRIBUTE TO G OBJECT, IN THIS CASE CLASS=CUBES
+
+        // THE VARIABLES USED IN THE DRAG FUNCTIONS
+        var mx, // X POSITION OF MOUSE
+            my, // Y POSITION OF MOUSE
+            mouseX, // X PSOITION OF DRAGGED MOUSE
+            mouseY, // Y POSITION OF DRAGGED MOUSE
+            alpha = 0,
+            beta = 0;
+        var checkinput = 0;
+
+
+
+
+
+
+     //******************START OF PROCESSING JSON*********************
+
+    // ------------------------ VARIABLES ---------------------------
+        var dates = [], // AN ARRAY OF DATES
+            personnel = [], // AN ARRAY CONTAINING INFORMATION/YEAR
+            yearData = {}, // CREATES AN OBJECT YEARDATA (NOT AN ARRAY)
+            // DATA IDENTIFIERS
+            inst = 'all',
+            role = 'faculty',
+            fs = 'Total',
+            year = 8;
+
+        // VARIABLES FOR LOOP
+        // CAN BE FOUND IN PROCESS DATA FOR MORE FLEXIBILITY
+        var years;
+        var fields = ['FS_Life_sciences',
+                      'FS_Mathematics_and_computer_sciences',
+                      'FS_Psychology_and_social_sciences',
+                      'FS_Engineering',
+                      'FS_Education',
+                      'FS_Humanities_and_arts',
+                      'FS_Others',
+                      'Total'];
+        var institution = ['r1',
+                      'fourYear',
+                      'twoYear',
+                      'all'];
+        var faculty = ['faculty',
+                      'nonfaculty',
+                      'postdoc'];
+     // ------------------------ VARIABLES ---------------------------
+
+
+
+
+
+        d3.json("data.json", function(d){ // DATA.JSON IS PASSED INTO FUNCTION THROUGH PARAM d
+
+            console.log("I'm in ")
+
+            years="2007 2010 2011 2012 2013 2014 2015 2016 2017".split(" ") // CREATES ARRAY YEARS
+            const numYears = years.length // SIZE OF YEARS
+
+            console.log(numYears)
+
+            for (var i = 0; i<numYears; i++) { // LOOPS THROUGH THE ARRAY YEARS
+
+                if (i > 20) alert("stop")
+
+                const year = years[i] // CURRENT YEAR
+                const z = new Date("9/1/"+year) // CREATES A DATE USING THE CURRENT YEAR
+                dates.push( z ); // CURRENT DATE ADDED
+
+                // OBTAIN INFORMATION FROM JSON
+                yearData = {
+                    r1: {
+                        faculty:d[0][0][year],
+                        nonfaculty:d[0][1][year],
+                        postdoc:d[0][2][year]
+                    },
+                    fourYear: {
+                        faculty:d[1][0][year],
+                        nonfaculty:d[1][1][year],
+                        postdoc:d[1][2][year]
+                    },
+                    twoYear: {
+                        faculty:d[2][0][year],
+                        nonfaculty:d[2][1][year],
+                        postdoc:d[2][2][year]
+                    },
+                    all: {
+                        faculty:d[3][0][year],
+                        nonfaculty:d[3][1][year],
+                        postdoc:d[3][2][year]
+                    },
+                    Year:year
+                }
+                personnel.push(yearData)
+            }
 
     console.log("I'm out")
 
@@ -280,17 +431,26 @@ function getResult() {
 
 
 
-/**
-* THIS IS A FUNCTION CALLED LIMIT CHECK
-* IT LIMITS THE NUMBER OF CHECKBOXES THAT CAN BE CHECKED AT A TIME
-* ONLY 2 BOXES CAN BE CHECKED
-**/
-function limitCheck() {
-    var a = document.getElementsByName('variable'); // GET HTML OBJECT
-    var newvar = 0;
-    for (var count = 0; count < a.length; count++) {
-        if (a[count].checked == true) {
-            newvar = newvar + 1;
+
+
+
+        /**
+        * THIS IS A FUNCTION CALLED LIMIT CHECK
+        * IT LIMITS THE NUMBER OF CHECKBOXES THAT CAN BE CHECKED AT A TIME
+        * ONLY 2 BOXES CAN BE CHECKED
+        **/
+        function limitCheck(){
+            var a = document.getElementsByName('variable'); // GET HTML OBJECT
+            var newvar = 0;
+            for(var count=0; count<a.length; count++){
+                if(a[count].checked==true){
+                    newvar=newvar+1;
+                }
+            }
+            if(newvar>2){
+                return false;
+            }
+            checkinput = newvar;
         }
     }
     if (newvar > 2) {
@@ -333,25 +493,56 @@ function setUp() {
 
 
 
-/**
-* THIS IS A FUNCTION CALLED GETLENGTH
-* IT TAKES A STRING NAME OF DATA AS INPUT
-* AND RETURNS THE SIZE OF THE DATA
-**/
-function getLength(result) {
-    if (result.localeCompare("institution") == 0) {
-        return institution.length;
-    }
-    if (result.localeCompare("staff") == 0) {
-        return faculty.length;
-    }
-    if (result.localeCompare("fields") == 0) {
-        return fields.length;
-    }
-    if (result.localeCompare("years") == 0) {
-        return years.length;
-    }
-}
+
+
+        /**
+        * THIS IS A FUNCTION CALLED SETUP
+        * IT MAKES CERTAIN RADIOBOXES VISIBLE DEPENDING ON INPUT
+        **/
+        function setUp(){
+            var d1 = document.getElementById("instbuttons");
+            var d2 = document.getElementById("staffbuttons");
+            var d3 = document.getElementById("fieldbuttons");
+            var d4 = document.getElementById("yearbuttons");
+            var d5 = document.getElementById("warning");
+            var d6 = document.getElementById("image");
+            var x = document.getElementsByName('variable');
+            
+            if(checkinput==2){
+               if(x[0].checked==false){ //years
+                    d4.style.display = "block"
+                } else{
+                    d4.style.display = "none"
+                }
+                if(x[1].checked==false){ //inst
+                    d1.style.display = "block"
+                } else{
+                    d1.style.display = "none"
+                }
+                if(x[2].checked==false){ //staff
+                    d2.style.display = "block"
+                } else{
+                    d2.style.display = "none"
+                }
+                if(x[3].checked==false){ //fields
+                    d3.style.display = "block"
+                } else{
+                    d3.style.display = "none"
+                }
+                d6.style.display = "block";
+                init();
+            } else{
+                d5.style.display = "block"
+                d1.style.display = "none"
+                d2.style.display = "none"
+                d3.style.display = "none"
+                d4.style.display = "none"
+                d6.style.display = "none"
+            }
+        }
+
+
+
 
 
 
