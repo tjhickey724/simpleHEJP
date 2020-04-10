@@ -1,19 +1,15 @@
 <!-- ********** TO DO LIST **************** -->
-<!-- GRID IS NOT DRAWN YET AND THEREFORE DOES NOT APPEAR IN VISUALIZATION -->
-<!-- GRID NEEDS VERTICES IN ORDER TO APPEAR -->
-<!-- MOUSEOVER NEEDS TO SHOW INFO ABOUT DATA AND NOT JUST ID -->
-<!-- NEED TO ADD LABELS TO DATA -->
+<!-- TOOLTIP NEEDS TO SHOW INFO ABOUT DATA AND NOT JUST ID -->
 <!-- FOR SOME REASON, THE COORDINATE PLANE IS UPSIDE DOWN -->
 <!-- QUERIES -->
-<!-- NEED TO CREATE FLEXIBLE SCALING AND GRAPH CENTERING -->
-<!-- PREVENT USER FROM CHOOSING LESS THAN TWO VARIABLES -->
+<!-- NEED TO MODIFY IMAGE ROTATION TO BE MORE CENTERED -->
+<!-- SCALING? -->
 
 
-<!-- *********** SUGGESTIONS ***************** -->
-<!-- REPLACE TOOLTIP WITH SOME OTHER TOOL TO DISPLAY DATA ON THE SIDE OF SCREEN INSTEAD OF AS A POP UP -->
+<!-- ************** SUGGESTIONS ***************** -->
 
-<!-- ********** BUGS ********** -->
-<!-- ERROR OCCURS IF USER CHOOSES LESS THAN TWO VARIABLES -->
+
+<!-- ******************* BUGS ******************* -->
 <!-- LABLES: YEARS x INSTITUTION DOES NOT WORK AS EXPECTED -->
 <!-- LABLES: INSTITUTION x FIELDS DOES NOT WORK AS EXPECTED -->
 
@@ -30,7 +26,7 @@
 
     <div class="container">
 
-        <h2>College and University Personnel by Year</h2>
+        <h2>HEJP Job Listing Comparisons</h2>
 
         <small>
             <label for="x-axis">Choose two variables:</label>
@@ -38,7 +34,10 @@
                 <input type="checkbox" name="variable" onclick = "return limitCheck()" value="institution">Institution
                 <input type="checkbox" name="variable" onclick = "return limitCheck()" value="staff">Staff
                 <input type="checkbox" name="variable" onclick = "return limitCheck()" value="fields">Fields
-
+            
+            <!-- RADIO BUTTON CHOICES CHANGE DEPENDING ON ABOVE OPTIONS -->
+            
+            <!-- ******************* INSTITUTION TYPE ******************* -->
             <div id="instbuttons" style="display: none">
                 R1 <input
                     type="radio"
@@ -70,6 +69,7 @@
                     checked
                     >&nbsp;&nbsp;&nbsp;||&nbsp;&nbsp;&nbsp;
             </div>
+            <!-- ******************* STAFF TYPE ******************* -->
             <div id="staffbuttons" style="display: none">
                 faculty <input
                     type="radio"
@@ -94,6 +94,7 @@
                     class="staffType"
                     >&nbsp;|&nbsp;
             </div>
+            <!-- ******************* FIELD OF STUDY ******************* -->
             <div id="fieldbuttons" style="display: none">
                 Life Sciences <input
                     type="radio"
@@ -153,6 +154,7 @@
                     checked
                     > &nbsp; | &nbsp;
             </div>
+            <!-- ******************* YEAR ******************* -->
             <div id="yearbuttons" style="display: none">
                 2007 <input
                     type="radio"
@@ -219,10 +221,12 @@
                     checked
                     > &nbsp; | &nbsp;
             </div>
+            <!-- ******************* WARNING ******************* -->
             <div id="warning" style="display: none; color: crimson">
                 <br>
                 <b>You must choose two variables!</b>
             </div>
+            
         </small>
         <hr>
 
@@ -250,10 +254,9 @@
         }
 
     </style>
-    <div id="s" style="visibility: visible">
+    
     <button class = "button" onClick = "setUp();">update</button>
     <!-- END OF THE UPDATE BUTTON IN THE CORNER -->
-
 
     <!-- start of the javascript to create the cubes themselves and work with data -->
     <script src="3d_script.js"></script>
