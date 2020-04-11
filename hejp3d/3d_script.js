@@ -589,7 +589,7 @@
                         //THE INTERPOLATION ADDS A DYNAMIC EFFECT BEFORE IT LANDS ON THE CURRENT INFO
                         var i = d3.interpolateNumber(+that.text(), Math.abs(clicked_cube.height));
                         return function(t){
-                            that.text(clicked_cube.id + " " + ~~(i(t)*10000))
+                            that.text(clicked_cube.id + " " + ~~Math.abs(clicked_cube.height*10000) )
                             .attr("visibility", visibility) //CHANGE VISIBILITY
                             .attr("fill", "red") //COLOR OF THE TEXT
 
