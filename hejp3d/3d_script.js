@@ -229,6 +229,10 @@
             //*******CREATE THE CUBES AND PUSH THEM********
 
             cubesData = []; // AN ARRAY OF CUBES WHERE EACH CUBES IS DEFINED BY 8 VERTICES
+            yLine = [];
+            xLine = [];
+            xLabel = [];
+            yLabel = [];
 
             var cnt = 0; // CUBE ID NUMBER
 
@@ -266,8 +270,8 @@
                     
                     /***********************************************************************/
 
-                    var x_line_edge = 5 * (p - 1) - 7;
-                    var y_line_edge = 5 * (q - 1) - 2;
+                    var x_line_edge = 5 * (p - 1)- 5*(p/2) + 5;
+                    var y_line_edge = 5 * (q - 1)- 5*(q/2) + 5;
 
                     xLine.push([x_line_edge, 1, b]);
                     yLine.push([a, 1, y_line_edge]);
