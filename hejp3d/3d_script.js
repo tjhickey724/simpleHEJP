@@ -236,6 +236,7 @@
             // GETS THE SIZE OF THE DATA FOR EACH CHOOSEN VARIABLE
             var q = getLength(results[0]);
             var p = getLength(results[1]);
+            console.log(q+"and"+p)
 
             var max_a = Number.MIN_VALUE;
             var max_b = Number.MIN_VALUE;
@@ -247,8 +248,23 @@
                     secData = second(firstData, results[1], x); // OBTAIN SECOND VARIABLE'S DATA
 
                     var y = parseFloat((-1 * (secData) / 10000).toFixed(5)); // NUMBER OF DIGITS TO APPEAR AFTER DECIMAL POINT = 5
+                    
+                    
+                    /***********************************************************************/
+                    /**
+                    * CHANGES:
+                    * - ADDED (P/2) AND (Q/2) TO ADJUST FOR DIFFERENT SIZES OF DIFFERENT DATA
+                    * - CHANGE SHIFTS CUBES IN COORDINATE PLANE OVER BY HALF THE SIZE OF EACH DATA VARIABLE
+                    
+                    * OLD CODE
                     var a = 5 * x - 10; // ADJUST SIZE
                     var b = 5 * z - 5; // ADJUST SIZE
+                    **/
+                    
+                    var a = 5 * x - 5*(p/2); // ADJUST SIZE
+                    var b = 5 * z - 5*(q/2); // ADJUST SIZE
+                    
+                    /***********************************************************************/
 
                     var x_line_edge = 5 * (p - 1) - 7;
                     var y_line_edge = 5 * (q - 1) - 2;
