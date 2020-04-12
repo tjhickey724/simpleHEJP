@@ -71,12 +71,6 @@
 
 
         // ------------------------ GRID VARIABLES ---------------------------
-        var grid3d = d3._3d()
-            .shape('GRID', 20) // TYPE OF SHAPE AND HOW MANY POINTS PER ROW
-            .origin(origin) // WHERE THE SHAPE IS LOCATED
-            //.rotateY( startAngle)
-            //.rotateX(-startAngle)
-            .scale(scale); //NOT SURE IF SCALE IS NEEDED FOR GRID (GRID NOT VISIBLE)
 
         var yScale3d = d3._3d()
             .shape('LINE_STRIP')
@@ -568,8 +562,8 @@
                     .attr('x', function (d) { return d.projected.x; })
                     .attr('y', function (d) { return d.projected.y; })
                     .text(function (d, i) {
-                        if ((i + 1) % xLabel.length == 0) {
-                            return yLabel[(i + 1) / xLabel.length - 1];
+                        if( i < yLabel.length){
+                            return yLabel[i];
                         }
                     });
                 yText.exit().remove();
@@ -780,7 +774,6 @@
             alpha = (d3.event.y - my + mouseY) * Math.PI / 230 * (-1);
             //processData(cubes3D.rotateY(beta + startAngle).rotateX(alpha - startAngle)(cubesData), 0);
             var data = [
-                //grid3d.rotateY(beta + startAngle).rotateX(alpha - startAngle)(xGrid),
                 cubes3D.rotateY(beta + startAngle).rotateX(alpha - startAngle)(cubesData),
                 yScale3d.rotateY(beta + startAngle).rotateX(alpha - startAngle)([yLine]),
                 xScale3d.rotateY(beta + startAngle).rotateX(alpha - startAngle)([xLine]),
