@@ -208,9 +208,9 @@
             maxyScale = maxFac
 
             //******************Defining Datas*********************
-            
+
             console.log("Trying out the variables", yearData[inst][role][fs])
-            
+
             console.log("I'm out")
         })
 
@@ -242,7 +242,7 @@
             var max_b = Number.MIN_VALUE;
 
             for (var z = 0; z < q; z++) {
-                
+
                 firstData = first(results, z); // OBTAIN FIRST VARIABLE'S DATA
                 console.log("x label", xLabel[z])
                 console.log("ITS OVER HERE");
@@ -250,8 +250,18 @@
                     console.log("Y label INFO", yLabel[x]);
                     ycolor = yLabel[x];
                     secData = second(firstData, results[1], x); // OBTAIN SECOND VARIABLE'S DATA
-              
-                    
+
+
+                    var y = parseFloat((-1 * (secData) / 10000).toFixed(5)); // NUMBER OF DIGITS TO APPEAR AFTER DECIMAL POINT = 5
+                    var a = 5 * x - 10; // ADJUST SIZE
+                    var b = 5 * z - 5; // ADJUST SIZE
+
+                    var x_line_edge = 5 * (p - 1) - 7;
+                    var y_line_edge = 5 * (q - 1) - 2;
+
+                    xLine.push([x_line_edge, 1, b]);
+                    yLine.push([a, 1, y_line_edge]);
+
                     var y = parseFloat((-1 * (secData) / 10000).toFixed(5)); // NUMBER OF DIGITS TO APPEAR AFTER DECIMAL POINT = 5
                     var a = 5 * x - 10; // ADJUST SIZE
                     var b = 5 * z - 5; // ADJUST SIZE
@@ -267,7 +277,7 @@
                     _cube.ycolor = color(ycolor);
                     console.log("Y label INFO", yLabel)
                   // RECORDS THE HEIGHT OF THE CUBE
-                   
+
                     cubesData.push(_cube); // ADDS CUBE TO ARRAY
                 }
 
@@ -494,11 +504,11 @@
         function processData(data, tt) {
             console.log("Is this processed?")
 
-            
+
             // ************************** GRID ***************************** //
-            
-            
-            
+
+
+
             /* ----------- X AND Y AXES ----------- */
             var yScale3d = d3._3d()
                 .shape('LINE_STRIP')
@@ -514,7 +524,7 @@
                 .rotateX(-startAngle)
                 .scale(scale);
 
-            
+
             /* -------------- y-Scale -------------- */
             var yScale = svg.selectAll('path.yScale').data(data[1]);
                 yScale
@@ -528,7 +538,7 @@
 
                 yScale.exit().remove();
 
-            
+
             /* --------------- x-Scale --------------- */
             var xScale = svg.selectAll('path.xScale').data(data[2]);
                 xScale
@@ -542,7 +552,7 @@
 
                 xScale.exit().remove();
 
-            
+
             /* -------------- y-Scale Text -------------- */
             var yText = svg.selectAll('text.yText').data(data[1][0]);
                 yText
@@ -563,7 +573,7 @@
                     });
                 yText.exit().remove();
 
-            
+
             /* ----------- x-Scale Text ----------- */
             var xText = svg.selectAll('text.xText').data(data[2][0]);
                 xText
@@ -584,7 +594,7 @@
                     });
                 xText.exit().remove();
 
-            
+
             // ************************** CUBES ***************************** //
 
             var cubes = cubesGroup.selectAll('g.cube').data(data[0], function (d) { return d.id });
@@ -718,7 +728,7 @@
                         var that = d3.select(this);
                         //THE INTERPOLATION ADDS A DYNAMIC EFFECT BEFORE IT LANDS ON THE CURRENT INFO
                         var year
-                        var i = d3.interpolateNumber(+that.text(), 
+                        var i = d3.interpolateNumber(+that.text(),
                         Math.abs(clicked_cube.height));
                         return function(t){
                             that.text(clicked_cube.id + " " + ~~(i(t)*10000))
