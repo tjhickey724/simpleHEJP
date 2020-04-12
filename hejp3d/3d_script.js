@@ -491,6 +491,43 @@
         }
 
 
+        function survivedLegend() {
+
+            var group = d3.select(svg).append("g")
+            .attr("class","legend-group");
+
+            group.append("text")
+                .text("Passenger survived?")
+                .attr("x",493)
+                .attr("y",59)
+                .style("font-weight","bold")
+                .style("text-anchor","end");
+
+            var legend = group.selectAll(".legend")
+            .data(s.domain().slice().reverse())
+            .enter().append("g")
+            .attr("class","legend")
+            .attr("transform",function(d,i) {
+                return "translate(0," + i * 20 + ")";
+            });
+
+            legend.append("rect")
+                .attr("x",475)
+                .attr("y",65)
+                .attr("width",18)
+                .attr("height",18)
+                .style("fill",s);
+
+            legend.append("text")
+                .attr("x",465)
+                .attr("y",73)
+                .attr("dy",".35em")
+                .style("text-anchor","end")
+                .text(function(d) { return d; });
+        
+        }
+
+
 
 
 
