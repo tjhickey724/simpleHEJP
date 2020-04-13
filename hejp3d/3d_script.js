@@ -45,6 +45,7 @@
         // USED FOR CLICK EVENTS
         var selected = [];
         var arraySize = 0;
+        var group = null;
 
 
 
@@ -212,14 +213,9 @@
             console.log("Trying out the variables", yearData[inst][role][fs])
 
             console.log("I'm out")
-        })
+        });
 
         //******************END OF PROCESSING JSON*********************
-
-
-
-
-
 
         /**
         * THIS IS A FUNCTION CALLED INIT
@@ -227,7 +223,12 @@
         **/
         function init() {
             //*******CREATE THE CUBES AND PUSH THEM********
+            
 
+            if(group!=null){
+                group.remove();
+            }
+            
             cubesData = []; // AN ARRAY OF CUBES WHERE EACH CUBES IS DEFINED BY 8 VERTICES
 
             var cnt = 0; // CUBE ID NUMBER
@@ -289,10 +290,13 @@
                 yScale3d([yLine]),
                 xScale3d([xLine]),
             ];
+            survivedLegend();
 
             console.log(">>>>>>>>>>>> xLabel: ", xLabel);
             console.log(">>>>>>>>>>>> yLabel: ", yLabel);
             processData(allData, 1000); // DRAW THE SVG
+
+            
         }
 
 
@@ -304,7 +308,8 @@
         * THIS IS A FUNCTION CALLED GETRESULT
         * IT OBTAINS THE USER INPUT FROM CHECKBOXES
         * IT RETURNS AN ARRAY OF STRINGS OF TWO VARIABLES
-        * OR NULL IF TWO CHOICES WERE NOT MADE
+        * OR NULL 
+        TWO CHOICES WERE NOT MADE
         **/
         function getResult() {
             var x = document.getElementsByName('variable'); // GET THE HTML OBJECT
@@ -490,21 +495,66 @@
             }
         }
 
+           /**********
+
+        function genderLegend() {
+              // color
+            c = d3.scaleOrdinal()
+                .domain(["male","female"])
+                .range(["#a6cee3","#fb9a99"]);
+            
+            // Draw the gender legend
+            var legend = d3.select('svg').selectAll(".legend")
+            .data(c.domain().slice().reverse())
+            .enter().append("g")
+            .attr("class","legend")
+            .attr("transform",function(d,i) {
+                return "translate(0," + i * 20 + ")";
+            });
+
+            legend.append("rect")
+                .attr("x",475)
+                .attr("y",9)
+                .attr("width",18)
+                .attr("height",18)
+                .style("fill",c);
+            
+            legend.append("text")
+                .attr("x",465)
+                .attr("y",18)
+                .attr("dy",".35em")
+                .style("text-anchor","end")
+                .text(function(d) {
+                return d.charAt(0).toUpperCase()+d.slice(1);
+            });
+        }
+
+ **********/
 
         function survivedLegend() {
+              // stroke
+            
+            s = d3.scaleOrdinal()
+                .domain(yLabel)
+                .range(["#e31a1c","#1f78b4"]);
+ 
+            console.log("I'm trying to show the survived legend", s.domain())
 
-            var group = d3.select(svg).append("g")
+            group = d3.select('svg').append("g")
             .attr("class","legend-group");
-
+            
+        var label = getResult()
+            
             group.append("text")
-                .text("Passenger survived?")
+                .text(label[1])
                 .attr("x",493)
                 .attr("y",59)
                 .style("font-weight","bold")
+                .style("text-transform", "capitalize")
                 .style("text-anchor","end");
 
             var legend = group.selectAll(".legend")
-            .data(s.domain().slice().reverse())
+            .data(s.domain())
             .enter().append("g")
             .attr("class","legend")
             .attr("transform",function(d,i) {
@@ -516,7 +566,7 @@
                 .attr("y",65)
                 .attr("width",18)
                 .attr("height",18)
-                .style("fill",s);
+                .style("fill", function (d) { return color(d)});
 
             legend.append("text")
                 .attr("x",465)
@@ -524,6 +574,8 @@
                 .attr("dy",".35em")
                 .style("text-anchor","end")
                 .text(function(d) { return d; });
+            
+           
         
         }
 
@@ -648,6 +700,7 @@
                 .sort(cubes3D.sort)
 
                 /** THIS IS THE INFO ON THE PREVIOUS TOOLTIP
+                
                     .html('<div style="font-size: 2rem; font-weight: bold">'+ d.id +'</div>')
                     .style('left', (origin[0]-400) + 'px')
                     .style('top', (300) + 'px') ***/
