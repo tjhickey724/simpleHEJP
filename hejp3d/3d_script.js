@@ -75,8 +75,8 @@
         var yScale3d = d3._3d()
             .shape('LINE_STRIP')
             .origin(origin)
-            .rotateY(-startAngle)
-            .rotateX(startAngle)
+            .rotateY(startAngle)
+            .rotateX(-startAngle)
             .scale(scale);
 
         var xScale3d = d3._3d()
