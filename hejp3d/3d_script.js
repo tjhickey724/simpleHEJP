@@ -45,7 +45,6 @@
         // USED FOR CLICK EVENTS
         var selected = [];
         var arraySize = 0;
-        var group = null;
 
 
 
@@ -211,13 +210,18 @@
             maxyScale = maxFac
 
             //******************Defining Datas*********************
-
+            
             console.log("Trying out the variables", yearData[inst][role][fs])
-
+            
             console.log("I'm out")
-        });
+        })
 
         //******************END OF PROCESSING JSON*********************
+
+
+
+
+
 
         /**
         * THIS IS A FUNCTION CALLED INIT
@@ -225,12 +229,7 @@
         **/
         function init() {
             //*******CREATE THE CUBES AND PUSH THEM********
-            
 
-            if(group!=null){
-                group.remove();
-            }
-            
             cubesData = []; // AN ARRAY OF CUBES WHERE EACH CUBES IS DEFINED BY 8 VERTICES
             yLine = [];
             xLine = [];
@@ -238,7 +237,6 @@
             yLabel = [];
 
             var cnt = 0; // CUBE ID NUMBER
-            var ycolor;
 
             var results = getResult(); // OBTAINS VARIABLES CHOOSEN BY USER AS ARRAY
             // GETS THE SIZE OF THE DATA FOR EACH CHOOSEN VARIABLE
@@ -250,25 +248,10 @@
             var max_b = Number.MIN_VALUE;
 
             for (var z = 0; z < q; z++) {
-
                 firstData = first(results, z); // OBTAIN FIRST VARIABLE'S DATA
-                console.log("x label", xLabel[z])
                 console.log("ITS OVER HERE");
                 for (var x = 0; x < p; x++) {
-                    console.log("Y label INFO", yLabel[x]);
-                    ycolor = yLabel[x];
                     secData = second(firstData, results[1], x); // OBTAIN SECOND VARIABLE'S DATA
-
-
-                    var y = parseFloat((-1 * (secData) / 10000).toFixed(5)); // NUMBER OF DIGITS TO APPEAR AFTER DECIMAL POINT = 5
-                    var a = 5 * x - 10; // ADJUST SIZE
-                    var b = 5 * z - 5; // ADJUST SIZE
-
-                    var x_line_edge = 5 * (p - 1) - 7;
-                    var y_line_edge = 5 * (q - 1) - 2;
-
-                    xLine.push([x_line_edge, 1, b]);
-                    yLine.push([a, 1, y_line_edge]);
 
                     var y = parseFloat((-1 * (secData) / 10000).toFixed(5)); // NUMBER OF DIGITS TO APPEAR AFTER DECIMAL POINT = 5
                     
@@ -297,10 +280,7 @@
 
                     var _cube = makeCube(a, y, b); // MAKE THE CUBE USING BASE (X,Y,Z)
                     _cube.id = 'cube_' + cnt++; // THE NAME OF THE CUBE i.e cube_1
-                    _cube.ycolor = color(ycolor);
-                    console.log("Y label INFO", yLabel)
-                  // RECORDS THE HEIGHT OF THE CUBE
-
+                    _cube.height = y; // RECORDS THE HEIGHT OF THE CUBE
                     cubesData.push(_cube); // ADDS CUBE TO ARRAY
                 }
 
@@ -312,13 +292,10 @@
                 yScale3d([yLine]),
                 xScale3d([xLine]),
             ];
-            survivedLegend();
 
             console.log(">>>>>>>>>>>> xLabel: ", xLabel);
             console.log(">>>>>>>>>>>> yLabel: ", yLabel);
             processData(allData, 1000); // DRAW THE SVG
-
-            
         }
 
 
@@ -330,8 +307,7 @@
         * THIS IS A FUNCTION CALLED GETRESULT
         * IT OBTAINS THE USER INPUT FROM CHECKBOXES
         * IT RETURNS AN ARRAY OF STRINGS OF TWO VARIABLES
-        * OR NULL 
-        TWO CHOICES WERE NOT MADE
+        * OR NULL IF TWO CHOICES WERE NOT MADE
         **/
         function getResult() {
             var x = document.getElementsByName('variable'); // GET THE HTML OBJECT
@@ -517,90 +493,6 @@
             }
         }
 
-           /**********
-
-        function genderLegend() {
-              // color
-            c = d3.scaleOrdinal()
-                .domain(["male","female"])
-                .range(["#a6cee3","#fb9a99"]);
-            
-            // Draw the gender legend
-            var legend = d3.select('svg').selectAll(".legend")
-            .data(c.domain().slice().reverse())
-            .enter().append("g")
-            .attr("class","legend")
-            .attr("transform",function(d,i) {
-                return "translate(0," + i * 20 + ")";
-            });
-
-            legend.append("rect")
-                .attr("x",475)
-                .attr("y",9)
-                .attr("width",18)
-                .attr("height",18)
-                .style("fill",c);
-            
-            legend.append("text")
-                .attr("x",465)
-                .attr("y",18)
-                .attr("dy",".35em")
-                .style("text-anchor","end")
-                .text(function(d) {
-                return d.charAt(0).toUpperCase()+d.slice(1);
-            });
-        }
-
- **********/
-
-        function survivedLegend() {
-              // stroke
-            
-            s = d3.scaleOrdinal()
-                .domain(yLabel)
-                .range(["#e31a1c","#1f78b4"]);
- 
-            console.log("I'm trying to show the survived legend", s.domain())
-
-            group = d3.select('svg').append("g")
-            .attr("class","legend-group");
-            
-        var label = getResult()
-            
-            group.append("text")
-                .text(label[1])
-                .attr("x",493)
-                .attr("y",59)
-                .style("font-weight","bold")
-                .style("text-transform", "capitalize")
-                .style("text-anchor","end");
-
-            var legend = group.selectAll(".legend")
-            .data(s.domain())
-            .enter().append("g")
-            .attr("class","legend")
-            .attr("transform",function(d,i) {
-                return "translate(0," + i * 20 + ")";
-            });
-
-            legend.append("rect")
-                .attr("x",475)
-                .attr("y",65)
-                .attr("width",18)
-                .attr("height",18)
-                .style("fill", function (d) { return color(d)});
-
-            legend.append("text")
-                .attr("x",465)
-                .attr("y",73)
-                .attr("dy",".35em")
-                .style("text-anchor","end")
-                .text(function(d) { return d; });
-            
-           
-        
-        }
-
 
 
 
@@ -615,11 +507,11 @@
         function processData(data, tt) {
             console.log("Is this processed?")
 
-
+            
             // ************************** GRID ***************************** //
-
-
-
+            
+            
+            
             /* ----------- X AND Y AXES ----------- */
             var yScale3d = d3._3d()
                 .shape('LINE_STRIP')
@@ -635,7 +527,7 @@
                 .rotateX(-startAngle)
                 .scale(scale);
 
-
+            
             /* -------------- y-Scale -------------- */
             var yScale = svg.selectAll('path.yScale').data(data[1]);
                 yScale
@@ -649,7 +541,7 @@
 
                 yScale.exit().remove();
 
-
+            
             /* --------------- x-Scale --------------- */
             var xScale = svg.selectAll('path.xScale').data(data[2]);
                 xScale
@@ -663,7 +555,7 @@
 
                 xScale.exit().remove();
 
-
+            
             /* -------------- y-Scale Text -------------- */
             var yText = svg.selectAll('text.yText').data(data[1][0]);
                 yText
@@ -684,7 +576,7 @@
                     });
                 yText.exit().remove();
 
-
+            
             /* ----------- x-Scale Text ----------- */
             var xText = svg.selectAll('text.xText').data(data[2][0]);
                 xText
@@ -705,7 +597,7 @@
                     });
                 xText.exit().remove();
 
-
+            
             // ************************** CUBES ***************************** //
 
             var cubes = cubesGroup.selectAll('g.cube').data(data[0], function (d) { return d.id });
@@ -714,15 +606,12 @@
                 .enter()
                 .append('g')
                 .attr('class', 'cube')
-                .attr('fill', function (d) { console.log("MY COLOR SHOULD BE", d);
-                                            return d.ycolor;
-                                           })
-                .attr('stroke', function (d) { return d3.color(d.ycolor).darker(2);})
+                .attr('fill', function (d) { return color(d.id); })
+                .attr('stroke', function (d) { return d3.color(color(d.id)).darker(2); })
                 .merge(cubes)
                 .sort(cubes3D.sort)
 
                 /** THIS IS THE INFO ON THE PREVIOUS TOOLTIP
-                
                     .html('<div style="font-size: 2rem; font-weight: bold">'+ d.id +'</div>')
                     .style('left', (origin[0]-400) + 'px')
                     .style('top', (300) + 'px') ***/
@@ -839,9 +728,7 @@
                     .tween('text', function(d){
                         var that = d3.select(this);
                         //THE INTERPOLATION ADDS A DYNAMIC EFFECT BEFORE IT LANDS ON THE CURRENT INFO
-                        var year
-                        var i = d3.interpolateNumber(+that.text(),
-                        Math.abs(clicked_cube.height));
+                        var i = d3.interpolateNumber(+that.text(), Math.abs(clicked_cube.height));
                         return function(t){
                             that.text(clicked_cube.id + " " + ~~(i(t)*10000))
                             .attr("visibility", visibility) //CHANGE VISIBILITY
