@@ -134,6 +134,14 @@
                       'FS_Humanities_and_arts',
                       'FS_Others',
                       'Total'];
+        var fields_names = ['Life Sciences',
+                      'Mathematics and Computer Sciences',
+                      'Psychology and Social Sciences',
+                      'Engineering',
+                      'Education',
+                      'Humanities and Arts',
+                      'Others',
+                      'Total'];
         var institution = ['r1',
                            'fourYear',
                            'twoYear',
@@ -439,7 +447,7 @@
                     return personnel[z][inst]
                 }
                 if (result[1].localeCompare("fields") == 0) {
-                    yLabel = fields;
+                    yLabel = fields_names;
                     return personnel[z][inst][role]
                 }
                 return personnel[z];
@@ -447,7 +455,7 @@
             if (result[0].localeCompare("institution") == 0) {
                 xLabel = institution;
                 if (result[1].localeCompare("fields") == 0) {
-                    yLabel = fields;
+                    yLabel = fields_names;
                     return personnel[year][institution[z]][role]
                 }
                 return personnel[year][institution[z]]
@@ -480,7 +488,7 @@
                 return first[faculty[z]][fs]
             }
             if (result.localeCompare("fields") == 0) {
-                yLabel = fields;
+                yLabel = fields_names;
                 return first[fields[z]]
             }
         }
