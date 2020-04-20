@@ -45,6 +45,7 @@
         // USED FOR CLICK EVENTS
         var selected = [];
         var arraySize = 0;
+    var group = null;
 
 
 
@@ -229,6 +230,9 @@
         **/
         function init() {
             //*******CREATE THE CUBES AND PUSH THEM********
+            if(group!=null){
+                group.remove();
+            }
 
             cubesData = []; // AN ARRAY OF CUBES WHERE EACH CUBES IS DEFINED BY 8 VERTICES
             yLine = [];
@@ -237,6 +241,8 @@
             yLabel = [];
 
             var cnt = 0; // CUBE ID NUMBER
+            var ycolor;
+            var xattr;
 
             var results = getResult(); // OBTAINS VARIABLES CHOOSEN BY USER AS ARRAY
             // GETS THE SIZE OF THE DATA FOR EACH CHOOSEN VARIABLE
@@ -249,8 +255,10 @@
 
             for (var z = 0; z < q; z++) {
                 firstData = first(results, z); // OBTAIN FIRST VARIABLE'S DATA
+                xattr = xLabel[z]
                 console.log("ITS OVER HERE");
                 for (var x = 0; x < p; x++) {
+                    ycolor = yLabel[x];
                     secData = second(firstData, results[1], x); // OBTAIN SECOND VARIABLE'S DATA
 
                     var y = parseFloat((-1 * (secData) / 10000).toFixed(5)); // NUMBER OF DIGITS TO APPEAR AFTER DECIMAL POINT = 5
@@ -281,6 +289,8 @@
                     var _cube = makeCube(a, y, b); // MAKE THE CUBE USING BASE (X,Y,Z)
                     _cube.id = 'cube_' + cnt++; // THE NAME OF THE CUBE i.e cube_1
                     _cube.height = y; // RECORDS THE HEIGHT OF THE CUBE
+                    _cube.ycolor = ycolor;
+                    _cube.xattr = xattr;
                     cubesData.push(_cube); // ADDS CUBE TO ARRAY
                 }
 
@@ -292,6 +302,7 @@
                 yScale3d([yLine]),
                 xScale3d([xLine]),
             ];
+            survivedLegend();
 
             console.log(">>>>>>>>>>>> xLabel: ", xLabel);
             console.log(">>>>>>>>>>>> yLabel: ", yLabel);
@@ -496,7 +507,54 @@
 
 
 
+function survivedLegend() {
+              // stroke
 
+            s = d3.scaleOrdinal()
+                .domain(yLabel)
+                .range(["#e31a1c","#1f78b4"]);
+
+            console.log("I'm trying to show the survived legend", s.domain())
+
+            group = d3.select('svg').append("g")
+            .attr("class","legend-group");
+
+        var label = getResult()
+        console.log("LABELSS", label)
+
+            group.append("text")
+                .text(label[1])
+                .attr("x",493)
+                .attr("y",59)
+                .style("font-weight","bold")
+                .style("text-transform", "capitalize")
+                .style("text-anchor","end");
+
+            var legend = group.selectAll(".legend")
+            .data(s.domain())
+            .enter().append("g")
+            .attr("class","legend")
+            .attr("transform",function(d,i) {
+                return "translate(0," + i * 20 + ")";
+            });
+
+            legend.append("rect")
+                .attr("x",475)
+                .attr("y",65)
+                .attr("width",18)
+                .attr("height",18)
+                .style("fill", function (d) { return color(d)});
+
+            legend.append("text")
+                .attr("x",465)
+                .attr("y",73)
+                .attr("dy",".35em")
+                .style("text-anchor","end")
+                .text(function(d) { return d; });
+
+
+
+        }
 
         /**
         * THIS IS A FUNCTION CALLED PROCESSDATA
@@ -606,8 +664,11 @@
                 .enter()
                 .append('g')
                 .attr('class', 'cube')
-                .attr('fill', function (d) { return color(d.id); })
-                .attr('stroke', function (d) { return d3.color(color(d.id)).darker(2); })
+                .attr('fill', function (d) { console.log("MY COLOR SHOULD BE", d.ycolor);
+                                            return color(d.ycolor);
+                                           })
+                .attr('stroke', function (d) { return d3.color(color(d.ycolor)).darker(2);})
+              
                 .merge(cubes)
                 .sort(cubes3D.sort)
 
@@ -706,6 +767,8 @@
                     //});
                     return [{height: clicked_cube.height, centroid: clicked_cube.faces[4].centroid}];
                 });
+                var label = getResult()
+                console.log("LABELSS", label)
 
                 texts
                     .enter()
@@ -728,12 +791,25 @@
                     .tween('text', function(d){
                         var that = d3.select(this);
                         //THE INTERPOLATION ADDS A DYNAMIC EFFECT BEFORE IT LANDS ON THE CURRENT INFO
-                        var i = d3.interpolateNumber(+that.text(), Math.abs(clicked_cube.height));
+                        var year
+                        var height = Math.abs(clicked_cube.height);
                         return function(t){
-                            that.text(clicked_cube.id + " " + ~~(i(t)*10000))
+                            that.html(function (d) {
+  return "<tspan x='"+(origin[0]-400) +"' dy='1.2em'>" + label[1] + ": " + clicked_cube.ycolor + "</tspan>"
+       + "<tspan x='"+(origin[0]-400) +"' dy='1.2em'>" + label[0] + ": " +clicked_cube.xattr + "</tspan>"
+      + "<tspan x='"+(origin[0]-400) +"' dy='1.2em'>" + "Fields: " + fs + "</tspan>"
+     + "<tspan x='"+(origin[0]-400) +"' dy='1.2em'>" + "Role: " + role + "</tspan>"
+                                ;
+
+})
+
+
                             .attr("visibility", visibility) //CHANGE VISIBILITY
                             .attr("fill", "red") //COLOR OF THE TEXT
+                            .attr('dy', '-.8em')
                         };
+
+
                     });
                     console.log("tried to display the text")
                 texts.exit().remove();
