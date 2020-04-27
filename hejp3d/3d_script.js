@@ -790,22 +790,27 @@ function survivedLegend() {
                     .attr('y', function(d){ return (300) + 'px' })
                     .tween('text', function(d){
                         var that = d3.select(this);
-                        //THE INTERPOLATION ADDS A DYNAMIC EFFECT BEFORE IT LANDS ON THE CURRENT INFO
-                        var year
-                        var height = Math.abs(clicked_cube.height);
+                        //All the text that will be displayed
+                        var height = Math.abs(clicked_cube.height)*10000;
+                        var height_text = "<tspan x='"+(origin[0]-400) +"' dy='1.2em'>" + "Jobs: " + height + "</tspan>"
+                        var role_text = "<tspan x='"+(origin[0]-400) +"' dy='1.2em'>" + "Role: " + role + "</tspan>"
+                        var fields_text = "<tspan x='"+(origin[0]-400) +"' dy='1.2em'>" + "Fields: " + fs + "</tspan>"
+                        var x_text = "<tspan x='"+(origin[0]-400) +"' dy='1.2em'>" + label[0] + ": " +clicked_cube.xattr + "</tspan>"
+                        var y_text = "<tspan x='"+(origin[0]-400) +"' dy='1.2em'>" + label[1] + ": " + clicked_cube.ycolor + "</tspan>"
                         return function(t){
                             that.html(function (d) {
-  return "<tspan x='"+(origin[0]-400) +"' dy='1.2em'>" + label[1] + ": " + clicked_cube.ycolor + "</tspan>"
-       + "<tspan x='"+(origin[0]-400) +"' dy='1.2em'>" + label[0] + ": " +clicked_cube.xattr + "</tspan>"
-      + "<tspan x='"+(origin[0]-400) +"' dy='1.2em'>" + "Fields: " + fs + "</tspan>"
-     + "<tspan x='"+(origin[0]-400) +"' dy='1.2em'>" + "Role: " + role + "</tspan>"
+  return y_text
+       + x_text
+      + fields_text
+     + role_text
+    + height_text
                                 ;
 
 })
 
 
                             .attr("visibility", visibility) //CHANGE VISIBILITY
-                            .attr("fill", "red") //COLOR OF THE TEXT
+                            .attr("fill", "black") //COLOR OF THE TEXT
                             .attr('dy', '-.8em')
                         };
 
