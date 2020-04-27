@@ -22,6 +22,11 @@
 
         // ---------------------- IMAGE VARIABLES -------------------------
         console.log("Starting the script")
+
+        var svg2 = d3.select('#svg2');
+        
+       
+
         var svg = d3.select('svg') // SELECTS IN HTML LOCATION OF IMAGE
             .call(d3.drag() // ENVOKES FUNCTION EXACTLY ONCE IN THIS CASE, THE DRAG FUNCTION WHICH CREATES NEW DRAG BEHAVIOR
             // EVENTS: ON START OF DRAG, DRAGGING, AND END OF DRAG
@@ -258,7 +263,6 @@
                 xattr = xLabel[z]
                 console.log("ITS OVER HERE");
                 for (var x = 0; x < p; x++) {
-                    ycolor = yLabel[x];
                     secData = second(firstData, results[1], x); // OBTAIN SECOND VARIABLE'S DATA
 
                     var y = parseFloat((-1 * (secData) / 10000).toFixed(5)); // NUMBER OF DIGITS TO APPEAR AFTER DECIMAL POINT = 5
@@ -289,6 +293,8 @@
                     var _cube = makeCube(a, y, b); // MAKE THE CUBE USING BASE (X,Y,Z)
                     _cube.id = 'cube_' + cnt++; // THE NAME OF THE CUBE i.e cube_1
                     _cube.height = y; // RECORDS THE HEIGHT OF THE CUBE
+                    ycolor = yLabel[x];
+                    console.log("ARE WE UNDEFINES?", yLabel)
                     _cube.ycolor = ycolor;
                     _cube.xattr = xattr;
                     cubesData.push(_cube); // ADDS CUBE TO ARRAY
@@ -524,8 +530,8 @@ function survivedLegend() {
 
             group.append("text")
                 .text(label[1])
-                .attr("x",493)
-                .attr("y",59)
+                .attr('x', function(d){ return (origin[0]+400) + 'px'})
+                .attr('y', function(d){ return (159) + 'px' })
                 .style("font-weight","bold")
                 .style("text-transform", "capitalize")
                 .style("text-anchor","end");
@@ -539,15 +545,15 @@ function survivedLegend() {
             });
 
             legend.append("rect")
-                .attr("x",475)
-                .attr("y",65)
+                .attr('x', function(d){ return (origin[0]+400) + 'px'})
+                .attr('y', function(d){ return (165) + 'px' })
                 .attr("width",18)
                 .attr("height",18)
                 .style("fill", function (d) { return color(d)});
 
             legend.append("text")
-                .attr("x",465)
-                .attr("y",73)
+                .attr('x', function(d){ return (origin[0]+400) + 'px'})
+                .attr('y', function(d){ return (173) + 'px' })
                 .attr("dy",".35em")
                 .style("text-anchor","end")
                 .text(function(d) { return d; });
@@ -761,49 +767,64 @@ function survivedLegend() {
             /** THIS IS THE NEW TOOLTIP THAT DRAWS INFO ABOUT EACH CUBE **/
 
             function draw_information(clicked_cube, visibility){
-                var texts = cubes.merge(ce).selectAll('text.text').data(function(d){
+            
+                var texts = svg2.selectAll('text').data(function(d){
                     //var _t = clicked_cube.faces.filter(function(d){
                     //    return clicked_cube.face === 'top';
                     //});
-                    return [{height: clicked_cube.height, centroid: clicked_cube.faces[4].centroid}];
+                    return [{height: clicked_cube.height}];
                 });
                 var label = getResult()
-                console.log("LABELSS", label)
+                console.log("LABELSS", label[1])
 
                 texts
                     .enter()
                     .append('text')
                     .attr('class', 'text')
-                    .attr('dy', '-.7em')
+                    .attr('dy', '-.40em')
                     .attr('text-anchor', 'middle')
                     .attr('font-family', 'sans-serif')
                     .attr('font-weight', 'bolder')
-                    .attr("font-size", "25px")
+                    .attr("font-size", "1rem")
                     .attr('x', function(d){ return (origin[0]-400) + 'px' })
-                    .attr('y', function(d){ return (300) + 'px' })
+                    .attr('y', function(d){ return (10) })
                     .classed('_3d', true)
                     .merge(texts)
-                    .transition().duration(tt)
+                    .transition().duration(2000000)
                     .attr('fill', 'black')
                     .attr('stroke', 'none')
                     .attr('x', function(d){ return (origin[0]-400) + 'px'})
-                    .attr('y', function(d){ return (300) + 'px' })
+                    .attr('y', function(d){ return (10) + 'px' })
                     .tween('text', function(d){
                         var that = d3.select(this);
                         //All the text that will be displayed
-                        var height = Math.abs(clicked_cube.height)*10000;
+                        var height = ~~Math.abs(clicked_cube.height)*10000;
                         var height_text = "<tspan x='"+(origin[0]-400) +"' dy='1.2em'>" + "Jobs: " + height + "</tspan>"
                         var role_text = "<tspan x='"+(origin[0]-400) +"' dy='1.2em'>" + "Role: " + role + "</tspan>"
                         var fields_text = "<tspan x='"+(origin[0]-400) +"' dy='1.2em'>" + "Fields: " + fs + "</tspan>"
                         var x_text = "<tspan x='"+(origin[0]-400) +"' dy='1.2em'>" + label[0] + ": " +clicked_cube.xattr + "</tspan>"
                         var y_text = "<tspan x='"+(origin[0]-400) +"' dy='1.2em'>" + label[1] + ": " + clicked_cube.ycolor + "</tspan>"
+                        var inst_text = "<tspan x='"+(origin[0]-400) +"' dy='1.2em'>" + "Institution" + ": " + inst + "</tspan>"
+                        
+                        if(label[0] == "fileds" || label[1] == "fields" ){
+                            fields_text = " "
+                        }
+                    if(label[0] == "institution" || label[1] == "institution" ){
+                            inst_text = " "
+                        }
+                    if(label[0] == "staff" || label[1] == "staff" ){
+                            role_text = " "
+                        }
+                        
                         return function(t){
                             that.html(function (d) {
   return y_text
        + x_text
       + fields_text
      + role_text
+    +inst_text
     + height_text
+    
                                 ;
 
 })
