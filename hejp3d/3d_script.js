@@ -8,6 +8,7 @@
     GETLENGTH(STRING) RETURN NUMBER
     FIRST(STRING[], INT) RETURN DATA
     SECOND(DATA, STRING, INT) RETURN NUMBER
+    SURVIVEDLEGEND()
     PROCESSDATA(DATA, NUMBER)
     DRAGSTART()
     DRAGGED()
@@ -24,8 +25,6 @@
         console.log("Starting the script")
 
         var svg2 = d3.select('#svg2');
-        
-       
 
         var svg = d3.select('svg') // SELECTS IN HTML LOCATION OF IMAGE
             .call(d3.drag() // ENVOKES FUNCTION EXACTLY ONCE IN THIS CASE, THE DRAG FUNCTION WHICH CREATES NEW DRAG BEHAVIOR
@@ -47,10 +46,12 @@
             xLabel = [],
             yLabel = [];
 
+        // FOR USE IN LEGEND
+        var group = null;
+
         // USED FOR CLICK EVENTS
         var selected = [];
         var arraySize = 0;
-    var group = null;
 
 
 
@@ -116,18 +117,18 @@
 
 
 
-        //******************START OF PROCESSING JSON*********************
+        //****************** START OF PROCESSING JSON *********************
 
 
         // ------------------------ VARIABLES ---------------------------
-        var dates = [], // AN ARRAY OF DATES
-            personnel = [], // AN ARRAY CONTAINING INFORMATION/YEAR
+        var personnel = [], // AN ARRAY CONTAINING INFORMATION/YEAR
             yearData = {}, // CREATES AN OBJECT YEARDATA (NOT AN ARRAY)
             // DATA IDENTIFIERS
             inst = 'all',
             role = 'faculty',
             fs = 'Total',
-            year = 8;
+            year = 8,
+            datatype = 0;
 
         // VARIABLES FOR LOOP
         // CAN BE FOUND IN PROCESS DATA FOR MORE FLEXIBILITY
@@ -155,7 +156,7 @@
         var faculty = ['faculty',
                        'nonfaculty',
                        'postdoc'];
-        // ------------------------ VARIABLES ---------------------------
+        // ------------------------ VARIABLES END ---------------------------
 
 
 
@@ -176,8 +177,6 @@
                 if (i > 20) alert("stop")
 
                 const year = years[i] // CURRENT YEAR
-                const z = new Date("9/1/" + year) // CREATES A DATE USING THE CURRENT YEAR
-                dates.push(z); // CURRENT DATE ADDED
 
                 // OBTAIN INFORMATION FROM JSON
                 yearData = {
@@ -208,21 +207,11 @@
 
             console.log(yearData.r1.faculty)
             console.log("my year data is:", inst);
-
-            // CREATES AN ARRAY OF SPECIFIED VALUES FOR EACH YEAR AND TAKES THE MAX
-            maxFac = d3.max(personnel.map((x) => x.all.faculty.Total)) // FACULTY DATA
-            maxNonFac = d3.max(personnel.map((x) => x.all.nonfaculty.Total)) // NON-FACULTY DATA
-            maxPostdoc = d3.max(personnel.map((x) => x.all.postdoc.Total)) // POSTDOC DATA
-            maxyScale = maxFac
-
-            //******************Defining Datas*********************
-            
             console.log("Trying out the variables", yearData[inst][role][fs])
-            
             console.log("I'm out")
         })
 
-        //******************END OF PROCESSING JSON*********************
+        //****************** END OF PROCESSING JSON *********************
 
 
 
@@ -234,61 +223,57 @@
         * IT CREATES THE CUBE AND DRAWS THE SVG
         **/
         function init() {
-            //*******CREATE THE CUBES AND PUSH THEM********
-            if(group!=null){
-                group.remove();
-            }
+            
+            if (group != null) group.remove();
 
-            cubesData = []; // AN ARRAY OF CUBES WHERE EACH CUBES IS DEFINED BY 8 VERTICES
+            //******* CREATE THE CUBES AND PUSH THEM ********
+            
+            // ARRAYS OF ELEMENTS FOR EACH OBJECT IN THE IMAGE
+            // VERTICES
+            cubesData = [];
             yLine = [];
             xLine = [];
+            // STRING
             xLabel = [];
             yLabel = [];
 
-            var cnt = 0; // CUBE ID NUMBER
+            // CUBE VARIABLES; ID, COLOR, ATTRIBUTE
+            var cnt = 0;
             var ycolor;
             var xattr;
 
-            var results = getResult(); // OBTAINS VARIABLES CHOOSEN BY USER AS ARRAY
-            // GETS THE SIZE OF THE DATA FOR EACH CHOOSEN VARIABLE
+            // DATA VARIABLES; USER CHOICE, LENGTH OF DATA VARIABLES
+            var results = getResult();
             var q = getLength(results[0]);
             var p = getLength(results[1]);
-            console.log(q+"and"+p)
-
-            var max_a = Number.MIN_VALUE;
-            var max_b = Number.MIN_VALUE;
+            
+            var con = [];
 
             for (var z = 0; z < q; z++) {
+                
                 firstData = first(results, z); // OBTAIN FIRST VARIABLE'S DATA
-                xattr = xLabel[z]
+                xattr = xLabel[z] // RETRIEVE X LABEL FOR THE CURRENT CUBE
                 console.log("ITS OVER HERE");
+                
                 for (var x = 0; x < p; x++) {
+                    
                     secData = second(firstData, results[1], x); // OBTAIN SECOND VARIABLE'S DATA
 
+                    // ------------------------ CUBE ------------------------------
+                    
                     var y = parseFloat((-1 * (secData) / 10000).toFixed(5)); // NUMBER OF DIGITS TO APPEAR AFTER DECIMAL POINT = 5
-                    
-                    
-                    /***********************************************************************/
-                    /**
-                    * CHANGES:
-                    * - ADDED (P/2) AND (Q/2) TO ADJUST FOR DIFFERENT SIZES OF DIFFERENT DATA
-                    * - CHANGE SHIFTS CUBES IN COORDINATE PLANE OVER BY HALF THE SIZE OF EACH DATA VARIABLE
-                    
-                    * OLD CODE
-                    var a = 5 * x - 10; // ADJUST SIZE
-                    var b = 5 * z - 5; // ADJUST SIZE
-                    **/
-                    
                     var a = 5 * x - 5*(p/2); // ADJUST SIZE
                     var b = 5 * z - 5*(q/2); // ADJUST SIZE
                     
-                    /***********************************************************************/
-
-                    var x_line_edge = 5 * (p - 1)- 5*(p/2) + 5;
-                    var y_line_edge = 5 * (q - 1)- 5*(q/2) + 5;
-
-                    xLine.push([x_line_edge, 1, b]);
-                    yLine.push([a, 1, y_line_edge]);
+                    if(datatype == 1){
+                        if(z == 0){
+                            con.push(y);
+                        } else{
+                            // CALCULATIONS FOR GROWTH GO HERE
+                            // USE THE VALUES IN CON AND THE Y VALUE
+                            // TO CALCULATE THE NEW Y FOR GROWTH
+                        }
+                    }
 
                     var _cube = makeCube(a, y, b); // MAKE THE CUBE USING BASE (X,Y,Z)
                     _cube.id = 'cube_' + cnt++; // THE NAME OF THE CUBE i.e cube_1
@@ -298,6 +283,14 @@
                     _cube.ycolor = ycolor;
                     _cube.xattr = xattr;
                     cubesData.push(_cube); // ADDS CUBE TO ARRAY
+                    
+                    // ------------------------ LINES ------------------------------
+                    
+                    var x_line_edge = 5 * (p - 1)- 5*(p/2) + 5;
+                    var y_line_edge = 5 * (q - 1)- 5*(q/2) + 5;
+
+                    xLine.push([x_line_edge, 1, b]);
+                    yLine.push([a, 1, y_line_edge]);
                 }
 
             }
@@ -383,13 +376,17 @@
             var d4 = document.getElementById("yearbuttons");
             var d5 = document.getElementById("warning");
             var d6 = document.getElementById("image");
+            var d7 = document.getElementById("valuebuttons");
             var x = document.getElementsByName('variable');
 
             if(checkinput==2){
                if(x[0].checked==false){ //years
                     d4.style.display = "block"
+                    d7.style.display = "none"
+                    datatype = 0
                 } else{
                     d4.style.display = "none"
+                    d7.style.display = "block"
                 }
                 if(x[1].checked==false){ //inst
                     d1.style.display = "block"
@@ -416,6 +413,7 @@
                 d3.style.display = "none"
                 d4.style.display = "none"
                 d6.style.display = "none"
+                d7.style.display = "none"
             }
         }
 
@@ -513,9 +511,15 @@
 
 
 
-function survivedLegend() {
-              // stroke
 
+
+        /**
+        * THIS IS A FUNCTION CALLED SURVIVEDLEGEND
+        * IT DRAWS THE GRAPH LENGEND
+        **/
+        function survivedLegend() {
+            
+            // stroke
             s = d3.scaleOrdinal()
                 .domain(yLabel)
                 .range(["#e31a1c","#1f78b4"]);
@@ -525,8 +529,8 @@ function survivedLegend() {
             group = d3.select('svg').append("g")
             .attr("class","legend-group");
 
-        var label = getResult()
-        console.log("LABELSS", label)
+            var label = getResult()
+            console.log("LABELSS", label)
 
             group.append("text")
                 .text(label[1])
@@ -537,10 +541,10 @@ function survivedLegend() {
                 .style("text-anchor","end");
 
             var legend = group.selectAll(".legend")
-            .data(s.domain())
-            .enter().append("g")
-            .attr("class","legend")
-            .attr("transform",function(d,i) {
+                .data(s.domain())
+                .enter().append("g")
+                .attr("class","legend")
+                .attr("transform",function(d,i) {
                 return "translate(0," + i * 20 + ")";
             });
 
@@ -557,10 +561,12 @@ function survivedLegend() {
                 .attr("dy",".35em")
                 .style("text-anchor","end")
                 .text(function(d) { return d; });
-
-
-
         }
+
+
+
+
+
 
         /**
         * THIS IS A FUNCTION CALLED PROCESSDATA
@@ -570,11 +576,8 @@ function survivedLegend() {
         **/
         function processData(data, tt) {
             console.log("Is this processed?")
-
             
             // ************************** GRID ***************************** //
-            
-            
             
             /* ----------- X AND Y AXES ----------- */
             var yScale3d = d3._3d()
@@ -674,7 +677,6 @@ function survivedLegend() {
                                             return color(d.ycolor);
                                            })
                 .attr('stroke', function (d) { return d3.color(color(d.ycolor)).darker(2);})
-              
                 .merge(cubes)
                 .sort(cubes3D.sort)
 
@@ -731,12 +733,10 @@ function survivedLegend() {
 
                         //SELECT THE CURRENT CUBE
                         selected[0] = this;
-
                         d3.select(this)
                             .style('fill', 'yellow')
 
-
-                    //ADD NEW TEXT TO THE TOOLTIP
+                        //ADD NEW TEXT TO THE TOOLTIP
                         draw_information(d, "visible");
 
                     }
@@ -798,7 +798,8 @@ function survivedLegend() {
                     .tween('text', function(d){
                         var that = d3.select(this);
                         //All the text that will be displayed
-                        var height = ~~Math.abs(clicked_cube.height)*10000;
+                        var height = Math.abs(clicked_cube.height)*10000;
+                        console.log(Math.abs(clicked_cube.height)*10000)
                         var height_text = "<tspan x='"+(origin[0]-400) +"' dy='1.2em'>" + "Jobs: " + height + "</tspan>"
                         var role_text = "<tspan x='"+(origin[0]-400) +"' dy='1.2em'>" + "Role: " + role + "</tspan>"
                         var fields_text = "<tspan x='"+(origin[0]-400) +"' dy='1.2em'>" + "Fields: " + fs + "</tspan>"
@@ -809,48 +810,37 @@ function survivedLegend() {
                         if(label[0] == "fileds" || label[1] == "fields" ){
                             fields_text = " "
                         }
-                    if(label[0] == "institution" || label[1] == "institution" ){
+                        if(label[0] == "institution" || label[1] == "institution" ){
                             inst_text = " "
                         }
-                    if(label[0] == "staff" || label[1] == "staff" ){
+                        if(label[0] == "staff" || label[1] == "staff" ){
                             role_text = " "
                         }
                         
                         return function(t){
                             that.html(function (d) {
-  return y_text
-       + x_text
-      + fields_text
-     + role_text
-    +inst_text
-    + height_text
-    
-                                ;
-
-})
-
-
+                                return y_text
+                                    + x_text
+                                    + fields_text
+                                    + role_text
+                                    +inst_text
+                                    + height_text;
+                            })
                             .attr("visibility", visibility) //CHANGE VISIBILITY
                             .attr("fill", "black") //COLOR OF THE TEXT
                             .attr('dy', '-.8em')
                         };
-
-
                     });
                     console.log("tried to display the text")
                 texts.exit().remove();
             }
+            
             console.log("exiting the svg")
-
-            //my theory is that the tooltip is not exited().
-            //it is not removed.something about the drag just imprints it into the svg.
-
             cubes.exit().remove(); //VERY IMPORTANT STEP
 
             /* --------- SORT TEXT & FACES ---------*/
 
             ce.selectAll('._3d').sort(d3._3d().sort);
-
             console.log("The very last step")
         }
 
