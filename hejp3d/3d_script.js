@@ -807,7 +807,7 @@
                         var y_text = "<tspan x='"+(origin[0]-400) +"' dy='1.2em'>" + label[1] + ": " + clicked_cube.ycolor + "</tspan>"
                         var inst_text = "<tspan x='"+(origin[0]-400) +"' dy='1.2em'>" + "Institution" + ": " + inst + "</tspan>"
                         
-                        if(label[0] == "fileds" || label[1] == "fields" ){
+                        if(label[0] == "fields" || label[1] == "fields" ){
                             fields_text = " "
                         }
                         if(label[0] == "institution" || label[1] == "institution" ){
@@ -817,7 +817,7 @@
                             role_text = " "
                         }
                         
-                        return function(t){
+                        return function(t){    //VARIABLES RETURNED FOR EACH CUBE
                             that.html(function (d) {
                                 return y_text
                                     + x_text
