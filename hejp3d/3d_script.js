@@ -10,6 +10,7 @@
     SECOND(DATA, STRING, INT) RETURN NUMBER
     SURVIVEDLEGEND()
     PROCESSDATA(DATA, NUMBER)
+    draw_information(clicked_cube, visibility){
     DRAGSTART()
     DRAGGED()
     DRAGEND()
@@ -37,7 +38,7 @@
             .attr("viewBox", "0 0 600 400") // VIEWBOX ATTRIBUTE MAKES SVG SCALABLE WITH ORIGIN AT 0,0 AND WIDTH 600, HEIGHT 400
             .classed("svg-content-responsive", true); // INSURES THE SVG IS CONTAINED WITHIN THE DIV
 
-        var origin = [505, 300], // THE LOCATION OF THE CENTER OF THE 3D IMAGE
+        var origin = [405, 300], // THE LOCATION OF THE CENTER OF THE 3D IMAGE
             scale = 10, // USED TO SCALE THE OBJECT TO SIZE OF IMAGE: CHANGED FROM 20 TO 10
             startAngle = Math.PI / 6,
             // NEW VARIABLES FOR USE IN GRID
@@ -762,78 +763,6 @@
                 .attr('d', cubes3D.draw);
 
             faces.exit().remove();
-
-
-            /** THIS IS THE NEW TOOLTIP THAT DRAWS INFO ABOUT EACH CUBE **/
-
-            function draw_information(clicked_cube, visibility){
-            
-                var texts = svg2.selectAll('text').data(function(d){
-                    //var _t = clicked_cube.faces.filter(function(d){
-                    //    return clicked_cube.face === 'top';
-                    //});
-                    return [{height: clicked_cube.height}];
-                });
-                var label = getResult()
-                console.log("LABELSS", label[1])
-
-                texts
-                    .enter()
-                    .append('text')
-                    .attr('class', 'text')
-                    .attr('dy', '-.40em')
-                    .attr('text-anchor', 'middle')
-                    .attr('font-family', 'sans-serif')
-                    .attr('font-weight', 'bolder')
-                    .attr("font-size", "1rem")
-                    .attr('x', function(d){ return (origin[0]-400) + 'px' })
-                    .attr('y', function(d){ return (10) })
-                    .classed('_3d', true)
-                    .merge(texts)
-                    .transition().duration(2000000)
-                    .attr('fill', 'black')
-                    .attr('stroke', 'none')
-                    .attr('x', function(d){ return (origin[0]-400) + 'px'})
-                    .attr('y', function(d){ return (10) + 'px' })
-                    .tween('text', function(d){
-                        var that = d3.select(this);
-                        //All the text that will be displayed
-                        var height = Math.abs(clicked_cube.height)*10000;
-                        console.log(Math.abs(clicked_cube.height)*10000)
-                        var height_text = "<tspan x='"+(origin[0]-400) +"' dy='1.2em'>" + "Jobs: " + height + "</tspan>"
-                        var role_text = "<tspan x='"+(origin[0]-400) +"' dy='1.2em'>" + "Role: " + role + "</tspan>"
-                        var fields_text = "<tspan x='"+(origin[0]-400) +"' dy='1.2em'>" + "Fields: " + fs + "</tspan>"
-                        var x_text = "<tspan x='"+(origin[0]-400) +"' dy='1.2em'>" + label[0] + ": " +clicked_cube.xattr + "</tspan>"
-                        var y_text = "<tspan x='"+(origin[0]-400) +"' dy='1.2em'>" + label[1] + ": " + clicked_cube.ycolor + "</tspan>"
-                        var inst_text = "<tspan x='"+(origin[0]-400) +"' dy='1.2em'>" + "Institution" + ": " + inst + "</tspan>"
-                        
-                        if(label[0] == "fields" || label[1] == "fields" ){
-                            fields_text = " "
-                        }
-                        if(label[0] == "institution" || label[1] == "institution" ){
-                            inst_text = " "
-                        }
-                        if(label[0] == "staff" || label[1] == "staff" ){
-                            role_text = " "
-                        }
-                        
-                        return function(t){    //VARIABLES RETURNED FOR EACH CUBE
-                            that.html(function (d) {
-                                return y_text
-                                    + x_text
-                                    + fields_text
-                                    + role_text
-                                    +inst_text
-                                    + height_text;
-                            })
-                            .attr("visibility", visibility) //CHANGE VISIBILITY
-                            .attr("fill", "black") //COLOR OF THE TEXT
-                            .attr('dy', '-.8em')
-                        };
-                    });
-                    console.log("tried to display the text")
-                texts.exit().remove();
-            }
             
             console.log("exiting the svg")
             cubes.exit().remove(); //VERY IMPORTANT STEP
@@ -842,6 +771,82 @@
 
             ce.selectAll('._3d').sort(d3._3d().sort);
             console.log("The very last step")
+        }
+
+
+
+
+
+
+        /**
+        * THIS IS A FUNCTION CALLED DRAW_iNFORMATION
+        * THIS IS THE NEW TOOLTIP THAT DRAWS INFO ABOUT EACH CUBE
+        * IT TAKES A CUBE OBJECT AND VISIBILITY STRING AS PARAMETERS
+        **/
+        function draw_information(clicked_cube, visibility){
+            
+            var texts = svg2.selectAll('text').data(function(d){
+                return [{height: clicked_cube.height}];
+            });
+            var label = getResult()
+            console.log("LABELSS", label[1])
+
+            texts
+                .enter()
+                .append('text')
+                .attr('class', 'text')
+                .attr('dy', '-.40em')
+                .attr('text-anchor', 'middle')
+                .attr('font-family', 'sans-serif')
+                .attr('font-weight', 'bolder')
+                .attr("font-size", "1rem")
+                .attr('x', function(d){ return (origin[0]-400) + 'px' })
+                .attr('y', function(d){ return (10) })
+                .classed('_3d', true)
+                .merge(texts)
+                .transition().duration(2000000)
+                .attr('fill', 'black')
+                .attr('stroke', 'none')
+                .attr('x', function(d){ return (origin[0]-400) + 'px'})
+                .attr('y', function(d){ return (10) + 'px' })
+                .tween('text', function(d){
+                    var that = d3.select(this);
+                    //All the text that will be displayed
+                    var height = (Math.abs(clicked_cube.height)*10000).toFixed(0);
+                    console.log(Math.abs(clicked_cube.height)*10000)
+                    var height_text = "<tspan x='"+(origin[0]-400) +"' dy='1.2em'>" + "Jobs: " + height + "</tspan>"
+                    var role_text = "<tspan x='"+(origin[0]-400) +"' dy='1.2em'>" + "Role: " + role + "</tspan>"
+                    var fields_text = "<tspan x='"+(origin[0]-400) +"' dy='1.2em'>" + "Fields: " + fs + "</tspan>"
+                    var x_text = "<tspan x='"+(origin[0]-400) +"' dy='1.2em'>" + label[0] + ": " +clicked_cube.xattr + "</tspan>"
+                    var y_text = "<tspan x='"+(origin[0]-400) +"' dy='1.2em'>" + label[1] + ": " + clicked_cube.ycolor + "</tspan>"
+                    var inst_text = "<tspan x='"+(origin[0]-400) +"' dy='1.2em'>" + "Institution" + ": " + inst + "</tspan>"
+                        
+                    if(label[0] == "fields" || label[1] == "fields" ){
+                        fields_text = " "
+                    }
+                    if(label[0] == "institution" || label[1] == "institution" ){
+                        inst_text = " "
+                    }
+                    if(label[0] == "staff" || label[1] == "staff" ){
+                        role_text = " "
+                    }
+                        
+                    return function(t){    //VARIABLES RETURNED FOR EACH CUBE
+                        that.html(function (d) {
+                            return y_text
+                                + x_text
+                                + fields_text
+                                + role_text
+                                +inst_text
+                                + height_text;
+                        })
+                        .attr("visibility", visibility) //CHANGE VISIBILITY
+                        .attr("fill", "black") //COLOR OF THE TEXT
+                        .attr('dy', '-.8em')
+                    };
+                });
+                console.log("tried to display the text")
+            texts.exit().remove();
         }
 
 
