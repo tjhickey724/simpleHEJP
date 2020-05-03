@@ -1,0 +1,110 @@
+
+
+
+
+hejp=> \dt
+                List of relations
+ Schema |         Name         | Type  |  Owner   
+--------+----------------------+-------+----------
+ public | dummytable20200228   | table | hejp
+ public | faculty_job_openings | table | chami
+ public | job_beazone          | table | chami
+ public | job_skills_bad       | table | ruthros
+ public | job_state            | table | chami
+ public | maintable            | table | postgres
+ public | maintable20200228    | table | hejp
+ public | newdummy             | table | hejp
+ public | nsftable             | table | postgres
+ public | post_doc_jobs        | table | chami
+ public | post_doc_skills      | table | chami
+ public | post_doc_slides_data | table | ruthros
+ public | skilltable           | table | hejp
+ public | solomon              | table | solomon
+(14 rows)
+
+hejp=> \d maintable
+                      Table "public.maintable"
+            Column             |          Type          | Modifiers 
+-------------------------------+------------------------+-----------
+ jobid                         | bigint                 | 
+ year                          | integer                | 
+ jobtitle                      | text                   | 
+ occupation                    | character varying(250) | 
+ careerarea                    | character varying(250) | 
+ minimumedurequirements        | double precision       | 
+ maximumedurequirements        | double precision       | 
+ minimumexperiencerequirements | double precision       | 
+ annualsalary                  | double precision       | 
+ metropolitanstatisticalarea   | text                   | 
+ state                         | text                   | 
+ beazone                       | text                   | 
+ ipedsinstitutionname          | text                   | 
+ ipedssectorname               | character varying(250) | 
+ institutionstate              | text                   | 
+ institutionbeazone            | text                   | 
+ isresearch1institution        | character(1)           | 
+ fouryear                      | character(1)           | 
+ twoyear                       | character(1)           | 
+ public                        | character(1)           | 
+ private                       | character(1)           | 
+
+hejp=> \d nsftable
+                    Table "public.nsftable"
+               Column                |     Type     | Modifiers 
+-------------------------------------+--------------+-----------
+ jobid                               | bigint       | 
+ year                                | integer      | 
+ diversityandinclusion               | character(1) | 
+ postdoctoral                        | character(1) | 
+ faculty                             | character(1) | 
+ agriculturalsciencesandnaturalre    | character(1) | 
+ biologicalandbiomedicalsciences     | character(1) | 
+ healthsciences                      | character(1) | 
+ chemistry                           | character(1) | 
+ geosciencesatmosphericandoceansc    | character(1) | 
+ physicsandastronomy                 | character(1) | 
+ computerandinformationsciences      | character(1) | 
+ mathematicsandstatistics            | character(1) | 
+ psychology                          | character(1) | 
+ anthropology                        | character(1) | 
+ economics                           | character(1) | 
+ politicalscienceandgovernment       | character(1) | 
+ sociology                           | character(1) | 
+ othersocialsciences                 | character(1) | 
+ aerospaceaeronauticalandastronau    | character(1) | 
+ bioengineeringandbiomedicalengin    | character(1) | 
+ chemicalengineering                 | character(1) | 
+ civilengineering                    | character(1) | 
+ electricalelectronicsandcommunic    | character(1) | 
+ industrialandmanufacturingengine    | character(1) | 
+ materialsscienceengineering         | character(1) | 
+ mechanicalengineering               | character(1) | 
+ otherengineering                    | character(1) | 
+ educationadministration             | character(1) | 
+ educationresearch                   | character(1) | 
+ teachereducation                    | character(1) | 
+ teachingfields                      | character(1) | 
+ othereducation                      | character(1) | 
+ foreignlanguagesandliterature       | character(1) | 
+ history                             | character(1) | 
+ letters                             | character(1) | 
+ otherhumanitiesandarts              | character(1) | 
+ businessmanagementandadministrat    | character(1) | 
+ communication                       | character(1) | 
+ numberofdetailedfieldsofstudy       | integer      | 
+ fs_lifesciences                     | character(1) | 
+ fs_physicalsciencesandearthsciences | character(1) | 
+ fs_mathematicsandcomputersciences   | character(1) | 
+ fs_psychologyandsocialsciences      | character(1) | 
+ fs_engineering                      | character(1) | 
+ fs_education                        | character(1) | 
+ fs_humanitiesandarts                | character(1) | 
+ fs_others                           | character(1) | 
+ tenured                             | character(1) | 
+ tenured_track                       | character(1) | 
+ contingent                          | character(1) | 
+ fulltimecontingent                  | character(1) | 
+ parttimecontingent                  | character(1) | 
+ tenureline                          | character(1) | 
+
+hejp=> 

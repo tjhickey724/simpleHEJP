@@ -4,3 +4,5 @@ node_modules
 npm-debug.log
 builds/d3/images/*
 *.json
+*~
+__pycache__
