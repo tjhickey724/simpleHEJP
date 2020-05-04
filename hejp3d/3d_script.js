@@ -25,7 +25,7 @@
         // ---------------------- IMAGE VARIABLES -------------------------
         console.log("Starting the script")
 
-        var svg2 = d3.select('#svg2');
+        var tooltipSVG = d3.select('#tooltipSVG');
 
         var svg = d3.select('svg') // SELECTS IN HTML LOCATION OF IMAGE
             .call(d3.drag() // ENVOKES FUNCTION EXACTLY ONCE IN THIS CASE, THE DRAG FUNCTION WHICH CREATES NEW DRAG BEHAVIOR
@@ -785,7 +785,7 @@
         **/
         function draw_information(clicked_cube, visibility){
             
-            var texts = svg2.selectAll('text').data(function(d){
+            var texts = tooltipSVG.selectAll('text').data(function(d){
                 return [{height: clicked_cube.height}];
             });
             var label = getResult()
@@ -811,25 +811,54 @@
                 .attr('y', function(d){ return (10) + 'px' })
                 .tween('text', function(d){
                     var that = d3.select(this);
-                    //All the text that will be displayed
-                    var height = (Math.abs(clicked_cube.height)*10000).toFixed(0);
-                    console.log(Math.abs(clicked_cube.height)*10000)
-                    var height_text = "<tspan x='"+(origin[0]-400) +"' dy='1.2em'>" + "Jobs: " + height + "</tspan>"
-                    var role_text = "<tspan x='"+(origin[0]-400) +"' dy='1.2em'>" + "Role: " + role + "</tspan>"
-                    var fields_text = "<tspan x='"+(origin[0]-400) +"' dy='1.2em'>" + "Fields: " + fs + "</tspan>"
-                    var x_text = "<tspan x='"+(origin[0]-400) +"' dy='1.2em'>" + label[0] + ": " +clicked_cube.xattr + "</tspan>"
-                    var y_text = "<tspan x='"+(origin[0]-400) +"' dy='1.2em'>" + label[1] + ": " + clicked_cube.ycolor + "</tspan>"
-                    var inst_text = "<tspan x='"+(origin[0]-400) +"' dy='1.2em'>" + "Institution" + ": " + inst + "</tspan>"
+                
+                        //All the text that will be displayed with html attributes
+                        //Coordinates on the plane - where to place text
+                        var co_html = "<tspan x='"+(origin[0]-400) +"' dy='1.2em'>"
                         
-                    if(label[0] == "fields" || label[1] == "fields" ){
-                        fields_text = " "
-                    }
-                    if(label[0] == "institution" || label[1] == "institution" ){
-                        inst_text = " "
-                    }
-                    if(label[0] == "staff" || label[1] == "staff" ){
-                        role_text = " "
-                    }
+                        var height_id = "Total Jobs"
+                        var height = (Math.abs(clicked_cube.height)*10000).toFixed(0);
+                        var height_text = co_html + height_id + ": " + height + "</tspan>"
+                        
+                        var role_id = "Job Role"
+                        var role_text = co_html + role_id + ": "+ role + "</tspan>"
+                        
+                        var fields_id = "Field Type"
+                        var fields_text = co_html + fields_id + ": "+ fs + "</tspan>"
+                        
+                        var x_id = label[0][0].toUpperCase() + label[0].slice(1)
+                        console.log("id", fields_text)
+                        var x_text = co_html + x_id + ": " +clicked_cube.xattr + "</tspan>"
+                        
+                        var y_id = label[1][0].toUpperCase() + label[1].slice(1)
+                        var y_text = co_html + y_id + ": " + clicked_cube.ycolor + "</tspan>"
+                        
+                        var inst_id = "Institution"
+                        var inst_text = co_html + inst_id + ": " + inst + "</tspan>"
+                        
+                        //Deletes duplicate information from x and y fields
+                        
+                        if(label[0] == "fields" || label[1] == "fields" ){
+                            fields_text = " "
+                            fields_text = ""
+                            fields_id = ""
+                        }
+                        if(label[0] == "institution" || label[1] == "institution" ){
+                            inst_text = " "
+                            inst_text = ""
+                            inst_id = ""
+                        }
+                        if(label[0] == "staff" || label[1] == "staff" ){
+                            role_text = " "
+                            role_text = ""
+                            role_id = ""
+                        }
+                    
+                    //Collects all the possible information about the clicked cube
+                    //if repeated, appears as empty string ""
+                    var total_possible_rows = [height_id, role_id, fields_id, x_id, y_id, inst_id]
+                    
+                    console.log("All the rows", total_possible_rows)
                         
                     return function(t){    //VARIABLES RETURNED FOR EACH CUBE
                         that.html(function (d) {

@@ -11,7 +11,7 @@
 
 
 <!-- ******************* BUGS ******************* -->
-<!-- COLORS DO NOT MATCH WITH LEGEND -->
+
 
 
 <!DOCTYPE html>
@@ -254,22 +254,24 @@
     </div><!-- container -->
 
     <div id="image" style="display: block">
-        <svg width="960" height="500" style="outline-color: black; outline-style: solid; position: absolute; left: 300px"></svg>
+        <svg width="800" height="500" style="outline-color: black; outline-style: solid; position: absolute; left: 300px"></svg>
     </div>
     
-    <!-- TOOLTIP -->
-    <svg viewBox="0 0 240 80" xmlns="http://www.w3.org/2000/svg" id= "svg2">
+    
+    <!-- TOOLTIP 
+    the width is set to make sure tooltip svg ends when vizualization begins-->
+    <svg id= "tooltipSVG" width="290" height="500" viewBox="-100 0 300 150" style ="outline-color: aqua; outline-style: solid; position: absolute;>
         <style>
-            .small { font: italic 10px sans-serif; }
-            .heavy { font: bold 10px sans-serif; }
+            .small { font: italic 5px sans-serif; }
+            .heavy { font: bold 5px sans-serif; }
+            .text-align: center
             /** 
             * Note that the color of the text is set with the
             * fill property, the color property is for HTML only 
             **/
-            .Rrrrr { font: italic 40px serif; fill: red; }
         </style>
 
-        <text x="20" y="20" class="small"></text>
+        <text x="20" y="0" class="small"></text>
     </svg>
 
     <!-- trying to commit under my github account: sunnyako>
