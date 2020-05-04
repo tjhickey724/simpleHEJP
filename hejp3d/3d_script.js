@@ -224,7 +224,7 @@
         * IT CREATES THE CUBE AND DRAWS THE SVG
         **/
         function init() {
-            
+            d3.select(".cubes").selectAll("*").remove();
             if (group != null) group.remove();
 
             //******* CREATE THE CUBES AND PUSH THEM ********
