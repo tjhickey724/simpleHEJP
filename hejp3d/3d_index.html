@@ -11,7 +11,7 @@
 
 
 <!-- ******************* BUGS ******************* -->
-<!-- COLORS DO NOT MATCH WITH LEGEND -->
+
 
 
 <!DOCTYPE html>
@@ -34,9 +34,9 @@
                 <input type="checkbox" name="variable" onclick = "return limitCheck()" value="institution">Institution
                 <input type="checkbox" name="variable" onclick = "return limitCheck()" value="staff">Staff
                 <input type="checkbox" name="variable" onclick = "return limitCheck()" value="fields">Fields
-            
+
             <!-- RADIO BUTTON CHOICES CHANGE DEPENDING ON ABOVE OPTIONS -->
-            
+
             <!-- ******************* INSTITUTION TYPE ******************* -->
             <div id="instbuttons" style="display: none">
                 R1 <input
@@ -244,7 +244,7 @@
                 <br>
                 <b>You must choose two variables!</b>
             </div>
-            
+
         </small>
         <hr>
 
@@ -254,21 +254,24 @@
     </div><!-- container -->
 
     <div id="image" style="display: block">
-        <svg width="960" height="500"></svg>
+        <svg width="800" height="500" style="outline-color: black; outline-style: solid; position: absolute; left: 300px"></svg>
     </div>
-    
-    <svg viewBox="0 0 240 80" xmlns="http://www.w3.org/2000/svg" id= "svg2">
+
+
+    <!-- TOOLTIP
+    the width is set to make sure tooltip svg ends when vizualization begins-->
+    <svg id= "tooltipSVG" width="290" height="500" viewBox="-100 0 300 150" style ="outline-color: aqua; outline-style: solid; position: absolute;>
         <style>
-            .small { font: italic 6px sans-serif; } 
-            .heavy { font: bold 6px sans-serif; }
-            /** 
+            .small { font: italic 5px sans-serif; }
+            .heavy { font: bold 5px sans-serif; }
+            .text-align: center
+            /**
             * Note that the color of the text is set with the
-            * fill property, the color property is for HTML only 
+            * fill property, the color property is for HTML only
             **/
-            .Rrrrr { font: italic 40px serif; fill: red; }
         </style>
 
-        <text x="15" y="15" class="small"></text>
+        <text x="20" y="0" class="small"></text>
     </svg>
 
     <!-- trying to commit under my github account: sunnyako>
@@ -286,7 +289,7 @@
         }
 
     </style>
-    
+
     <button class = "button" onClick = "setUp();">update</button>
     <!-- END OF THE UPDATE BUTTON IN THE CORNER -->
 
