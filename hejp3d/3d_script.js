@@ -930,6 +930,13 @@
         }
 
 
+        /**
+        *THIS FUNCTION MAKES A TABLE THAT DISPLAYS THE DATA FOR EACH CUBE  <----------------------NOT SURE HOW CORRECT THIS IS SO FEEL FREE TO DELETE
+        **/
+        function makeTable() {
+            var svg3 = d3.select('svg3') 
+
+        }
 
 
 
