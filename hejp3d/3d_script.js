@@ -1,9 +1,14 @@
 /**
     THIS IS THE SCRIPT FOR THE 3D VISUAL.
+    
     ------ FUNCTIONS ------
+    
     INIT()
     GETRESULT() RETURN STRING[]
     LIMITCHECK() RETURN BOOL
+    ADJUST()
+    ADINPUT(INT)
+    FINDSCALE()
     SETUP()
     GETLENGTH(STRING) RETURN NUMBER
     FIRST(STRING[], INT) RETURN DATA
@@ -15,6 +20,9 @@
     DRAGGED()
     DRAGEND()
     MAKECUBE(NUMBER, NUMBER, NUMBER) RETURN VERTEX[]
+    
+    
+    MAKETABLE() IS CURRENTLY NOT BEING USED (DELETE?)
 **/
 
 
@@ -41,6 +49,13 @@
         var origin = [405, 300], // THE LOCATION OF THE CENTER OF THE 3D IMAGE
             scale = 10, // USED TO SCALE THE OBJECT TO SIZE OF IMAGE: CHANGED FROM 20 TO 10
             startAngle = Math.PI / 6,
+            
+            // VARIABLES USED IN AUTOSCALING OF DATA
+            max = 0, // MAX OF ALL DATA
+            diviser = 1, // USED TO CHANGE MAX DATA TO SIZE SCALE
+            hasAdjusted = 0, // IF A MANUAL ADJUSTMENT HAS BEEN MADE
+            maxVals = [], // USED TO FIND THE MAX DATA VALUE
+            
             // NEW VARIABLES FOR USE IN GRID
             yLine = [],
             xLine = [],
@@ -129,7 +144,7 @@
             role = 'faculty',
             fs = 'Total',
             year = 8,
-            datatype = 0;
+            datatype = 0; // FOR USE IN CALCULATING GROWTH
 
         // VARIABLES FOR LOOP
         // CAN BE FOUND IN PROCESS DATA FOR MORE FLEXIBILITY
@@ -205,7 +220,37 @@
                 }
                 personnel.push(yearData)
             }
-
+            
+            // ------------------------ SET UP DATA SCALING ---------------------------
+            
+            // MAX VALUES OF EACH TYPE
+            maxFac = d3.max(personnel.map((x) => x.all.faculty.Total)) // FACULTY DATA
+            maxNonFac = d3.max(personnel.map((x) => x.all.nonfaculty.Total)) // NON-FACULTY DATA
+            maxPostdoc = d3.max(personnel.map((x) => x.all.postdoc.Total)) // POSTDOC DATA
+            
+            // MANUALLY SET SCALE FOR DATA = 0
+            if(maxFac == 0){
+                maxFac == 200000
+            }
+            if(maxFac == 0){
+                maxNonFac == 200000
+            }
+            if(maxFac == 0){
+                maxPostdoc == 200000
+            }
+            
+            // ADD MAX OF EACH TYPE TO ARRAY
+            maxVals.push(maxFac) // FACULTY DATA
+            maxVals.push(maxNonFac) // NON-FACULTY DATA
+            maxVals.push(maxPostdoc) // POSTDOC DATA
+            
+            // FIND MAXIMUM DATA VALUE
+            for(var i=0; i<maxVals.length; i++){
+                if(max<maxVals[i]){
+                    max = maxVals[i]
+                }
+            }
+            
             console.log(yearData.r1.faculty)
             console.log("my year data is:", inst);
             console.log("Trying out the variables", yearData[inst][role][fs])
@@ -227,6 +272,13 @@
             d3.select(".cubes").selectAll("*").remove();
             if (group != null) group.remove();
 
+            // SET THE SCALE (AUTO OR MANUAL)
+            if(hasAdjusted == 0){
+                findScale();
+            } else{
+                hasAdjusted = 0;
+            }
+            
             //******* CREATE THE CUBES AND PUSH THEM ********
             
             // ARRAYS OF ELEMENTS FOR EACH OBJECT IN THE IMAGE
@@ -248,7 +300,7 @@
             var q = getLength(results[0]);
             var p = getLength(results[1]);
             
-            var con = [];
+            var con = []; // STORES VALUES OF THE YEAR 2007 FOR USE IN CALCULATING GROWTH
 
             for (var z = 0; z < q; z++) {
                 
@@ -262,20 +314,27 @@
 
                     // ------------------------ CUBE ------------------------------
                     
-                    var y = parseFloat((-1 * (secData) / 10000).toFixed(5)); // NUMBER OF DIGITS TO APPEAR AFTER DECIMAL POINT = 5
+                    var y = parseFloat((-1 * (secData) / diviser).toFixed(5)); // NUMBER OF DIGITS TO APPEAR AFTER DECIMAL POINT = 5 (10000)
                     var a = 5 * x - 5*(p/2); // ADJUST SIZE
                     var b = 5 * z - 5*(q/2); // ADJUST SIZE
                     
+                    // ADJUST DATA TO SHOW GROWTH
                     if(datatype == 1){
-                        if(z == 0){
-                            con.push(y);
+                        if(z == 0){ // YEAR 2007
+                            con.push(secData);
+                            y=0;
                         } else{
                             // CALCULATIONS FOR GROWTH GO HERE
-                            // USE THE VALUES IN CON AND THE Y VALUE
+                            // USE THE VALUES IN CON AND SECDATA
                             // TO CALCULATE THE NEW Y FOR GROWTH
+                            
+                            var val;
+                            val = ((secData-con[x])/con[x])*100
+                            y = (-val)/10
                         }
                     }
 
+                    // MAKE THE CUBE
                     var _cube = makeCube(a, y, b); // MAKE THE CUBE USING BASE (X,Y,Z)
                     _cube.id = 'cube_' + cnt++; // THE NAME OF THE CUBE i.e cube_1
                     _cube.height = y; // RECORDS THE HEIGHT OF THE CUBE
@@ -367,6 +426,68 @@
 
 
         /**
+        * THIS IS A FUNCTION CALLED ADJUST
+        * IT IS CALLED WHEN A MANUAL CHANGE TO THE SCALE HAS BEEN MADE
+        * IT CHANGES THE SCALE OF THE IMAGE BASED ON USER INPUT
+        **/
+        function adjust(){
+            thescale = document.getElementById("scale");
+            diviser = thescale.value;
+            hasAdjusted = 1;
+            init();
+        }
+
+
+
+
+
+
+        /**
+        * THIS IS A FUNCTION CALLED ADINPUT
+        * IT TAKES THE AUTO CALCULATED SCALE AND
+        * PRESENTS IT IN THE SCALE INPUT BOX
+        **/
+        function adInput(div){
+            thescale = document.getElementById("scale");
+            thescale.value = diviser
+        }
+
+
+
+
+
+
+        /**
+        * THIS IS A FUNCTION CALLED FIND SCALE
+        * IT LOOKS AT WHAT VARIABLES ARE CHECKED
+        * AND THEN CALCULATES THE SCALE BASED OFF OF IT
+        **/
+        function findScale(){
+            var a = document.getElementsByName('variable');
+            
+            // IF STAFF IS CHECKED
+            if(a[2].checked){
+                diviser = max/scale;
+            }
+            else{
+                var b = document.getElementsByName("staff")
+                if(b[0].checked){ // FACULTY
+                    diviser = maxFac/scale
+                } else if(b[1].checked){ // NONFACULTY
+                    diviser = maxNonFac/scale
+                } else if(b[2].checked){ // POSTDOC
+                    diviser = maxPostdoc/scale
+                }
+            }
+            adInput(diviser)
+        }
+
+
+
+
+
+
+        /**
         * THIS IS A FUNCTION CALLED SETUP
         * IT MAKES CERTAIN RADIOBOXES VISIBLE DEPENDING ON INPUT
         **/
@@ -378,32 +499,37 @@
             var d5 = document.getElementById("warning");
             var d6 = document.getElementById("image");
             var d7 = document.getElementById("valuebuttons");
+            var d8 = document.getElementById("scalediv");
             var x = document.getElementsByName('variable');
 
             if(checkinput==2){
                if(x[0].checked==false){ //years
                     d4.style.display = "block"
                     d7.style.display = "none"
-                    datatype = 0
+                    datatype = 0 // MAKES SURE TO RESET GROWTH
                 } else{
                     d4.style.display = "none"
                     d7.style.display = "block"
                 }
+                
                 if(x[1].checked==false){ //inst
                     d1.style.display = "block"
                 } else{
                     d1.style.display = "none"
                 }
+                
                 if(x[2].checked==false){ //staff
                     d2.style.display = "block"
                 } else{
                     d2.style.display = "none"
                 }
+                
                 if(x[3].checked==false){ //fields
                     d3.style.display = "block"
                 } else{
                     d3.style.display = "none"
                 }
+                d8.style.display = "block";
                 d6.style.display = "block";
                 d5.style.display = "none";
                 init();
@@ -415,6 +541,7 @@
                 d4.style.display = "none"
                 d6.style.display = "none"
                 d7.style.display = "none"
+                d8.style.display = "none";
             }
         }
 
@@ -930,14 +1057,6 @@
         }
 
 
-        /**
-        *THIS FUNCTION MAKES A TABLE THAT DISPLAYS THE DATA FOR EACH CUBE  <----------------------NOT SURE HOW CORRECT THIS IS SO FEEL FREE TO DELETE
-        **/
-        function makeTable() {
-            var svg3 = d3.select('svg3') 
-
-        }
-
 
 
 
@@ -961,4 +1080,19 @@
             ];
         }
 
+
+
+
+
+
+        /**
+        * THIS IS A FUNCTION CALLED MAKETABLE
+        * THIS FUNCTION MAKES A TABLE THAT DISPLAYS THE DATA FOR EACH CUBE  
+        * NOT SURE HOW CORRECT THIS IS SO FEEL FREE TO DELETE
+        * THIS FUNCTION IS NOT BEING CALLED ANYWHERE
+        **/
+        function makeTable() {
+            var svg3 = d3.select('svg3') 
+
+        }
         //d3.selectAll('button').on('click', init); // RERUNS INIT WITH BUTTON PRESS

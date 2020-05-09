@@ -1,17 +1,17 @@
 <!-- ********** TO DO LIST **************** -->
 <!-- FOR SOME REASON, THE COORDINATE PLANE IS UPSIDE DOWN -->
 <!-- QUERIES -->
-<!-- SCALING? -->
 <!-- BUTTON FOR FURTHER ANALYSIS -->
 <!-- GROWTH VS ABSOLUTE -->
 <!-- REPOSITION TOOLTIP AND LEGEND -->
+<!-- NO AUTO SCALING FOR DATA OTHER THAN STAFF TYPE YET -->
 
 
 <!-- ************** SUGGESTIONS ***************** -->
 
 
 <!-- ******************* BUGS ******************* -->
-
+<!-- ERROR OCCURS WHEN CHOOSING THE NONFACULTY DATA TYPE -->
 
 
 <!DOCTYPE html>
@@ -73,7 +73,7 @@
             <div id="staffbuttons" style="display: none">
                 faculty <input
                     type="radio"
-                    value="r1"
+                    value="faculty"
                     name="staff"
                     onChange="role='faculty'; init()"
                     class="staffType"
@@ -81,14 +81,14 @@
                     > &nbsp;|&nbsp;
                 nonfaculty <input
                     type="radio"
-                    value="fourYear"
+                    value="nonfaculty"
                     name="staff"
                     onChange="role='nonfaculty'; init()"
                     class="staffType"
                     >&nbsp;|&nbsp;
                 postdoc <input
                     type="radio"
-                    value="twoYear"
+                    value="postdoc"
                     name="staff"
                     onChange="role='postdoc'; init()"
                     class="staffType"
@@ -239,6 +239,10 @@
                     class="dataType"
                     >&nbsp;|&nbsp;
             </div>
+            <!-- **************** SCALING **************************** -->
+            <div id="scalediv" style="display: none">
+                Scale <input type="number" id="scale" name="scale" onchange="adjust()">
+            </div>
             <!-- ******************* WARNING ******************* -->
             <div id="warning" style="display: none; color: crimson">
                 <br>
@@ -253,6 +257,12 @@
 
     </div><!-- container -->
 
+    
+    
+    
+    
+    
+    <!-- ************************ THIS IS THE DATA VISULIZATION ************************ -->
     <div id="image" style="display: block">
         <svg width="800" height="500" style="outline-color: black; outline-style: solid; position: absolute; left: 300px"></svg>
     </div>
@@ -260,49 +270,50 @@
 
     
     
-<!-- DATA TABLE FOR CUBE -->
-    </div>
-    <svg width="30%" height="50%" viewBox="0 0 370 160">>
-<title>Expenses</title>
+    <!-- ****************************** DATA TABLE FOR CUBE ****************************** -->
+    <div>
+        <svg width="30%" height="50%" viewBox="0 0 370 160">>
+            <title>Expenses</title>
 
-<g id='rowGroup' transform='translate(0, 0)'>
-<rect x='25' y='40' width='310' height='20' fill='gainsboro'/>
-<rect x='25' y='76' width='310' height='20' fill='gainsboro'/>
+            <g id='rowGroup' transform='translate(0, 0)'>
+                <rect x='25' y='40' width='310' height='20' fill='gainsboro'/>
+                <rect x='25' y='76' width='310' height='20' fill='gainsboro'/>
 
-<text x='30' y='30' font-size='18px' font-weight='bold' fill='crimson' text-anchor='middle' role="row">
-<tspan   x='200'>Data</tspan>
-</text>
+                <text x='30' y='30' font-size='18px' font-weight='bold' fill='crimson' text-anchor='middle' role="row">
+                    <tspan   x='200'>Data</tspan>
+                </text>
 
-<text x='30' y='30' font-size='18px' text-anchor='middle' role="row">
-<tspan  x='30' dy='1.5em' font-weight='bold' fill='crimson' text-anchor='start'>Staff</tspan>
-<tspan  x='200'>$ 195</tspan> <!--< ADD STAFF DATA VARIABLE HERE>-->
-</text>
+                <text x='30' y='30' font-size='18px' text-anchor='middle' role="row">
+                    <tspan  x='30' dy='1.5em' font-weight='bold' fill='crimson' text-anchor='start'>Staff</tspan>
+                    <tspan  x='200'>$ 195</tspan> <!--< ADD STAFF DATA VARIABLE HERE>-->
+                </text>
 
-<text x='30' y='30' font-size='18px' text-anchor='middle' role="row">
-<tspan  x='30' dy='2.5em' font-weight='bold' fill='crimson' text-anchor='start'>Institution</tspan>
-<tspan  x='200'>$ 70</tspan> <!--< ADD INSTITUTION DATA VARIABLE HERE>-->
-</text>
+                <text x='30' y='30' font-size='18px' text-anchor='middle' role="row">
+                    <tspan  x='30' dy='2.5em' font-weight='bold' fill='crimson' text-anchor='start'>Institution</tspan>
+                    <tspan  x='200'>$ 70</tspan> <!--< ADD INSTITUTION DATA VARIABLE HERE>-->
+                </text>
 
-<text x='30' y='30' font-size='18px' text-anchor='middle' role="row">
-<tspan  x='30' dy='3.5em' font-weight='bold' fill='crimson' text-anchor='start'>Field Type</tspan>
-<tspan  x='200'>$ 88</tspan> <!--< ADD FIELD TYPE DATA VARIABLE HERE>-->
-</text>
+                <text x='30' y='30' font-size='18px' text-anchor='middle' role="row">
+                    <tspan  x='30' dy='3.5em' font-weight='bold' fill='crimson' text-anchor='start'>Field Type</tspan>
+                    <tspan  x='200'>$ 88</tspan> <!--< ADD FIELD TYPE DATA VARIABLE HERE>-->
+                </text>
 
-<text x='30' y='30' font-size='18px' text-anchor='middle' role="row">
-<tspan id="q4"  x='30' dy='4.5em' font-weight='bold' fill='crimson' text-anchor='start'>Total Jobs</tspan>
-<tspan  x='200'>$ 133</tspan>  <!--< ADD TOTAL JOBS DATA VARIABLE HERE>-->
-</text>
-</g>
-</svg>
+                <text x='30' y='30' font-size='18px' text-anchor='middle' role="row">
+                    <tspan id="q4"  x='30' dy='4.5em' font-weight='bold' fill='crimson' text-anchor='start'>Total Jobs</tspan>
+                    <tspan  x='200'>$ 133</tspan>  <!--< ADD TOTAL JOBS DATA VARIABLE HERE>-->
+                </text>
+            </g>
+        </svg>
      </div>     
     
     
 
+    
 
     
-    <!-- TOOLTIP
-    the width is set to make sure tooltip svg ends when vizualization begins-->
-    <svg id= "tooltipSVG" width="290" height="500" viewBox="-100 0 300 150" style ="outline-color: aqua; outline-style: solid; position: absolute;>
+    <!-- ************************ TOOLTIP ************************ -->
+    <!-- the width is set to make sure tooltip svg ends when vizualization begins-->
+    <svg id= "tooltipSVG" width="290" height="500" viewBox="-100 0 300 150" style ="outline-color: aqua; outline-style: solid; position: absolute;">
         <style>
             .small { font: italic 5px sans-serif; }
             .heavy { font: bold 5px sans-serif; }
@@ -316,8 +327,15 @@
         <text x="20" y="0" class="small"></text>
     </svg>
 
-    <!-- trying to commit under my github account: sunnyako>
-    <!--   THIS IS THE UPDATE BUTTON IN THE CORNER -->
+    
+    
+    
+    
+    
+    
+    <!-- trying to commit under my github account: sunnyako -->
+
+    <!-- ************************ THIS IS THE UPDATE BUTTON IN THE CORNER ************************ -->
     <style type="text/css">
 
         .button {
