@@ -9,6 +9,7 @@
     ADJUST()
     ADINPUT(INT)
     FINDSCALE()
+    FREEZE()
     SETUP()
     GETLENGTH(STRING) RETURN NUMBER
     FIRST(STRING[], INT) RETURN DATA
@@ -55,6 +56,7 @@
             diviser = 1, // USED TO CHANGE MAX DATA TO SIZE SCALE
             hasAdjusted = 0, // IF A MANUAL ADJUSTMENT HAS BEEN MADE
             maxVals = [], // USED TO FIND THE MAX DATA VALUE
+            frozen = 0,
             
             // NEW VARIABLES FOR USE IN GRID
             yLine = [],
@@ -273,11 +275,14 @@
             if (group != null) group.remove();
 
             // SET THE SCALE (AUTO OR MANUAL)
-            if(hasAdjusted == 0){
-                findScale();
-            } else{
-                hasAdjusted = 0;
+            if(frozen == 0){
+                if(hasAdjusted == 0){
+                    findScale();
+                } else{
+                    hasAdjusted = 0;
+                }
             }
+            
             
             //******* CREATE THE CUBES AND PUSH THEM ********
             
@@ -432,6 +437,9 @@
         **/
         function adjust(){
             thescale = document.getElementById("scale");
+            if(thescale.value < 1){
+                thescale.value = 1;
+            }
             diviser = thescale.value;
             hasAdjusted = 1;
             init();
@@ -480,6 +488,28 @@
                 }
             }
             adInput(diviser)
+        }
+
+
+
+
+
+
+        /**
+        * THIS IS A FUNCTION CALLED FREEZE
+        * IT FREEZES THE SCALE SO THAT IT CANNOT BE CHANGED AT ALL
+        **/
+        function freeze(){
+            var x = document.getElementsByName("freeze")
+            var sc = document.getElementById("scale")
+            if(x[0].checked){
+                sc.disabled = true;
+                frozen = 1;
+            } else{
+                sc.disabled = false;
+                frozen = 0;
+                init();
+            }
         }
 
 

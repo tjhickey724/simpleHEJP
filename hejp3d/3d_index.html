@@ -241,7 +241,8 @@
             </div>
             <!-- **************** SCALING **************************** -->
             <div id="scalediv" style="display: none">
-                Scale <input type="number" id="scale" name="scale" onchange="adjust()">
+                Scale <input type="number" id="scale" name="scale" onchange="adjust()" min="1">
+                <input type="checkbox" value="freeze" name="freeze" onchange="freeze()"> Freeze Scale
             </div>
             <!-- ******************* WARNING ******************* -->
             <div id="warning" style="display: none; color: crimson">
