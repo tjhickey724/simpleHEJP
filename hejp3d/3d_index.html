@@ -20,7 +20,7 @@
 <!-- IMPORTED SCRIPTS -->
 <script src="https://d3js.org/d3.v4.min.js"></script>
 <script src="https://unpkg.com/d3-3d/build/d3-3d.min.js"></script>
-
+<script src="https://gka.github.io/d3-jetpack/d3v4+jetpack.js"></script>
 
 <body>
 
@@ -258,85 +258,41 @@
 
     </div><!-- container -->
 
-    
-    
-    
-    
-    
+
+
+
+
+
     <!-- ************************ THIS IS THE DATA VISULIZATION ************************ -->
     <div id="image" style="display: block">
-        <svg width="800" height="500" style="outline-color: black; outline-style: solid; position: absolute; left: 300px"></svg>
+        <svg width="900" height="500" style="outline-color: black; outline-style: solid; position: absolute; left: 300px"></svg>
+
     </div>
-    
 
-    
-    
-    <!-- ****************************** DATA TABLE FOR CUBE ****************************** -->
+
+    <!-- DATA TABLE DISPLAYED WHEN A CUBE IS CLICKED
+    Idea: Make an Accessible SVG table easily manipulated by d3.js-->
     <div>
-        <svg width="30%" height="50%" viewBox="0 0 370 160">>
-            <title>Expenses</title>
-
-            <g id='rowGroup' transform='translate(0, 0)'>
-                <rect x='25' y='40' width='310' height='20' fill='gainsboro'/>
-                <rect x='25' y='76' width='310' height='20' fill='gainsboro'/>
-
-                <text x='30' y='30' font-size='18px' font-weight='bold' fill='crimson' text-anchor='middle' role="row">
-                    <tspan   x='200'>Data</tspan>
-                </text>
-
-                <text x='30' y='30' font-size='18px' text-anchor='middle' role="row">
-                    <tspan  x='30' dy='1.5em' font-weight='bold' fill='crimson' text-anchor='start'>Staff</tspan>
-                    <tspan  x='200'>$ 195</tspan> <!--< ADD STAFF DATA VARIABLE HERE>-->
-                </text>
-
-                <text x='30' y='30' font-size='18px' text-anchor='middle' role="row">
-                    <tspan  x='30' dy='2.5em' font-weight='bold' fill='crimson' text-anchor='start'>Institution</tspan>
-                    <tspan  x='200'>$ 70</tspan> <!--< ADD INSTITUTION DATA VARIABLE HERE>-->
-                </text>
-
-                <text x='30' y='30' font-size='18px' text-anchor='middle' role="row">
-                    <tspan  x='30' dy='3.5em' font-weight='bold' fill='crimson' text-anchor='start'>Field Type</tspan>
-                    <tspan  x='200'>$ 88</tspan> <!--< ADD FIELD TYPE DATA VARIABLE HERE>-->
-                </text>
-
-                <text x='30' y='30' font-size='18px' text-anchor='middle' role="row">
-                    <tspan id="q4"  x='30' dy='4.5em' font-weight='bold' fill='crimson' text-anchor='start'>Total Jobs</tspan>
-                    <tspan  x='200'>$ 133</tspan>  <!--< ADD TOTAL JOBS DATA VARIABLE HERE>-->
-                </text>
-            </g>
-        </svg>
-     </div>     
-    
-    
-
-    
-
-    
-    <!-- ************************ TOOLTIP ************************ -->
-    <!-- the width is set to make sure tooltip svg ends when vizualization begins-->
-    <svg id= "tooltipSVG" width="290" height="500" viewBox="-100 0 300 150" style ="outline-color: aqua; outline-style: solid; position: absolute;">
-        <style>
-            .small { font: italic 5px sans-serif; }
-            .heavy { font: bold 5px sans-serif; }
-            .text-align: center
-            /**
-            * Note that the color of the text is set with the
-            * fill property, the color property is for HTML only
-            **/
+    <svg id = "tooltipTT" width="290" height="500" viewBox="-100 0 300 150" style ="position: absolute;">
+        <style type="text/css">
+            body { font-family: 'Helvetica Neue', Helvetica; font-weight: 300; padding: 20px;}
+            th { text-align: left; }
+            th, td { padding: 0 1em 0.5ex 0;}
+            th.center, td.center { text-align: center; }
+            th.num, td.num { text-align: right; }
         </style>
+        </svg> <!-- End of table svg -->
+       <!-- End of table div -->
 
-        <text x="20" y="0" class="small"></text>
-    </svg>
+    </div>
 
-    
-    
-    
-    
-    
-    
-    <!-- trying to commit under my github account: sunnyako -->
 
-    <!-- ************************ THIS IS THE UPDATE BUTTON IN THE CORNER ************************ -->
+
+    <!-- TOOLTIP
+    Notes: The width is set to make sure tooltip svg ends when vizualization begins-->
+
+
+    <!--   THIS IS THE UPDATE BUTTON IN THE CORNER -->
     <style type="text/css">
 
         .button {
@@ -356,4 +312,5 @@
 
     <!-- start of the javascript to create the cubes themselves and work with data -->
     <script src="3d_script.js"></script>
+
 </body>
