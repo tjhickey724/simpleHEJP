@@ -22,18 +22,11 @@
     DRAGEND()
     MAKECUBE(NUMBER, NUMBER, NUMBER) RETURN VERTEX[]
 
-
-    MAKETABLE() IS CURRENTLY NOT BEING USED (DELETE?)
 **/
-
-
-
-
 
 
         // ---------------------- IMAGE VARIABLES -------------------------
         console.log("Starting the script")
-
 
         var tooltipSVG = d3.select('#tooltipTT');
 
@@ -74,10 +67,6 @@
         var table = null;
 
 
-
-
-
-
         // ------------------------ DATA VARIABLES ---------------------------
 
         var datas; // THE DATA TO BE USED IN VISUALIZATION
@@ -91,9 +80,6 @@
             .rotateX(-startAngle) // ROTATION OF CUBES ON Y-AXIS
             .origin(origin) // POSITIONS OBJECT IN 3D AREA AROUND ORIGIN
             .scale(scale); // FITS SIZE OF SHAPE TO IMAGE
-
-
-
 
 
 
@@ -115,9 +101,6 @@
 
 
 
-
-
-
         // ------------------------ OTHER VARIABLES ---------------------------
 
         var color = d3.scaleOrdinal(d3.schemeCategory20); // AN ARRAY OF 20 COLORS REPRESENTED AS HEX NUMBERS WITHIN AN ORDINAL SCALE OBJECT
@@ -131,9 +114,6 @@
             alpha = 0,
             beta = 0;
         var checkinput = 0;
-
-
-
 
 
 
@@ -176,10 +156,8 @@
         var faculty = ['faculty',
                        'nonfaculty',
                        'postdoc'];
+
         // ------------------------ VARIABLES END ---------------------------
-
-
-
 
 
 
@@ -222,8 +200,9 @@
                     },
                     Year: year
                 }
-		console.log("year data for "+year)
-		console.log(JSON.stringify(yearData,2))
+		          console.log("year data for "+year)
+		          console.log(JSON.stringify(yearData,2))
+                
                 personnel.push(yearData)
             }
 
@@ -264,10 +243,6 @@
         })
 
         //****************** END OF PROCESSING JSON *********************
-
-
-
-
 
 
         /**
@@ -382,9 +357,6 @@
 
 
 
-
-
-
         /**
         * THIS IS A FUNCTION CALLED GETRESULT
         * IT OBTAINS THE USER INPUT FROM CHECKBOXES
@@ -409,10 +381,6 @@
         }
 
 
-
-
-
-
         /**
         * THIS IS A FUNCTION CALLED LIMIT CHECK
         * IT LIMITS THE NUMBER OF CHECKBOXES THAT CAN BE CHECKED AT A TIME
@@ -434,9 +402,6 @@
 
 
 
-
-
-
         /**
         * THIS IS A FUNCTION CALLED ADJUST
         * IT IS CALLED WHEN A MANUAL CHANGE TO THE SCALE HAS BEEN MADE
@@ -454,9 +419,6 @@
 
 
 
-
-
-
         /**
         * THIS IS A FUNCTION CALLED ADINPUT
         * IT TAKES THE AUTO CALCULATED SCALE AND
@@ -466,8 +428,6 @@
             thescale = document.getElementById("scale");
             thescale.value = diviser
         }
-
-
 
 
 
@@ -499,9 +459,6 @@
 
 
 
-
-
-
         /**
         * THIS IS A FUNCTION CALLED FREEZE
         * IT FREEZES THE SCALE SO THAT IT CANNOT BE CHANGED AT ALL
@@ -518,9 +475,6 @@
                 init();
             }
         }
-
-
-
 
 
 
@@ -585,8 +539,6 @@
 
 
 
-
-
         /**
         * THIS IS A FUNCTION CALLED GETLENGTH
         * IT TAKES A STRING NAME OF DATA AS INPUT
@@ -606,8 +558,6 @@
                 return years.length;
             }
         }
-
-
 
 
 
@@ -648,9 +598,6 @@
 
 
 
-
-
-
         /**
         * THIS IS A FUNCTION CALLED SECOND
         * IT TAKES A DATA OBJECT
@@ -672,9 +619,6 @@
                 return first[fields[z]]
             }
         }
-
-
-
 
 
 
@@ -727,9 +671,6 @@
                 .style("text-anchor","end")
                 .text(function(d) { return d; });
         }
-
-
-
 
 
 
@@ -845,10 +786,6 @@
                 .merge(cubes)
                 .sort(cubes3D.sort)
 
-                /** THIS IS THE INFO ON THE PREVIOUS TOOLTIP
-                    .html('<div style="font-size: 2rem; font-weight: bold">'+ d.id +'</div>')
-                    .style('left', (origin[0]-400) + 'px')
-                    .style('top', (300) + 'px') ***/
 
             // ---------------------  NEW ON-CLICK OPTIONS --------------------- //
 
@@ -939,6 +876,7 @@
         }
 
 
+
         /**
         * THIS IS A FUNCTION CALLED DRAW_iNFORMATION
         * THIS IS THE NEW TOOLTIP THAT DRAWS INFO ABOUT EACH CUBE
@@ -950,7 +888,7 @@
                 console.log("removing the table")
                 table.selectAll("*").remove();
             }
-            else{
+                else{
                         var label = getResult()
 
                         //All the text that will be displayed
@@ -993,12 +931,14 @@
                         }
 
                     //Collects all the possible information about the clicked cube
-                    //if repeated, appears as empty string ""
+                    //holds the Indormation column for each row. tpr = total possible rows
                     var tpr = [height_id, role_id, fields_id, x_id, y_id, inst_id]
+                    
+                    //holds the Data column. tdp = total possible data
                     var tpd = [height_text, role_text, fields_text, x_text, y_text, inst_text]
                     console.log("All the rows before", tpr)
 
-                    //Remove non-applicable data
+                    //Remove non-applicable data from Data and Information columns
                     function table_dedup(arr) {
                         for( var i = 0; i < arr.length; i++){
                             if ( arr[i] === " ") {
@@ -1007,132 +947,118 @@
                         }
                     }
 
-                //Remove duplicates from headings and data
-                table_dedup(tpr);
-                table_dedup(tpd);
-                console.log("All the rows after", tpr)
+                    //Remove duplicates from Headings and Data
+                    table_dedup(tpr);
+                    table_dedup(tpd);
+                    //make sure deduplication occurs
+                    console.log("All the rows after", tpr)
+                    
 
-                //we need the variable names to construct the tab;e
-                const varToString = varObj => Object.keys(varObj)[0]
-                const displayName = varToString({ height_id })
-                console.log("new name", displayName)
+                    /** START BUILDING THE TABLE **/
+                    
+                    //the headings for the table
+                    var data_h = ["data"]
 
+                    //create rows for the table    
+                    var rows = []
+                    for(var x = 0; x<tpr.length; x++){
+                        console.log("Creating table info")
+                        const obj = data_h.reduce((o, key) => Object.assign(o, {[key]: tpr[x]}), {});
+                        obj.information = tpd[x]
+                        rows.push(obj)
 
+                    }
 
-            var data_h = ["data"]
-
-
-            const obj = tpr.reduce((o, key) => Object.assign(o, {[key]: tpd[tpr.indexOf(key)]}), {});
-
-            var movies = []
-            for(var x = 0; x<tpr.length; x++){
-                console.log("Pushes")
-                const objs = data_h.reduce((o, key) => Object.assign(o, {[key]: tpr[x]}), {});
-                objs.information = tpd[x]
-                movies.push(objs)
-
-            }
-
+                    //all the possible rows
+                console.log("Rows", rows)
 
 
-            const objs = data_h.reduce((o, key) => Object.assign(o, {[key]: tpd[0]}), {});
-            //obj = tpr.reduce((o, key) => Object.assign(o, {"one": tpd[tpr.indexOf(key)]}), {});
-
-
-            //all the possible rows
-
-
-                console.log("Movies", movies)
-
-/*
-Movies 
-(5) [{…}, {…}, {…}, {…}, {…}]
-0: {data: "Total Jobs", information: "29002"}
-1: {data: "Job Role", information: "faculty"}
-2: {data: "Field Type", information: "Total"}
-3: {data: "Years", information: "2007"}
-4: {data: "Institution", information: "fourYear"}
-length: 5
-__proto__: Array(0)
-*/
-let ajaxData = 
-{staff:movies[1]['information'],
- field:movies[2]['information'],
- year:movies[3]['information'],
- inst:movies[4]['information']}
-console.log('ajaxData='+JSON.stringify(ajaxData,3))
-
-formdata = new FormData()
-formdata.set('year',ajaxData['year'])
-formdata.set('staff',ajaxData['staff'])
-formdata.set('inst',ajaxData['inst'])
-formdata.set('field',ajaxData['field'])
-axios({method:'post',url:'/rawdata',
-    data:formdata})
-  .then((response) => {
-    console.log("processing axios request")
-    console.log(response.data);
-    console.log(response.status);
-    console.log(response.statusText);
-    console.log(response.headers);
-    console.log(response.config);
-    document.getElementById('rawdata').innerHTML = response.data
-  });
-
-		document.getElementById('rawdata').innerHTML = JSON.stringify(movies,2)
-                console.log("height dilemma", "'" + tpr[0] + "'")
-
-                var new_columns = []
-
-
+                //Create columns for the table
                 var columns = [
-                { head: "Data", cl: 'center', html: d3.f('data') },
-                { head: "Information", cl: 'center',html: d3.f('information') }
-                ];
+                    { head: "Data", cl: 'center', html: d3.f('data') },
+                    { head: "Information", cl: 'center',html: d3.f('information') }
+                    ];
 
-            console.log("Starting Table")
+                console.log("Starting Table")
 
-            table = d3.select('body')
-                .append("table")
-            console.log("Continuing for Table")
+                table = d3.select('body')
+                    .append("table")
+                console.log("Continuing for Table")
 
 
-            table.append('thead').append('tr')
-                .selectAll('th')
-                .data(columns).enter()
-                .append('th')
-                .attr('class', d3.f('cl'))
-                .text(d3.f('head'));
+                table.append('thead').append('tr')
+                    .selectAll('th')
+                    .data(columns).enter()
+                    .append('th')
+                    .attr('class', d3.f('cl'))
+                    .text(d3.f('head'));
 
-            // create table body
-            table.append('tbody')
-                .appendMany(movies, 'tr')
-                .appendMany(td_data, 'td')
-                .html(d3.f('html'))
-                .attr('class', d3.f('cl'));
+                // create table body
+                table.append('tbody')
+                    .appendMany(rows, 'tr')
+                    .appendMany(td_data, 'td')
+                    .html(d3.f('html'))
+                    .attr('class', d3.f('cl'));
 
-            console.log("appended body")
+                console.log("appended body")
 
-            function td_data(row, i) {
-                return columns.map(function(c) {
-                    // compute cell values for this specific row
-                    var cell = {};
-                    d3.keys(c).forEach(function(k) {
-                        console.log("KEYS")
-                        cell[k] = typeof c[k] == 'function' ? c[k](row,i) : c[k];
-                    });
-                    return cell;
-                  });
+                function td_data(row, i) {
+                    return columns.map(function(c) {
+                        // compute cell values for this specific row
+                        var cell = {};
+                        d3.keys(c).forEach(function(k) {
+                            console.log("KEYS")
+                            cell[k] = typeof c[k] == 'function' ? c[k](row,i) : c[k];
+                        });
+                        return cell;
+                      });
+                }
+                
+                    /*SHOWS THE RAW DATA FOR EACH CUBE
+                    
+                    Rows
+                    (5) [{…}, {…}, {…}, {…}, {…}]
+                    0: {data: "Total Jobs", information: "29002"}
+                    1: {data: "Job Role", information: "faculty"}
+                    2: {data: "Field Type", information: "Total"}
+                    3: {data: "Years", information: "2007"}
+                    4: {data: "Institution", information: "fourYear"}
+                    length: 5
+                    __proto__: Array(0)
+                    */
+
+                    let ajaxData =
+
+                    {staff:rows[1]['information'],
+                     field:rows[2]['information'],
+                     year:rows[3]['information'],
+                     inst:rows[4]['information']}
+                    console.log('ajaxData='+JSON.stringify(ajaxData,3))
+
+                    formdata = new FormData()
+                    formdata.set('year',ajaxData['year'])
+                    formdata.set('staff',ajaxData['staff'])
+                    formdata.set('inst',ajaxData['inst'])
+                    formdata.set('field',ajaxData['field'])
+                    axios({method:'post',url:'/rawdata',
+                        data:formdata})
+                      .then((response) => {
+                        console.log("processing axios request")
+                        console.log(response.data);
+                        console.log(response.status);
+                        console.log(response.statusText);
+                        console.log(response.headers);
+                        console.log(response.config);
+                        document.getElementById('rawdata').innerHTML = response.data
+                      });
+
+		          document.getElementById('rawdata').innerHTML = JSON.stringify(rows,2)
+                  console.log("height dilemma", "'" + tpr[0] + "'")        
+
+               console.log("tried to display the cube info")
             }
 
-           console.log("tried to display the text")
         }
-
-        }
-
-
-
-
 
 
         /**
@@ -1143,10 +1069,6 @@ axios({method:'post',url:'/rawdata',
             mx = d3.event.x;
             my = d3.event.y;
         }
-
-
-
-
 
 
         /**
@@ -1166,10 +1088,6 @@ axios({method:'post',url:'/rawdata',
             ];
             processData(data, 0);
         }
-
-
-
-
 
 
         /**
@@ -1194,9 +1112,6 @@ axios({method:'post',url:'/rawdata',
         }
 
 
-
-
-
         /**
         * THIS IS A FUNCTION CALLED MAKECUBE
         * IT CREATES THE VERTICES OF A SINGLE CUBE
@@ -1215,11 +1130,6 @@ axios({method:'post',url:'/rawdata',
                 { x: x + 1, y: y, z: z - 1 }, // BACK  TOP RIGHT
             ];
         }
-
-
-
-
-
 
 
         //d3.selectAll('button').on('click', init); // RERUNS INIT WITH BUTTON PRESS
