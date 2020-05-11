@@ -145,9 +145,11 @@ def processYears(result,inst,staff):
     data = {year:processFSdict(result,inst,staff,year) for year in [2007]+list(range(2010,2018))}
     return data
 
-def processFSdict(result,inst,staff,year):
+def processFSdict(result0,inst,staff,year):
     """ returns a dictionary with the field of study counts for each institution_type, job_type, and year
     """
+    result = [x for x in result0 if x[0]==year]
+
     data =  {"year":year,
              "institution_type":inst,
              "job_type":staff,
