@@ -273,7 +273,7 @@
     <!-- DATA TABLE DISPLAYED WHEN A CUBE IS CLICKED
     Idea: Make an Accessible SVG table easily manipulated by d3.js-->
     <div>
-    <svg id = "tooltipTT" width="290" height="500" viewBox="-100 0 300 150" style ="position: absolute;">
+    <svg id = "tooltipTT" width="290" height="500" viewBox="-100 0 300 150" style ="position: absolute;>"
         <style type="text/css">
             body { font-family: 'Helvetica Neue', Helvetica; font-weight: 300; padding: 20px;}
             th { text-align: left; }
@@ -286,8 +286,7 @@
 
     </div>
 
-
-
+<hr>
     <!-- TOOLTIP
     Notes: The width is set to make sure tooltip svg ends when vizualization begins-->
 
@@ -310,7 +309,22 @@
     <button class = "button" onClick = "setUp();">update</button>
     <!-- END OF THE UPDATE BUTTON IN THE CORNER -->
 
+
+    <div id = "rawdata" 
+style ="
+height: 33vh;
+    position: fixed; 
+    bottom:0%;
+    width:100%; 
+    background-color: #ffccaa; 
+    overflow:scroll
+">
+This is where the raw data goes ..
+</div>
+
+
     <!-- start of the javascript to create the cubes themselves and work with data -->
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
     <script src="3di.js"></script>
 
 </body>

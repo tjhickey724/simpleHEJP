@@ -36,6 +36,26 @@ app = Flask(__name__,
 def home():
     return render_template("homemini.html")
 
+@app.route('/rawdata',methods=["POST"])
+def rawdata():
+    year = request.form.get('year')
+    staff = request.form.get('staff')
+    inst = request.form.get('inst')
+    print(year+" "+staff+" "+inst)
+    print(request.form)
+    result = queryAll(
+     "Select * from maintable where year="+year+" limit 5;")
+    return render_template("rawdata.html",result=result)
+
+    return render_template("rawdata.html",result=[{'a':year},{'b':2}])
+
+def rawdata2():
+    data = request.form;
+    print(data)
+    result = queryAll(
+"Select * from maintable where year="+data['year']+" limit 5;")
+    return render_template("rawdata.html",result=result)
+
 @app.route('/test',methods=["GET"])
 def test():
     result = queryAll("Select * from maintable limit 5")

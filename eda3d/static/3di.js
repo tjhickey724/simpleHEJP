@@ -1043,6 +1043,41 @@
 
 
                 console.log("Movies", movies)
+
+/*
+Movies 
+(5) [{…}, {…}, {…}, {…}, {…}]
+0: {data: "Total Jobs", information: "29002"}
+1: {data: "Job Role", information: "faculty"}
+2: {data: "Field Type", information: "Total"}
+3: {data: "Years", information: "2007"}
+4: {data: "Institution", information: "fourYear"}
+length: 5
+__proto__: Array(0)
+*/
+let ajaxData = 
+{staff:movies[1]['information'],
+ year:movies[3]['information'],
+ inst:movies[4]['information']}
+console.log('ajaxData='+JSON.stringify(ajaxData,3))
+
+formdata = new FormData()
+formdata.set('year',ajaxData['year'])
+formdata.set('staff',ajaxData['staff'])
+formdata.set('inst',ajaxData['inst'])
+axios({method:'post',url:'/rawdata',
+    data:formdata})
+  .then((response) => {
+    console.log("processing axios request")
+    console.log(response.data);
+    console.log(response.status);
+    console.log(response.statusText);
+    console.log(response.headers);
+    console.log(response.config);
+    document.getElementById('rawdata').innerHTML = response.data
+  });
+
+		document.getElementById('rawdata').innerHTML = JSON.stringify(movies,2)
                 console.log("height dilemma", "'" + tpr[0] + "'")
 
                 var new_columns = []
