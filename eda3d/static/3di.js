@@ -1057,6 +1057,7 @@ __proto__: Array(0)
 */
 let ajaxData = 
 {staff:movies[1]['information'],
+ field:movies[2]['information'],
  year:movies[3]['information'],
  inst:movies[4]['information']}
 console.log('ajaxData='+JSON.stringify(ajaxData,3))
@@ -1065,6 +1066,7 @@ formdata = new FormData()
 formdata.set('year',ajaxData['year'])
 formdata.set('staff',ajaxData['staff'])
 formdata.set('inst',ajaxData['inst'])
+formdata.set('field',ajaxData['field'])
 axios({method:'post',url:'/rawdata',
     data:formdata})
   .then((response) => {

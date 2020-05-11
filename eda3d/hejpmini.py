@@ -36,18 +36,52 @@ app = Flask(__name__,
 def home():
     return render_template("homemini.html")
 
+fieldtranslate = {
+ "FS_Life_sciences":"fs_lifesciences",
+ "FS_physicalsciencesandearthsciences":"fs_physicalsciencesandearthsciences",
+ "FS_Mathematics_and_computer_sciences":"fs_mathematicsandcomputersciences",
+ "FS_Psychology_and_social_sciences":"fs_psychologyandsocialsciences",
+ "FS_Engineering":"fs_engineering",
+ "FS_Education":"fs_education",
+ "FS_Humanities_and_arts":"fs_humanitiesandarts",
+ "FS_others":"fs_others"}
+
 @app.route('/rawdata',methods=["POST"])
 def rawdata():
     year = request.form.get('year')
     staff = request.form.get('staff')
     inst = request.form.get('inst')
-    print(year+" "+staff+" "+inst)
-    print(request.form)
-    result = queryAll(
-     "Select * from maintable where year="+year+" limit 5;")
-    return render_template("rawdata.html",result=result)
+    field = request.form.get('field')
+    staffcode = ""
+    if (staff=='faculty'):
+        staffcode = " and faculty='1' and postdoctoral='0' "
+    elif (staff=='nonfaculty'):
+        staffcode = " and faculty='0' and postdoctoral='1' "
+    else:
+        staffcode = " and faculty='0' and postdoctoral='0' "
+    fieldcode = ""
+    if (field=="Total"):
+        fieldcode = ""
+    else:
+        fieldcode = "and "+fieldtranslate[field]+"='1'"
+    instcode = ""
+    if (inst == "r1"):
+        instcode = " and isresearch1institution='1' "
+    elif (inst=="fourYear"):
+        instcode = " and fouryear='1' "
+    elif (inst=="twoYear"):
+        instcode = " and twoyear='1' "
+    else:
+        instcode = ""
 
-    return render_template("rawdata.html",result=[{'a':year},{'b':2}])
+    yearcode = " and maintable.year = "+year+" "
+
+    result,desc = queryAllPlus(
+     "Select * from maintable,nsftable where maintable.jobid=nsftable.jobid "+yearcode+fieldcode+staffcode+instcode+" limit 25;")
+    zipr=[list(zip(list(desc),list(x))) for x in result]
+
+    return render_template("rawdata.html",result=result,desc=desc,zipr=zipr)
+
 
 def rawdata2():
     data = request.form;
@@ -210,13 +244,11 @@ def queryAll(query):
 
         # create a cursor
         cur = conn.cursor()
-
- # execute a statement
+        # execute a statement
         cur.execute(query)
 
         # display the PostgreSQL database server version
         result = cur.fetchall()
-        # print(result)
 
      # close the communication with the PostgreSQL
         cur.close()
@@ -227,6 +259,45 @@ def queryAll(query):
             conn.close()
             print('Database connection closed.')
         return result
+
+
+
+def queryAllPlus(query):
+    " Connect to the PostgreSQL database server "
+    conn = None
+    result = None
+    desc = None
+    try:
+        # read connection parameters
+        # conn_string = "host='localhost' dbname='HEJP' user='postgres' password='a12s34d56'"
+        # conn_string = "dbname='hejp' user='tim' password='none'"
+        conn_string = "dbname='hejp' password='none'"
+        #conn_string = "dbname='hejp' user='tim' password='HeJp19-20zz!!**'"
+
+
+        # connect to the PostgreSQL server
+        print('Connecting to the PostgreSQL database...')
+        conn = psycopg2.connect(conn_string)
+
+        # create a cursor
+        cur = conn.cursor()
+        # execute a statement
+        cur.execute(query)
+
+        # display the PostgreSQL database server version
+        result = cur.fetchall()
+        desc = cur.description
+        print(result)
+
+     # close the communication with the PostgreSQL
+        cur.close()
+    except (Exception, psycopg2.DatabaseError) as error:
+        print(error)
+    finally:
+        if conn is not None:
+            conn.close()
+            print('Database connection closed.')
+        return (result,desc)
 
 
 

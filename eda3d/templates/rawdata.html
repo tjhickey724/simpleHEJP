@@ -1,10 +1,14 @@
 
-    <h1>Testing DB queries </h1>
+    <h1>First 25 results </h1>
+<pre>
+{{desc}}
+</pre>
 <ol>
-{% for r in result %}
-<li>{{r}}
-<ul> {% for k in r %}
-  <li> {{k}}</li>
+{% for r in zipr %}
+<hr>
+<li> {{ r[2][1]  }} at {{r[12][1] }}
+<ul> {% for d in r %}
+  <li>{{d[0][0]}}: {{d[1]}}</li>
 {% endfor %}
 </ul>
 </li>
