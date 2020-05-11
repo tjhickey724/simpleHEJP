@@ -949,6 +949,7 @@
                 table.selectAll("*").remove();
             }
             else{
+                        var d_button = document.getElementById("info_buttons");
                         var label = getResult()
 
                         //All the text that will be displayed
