@@ -280,17 +280,16 @@
             th, td { padding: 0 1em 0.5ex 0;}
             th.center, td.center { text-align: center; }
             th.num, td.num { text-align: right; }
-              .button {
-                position: absolute;
-                right: 100px;
-                top: 10px;
-        }
-            
+        
+
         </style>
         
         </svg> <!-- End of table svg -->
        <!-- End of table div -->
-        <button class = "button" onClick = "" style="display: none">More Information</button>
+        
+        <!-- Button for making furtger queries to the database
+        CURRENTLY DOES NOTHIN ON CLICK.-->
+        <button id = "further_analysis" class = "button" onClick = "" style="display: none">First 10 Jobs</button>
     </div>
 
 
@@ -299,7 +298,9 @@
     Notes: The width is set to make sure tooltip svg ends when vizualization begins-->
 
 
-    <!--   THIS IS THE UPDATE BUTTON IN THE CORNER -->
+    <!--   THIS IS THE UPDATE BUTTON IN THE CORNER 
+            Includes the button for further analysis that shows up
+            with the tooltip. Diplays the "First 10 Jobs" for the selection. -->
     <style type="text/css">
 
         .button {
@@ -307,6 +308,12 @@
             right: 10px;
             top: 10px;
         }
+    
+         #further_analysis {
+            position: absolute;
+            right: 10px;
+            top: 35px;
+            }
 
         div.tooltip{
             pointer-events: none;

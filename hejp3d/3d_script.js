@@ -943,13 +943,16 @@
         * IT TAKES A CUBE OBJECT AND VISIBILITY STRING AS PARAMETERS
         **/
         function draw_information(clicked_cube, visibility){
+            var d_button = document.getElementById("further_analysis");
 
             if (visibility === "hidden" && table != null){
                 console.log("removing the table")
+                d_button.style.display = "none"
                 table.selectAll("*").remove();
             }
             else{
-                        var d_button = document.getElementById("info_buttons");
+                        
+                        d_button.style.display = "block"
                         var label = getResult()
 
                         //All the text that will be displayed
