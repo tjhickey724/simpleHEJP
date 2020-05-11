@@ -15,8 +15,8 @@ const selectElement = document.getElementById('instType');
   });
 */
 
-
-
+console.log("Inside demo2script")
+alert("loading demo2script")
 
 
   var
@@ -44,19 +44,53 @@ const selectElement = document.getElementById('instType');
         maxFac,
         maxNonFac,
         maxPostdoc,
-        inst = 'r1',
-        role = 'faculty';
+        inst = 'all',
+        role = 'faculty',
+        fs = 'Total';
 
-d3.json('js/all_faculty.json', function(d) {
-  for (var i = 1; i<d[0].length; i++) {
+d3.json('data.json', function(d) {
+  console.log("reading data.json")
+  console.dir(d)
+  console.log("length is ")
 
-    dates.push( new Date("9/1/"+d[0][i].Year) );
-    personnel.push({r1:d[0][i],fourYear:d[1][i], twoYear:d[2][i], all:d[3][i]})
-    years.push(d[0][i].Year)
+  years="2007 2010 2011 2012 2013 2014 2015 2016 2017".split(" ")
+  console.log(years)
+  console.log(years.length)
+  const numYears = years.length
+  for (var i = 0; i<numYears; i++) {
+    console.log(i)
+    if (i > 20) alert("stop")
+    const year = years[i]
+    const z = new Date("9/1/"+year)
+    console.log(z)
+    dates.push( z );
+    console.dir('help me please')
+    yearData =
+    {r1:
+        {faculty:d[0][0][year],
+         nonfaculty:d[0][1][year],
+         postdoc:d[0][2][year]},
+     fourYear:
+       {faculty:d[1][0][year],
+        nonfaculty:d[1][1][year],
+        postdoc:d[1][2][year]},
+     twoYear:
+       {faculty:d[2][0][year],
+        nonfaculty:d[2][1][year],
+        postdoc:d[2][2][year]},
+     all:
+       {faculty:d[3][0][year],
+        nonfaculty:d[3][1][year],
+        postdoc:d[3][2][year]},
+      Year:year
+    }
+    console.dir(yearData)
+    personnel.push(yearData)
+    //years.push(year)
   }
-  maxFac=d3.max(personnel.map((x)=>x.all.faculty))
-  maxNonFac=d3.max(personnel.map((x)=>x.all.nonfaculty))
-  maxPostdoc=d3.max(personnel.map((x)=>x.all.postdoc))
+  maxFac=d3.max(personnel.map((x)=>x.all.faculty.Total))
+  maxNonFac=d3.max(personnel.map((x)=>x.all.nonfaculty.Total))
+  maxPostdoc=d3.max(personnel.map((x)=>x.all.postdoc.Total))
   maxYScale = maxFac
   console.log('out of loop')
   //  console.log(`temps = ${temperatures}`)
@@ -112,9 +146,10 @@ function update0(theData) {
       .append('g')
       .attr('transform',
         'translate(' + margin.left + ',' + margin.right + ')')
-      .selectAll('rect').data(theData,d =>d.Year)
+      .selectAll('rect')
+      .data(theData,d =>{console.log("in the Data"); console.dir(d); return(d.Year)})
     .enter().append('rect')
-      .attr('fill', function(d) { return colors(d[inst][role])})
+      .attr('fill', function(d) { return colors(d[inst][role][fs])})
       .attr('width', function(d) {
         console.dir(d)
         console.log(`xScale.bandwidth=`)
@@ -123,18 +158,19 @@ function update0(theData) {
       })
       .attr('height', 0)
       .attr('x', function(d) {
-        console.log(`Year=${d[inst].Year}\n x=${xScale(d[inst].Year)}`)
-        return xScale(d[inst].Year);
+        console.log(`Year=${d.Year}\n x=${xScale(d.Year)}`)
+        return xScale(d.Year);
       })
       .attr('y', height)
+      console.log("created the chart")
 
-
+/*
       .on('mouseover', function(d) {
         tooltip.transition().duration(200)
           .style('opacity', .9)
         tooltip.html(
           '<div style="font-size: 2rem; font-weight: bold">' +
-            d[inst][role] + '/'+d[inst].Year+'</div>'
+            d[inst][role][fs] + '/'+d[inst].Year+'</div>'
         )
           .style('left', (d3.event.pageX -35) + 'px')
           .style('top', (d3.event.pageY -30) + 'px')
@@ -149,7 +185,7 @@ function update0(theData) {
           .style('fill', tempColor)
       })
 
-
+*/
 
 
   console.log('myChart.data = '+myChart.data)
@@ -168,11 +204,14 @@ function update0(theData) {
     .attr('height', function(d) {
       console.log('in transition')
       console.dir(d)
-      console.log(`yScale=${d[inst][role]}`)
-      return yScale(d[inst][role]);
+      console.log(`yScale=${d[inst][role][fs]}`)
+      console.log(d.Year)
+      console.log("inst,role,fs")
+      console.dir([inst,role,fs])
+      return yScale(d[inst][role][fs]);
     })
     .attr('y', function(d) {
-      return height - yScale(d[inst][role]);
+      return height - yScale(d[inst][role][fs]);
     })
     .delay(function(d, i) {
       return i * 20;
@@ -195,11 +234,12 @@ function update(newData){
     //.range([0,height])
   console.log("before selection")
   viz = d3.select("#viz svg")
-
+  console.log("after selection")
+  /*
   viz.select(".yaxis")
                   .transition().duration(1500).ease("sin-in-out")  // https://github.com/mbostock/d3/wiki/Transitions#wiki-d3_ease
                   .call(yAxisTicks);
-
+  */
   console.log("tried to select yaxis")
 /*
   yAxisValues = d3.scaleLinear()
@@ -219,10 +259,10 @@ function update(newData){
      .data(newData)
      .transition().duration(500)
      .attr('y', function(d) {
-       return height - yScale(d[inst][role]);
+       return height - yScale(d[inst][role][fs]);
      })
-     .attr('fill', function(d) { return colors(d[inst][role])})
+     .attr('fill', function(d) { return colors(d[inst][role][fs])})
      .attr('height', function(d) {
-       return yScale(d[inst][role])
+       return yScale(d[inst][role][fs])
      })
 }

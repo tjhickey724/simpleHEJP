@@ -1,0 +1,262 @@
+<!-- ********** TO DO LIST **************** -->
+<!-- GRID IS NOT DRAWN YET AND THEREFORE DOES NOT APPEAR IN VISUALIZATION -->
+<!-- GRID NEEDS VERTICES IN ORDER TO APPEAR -->
+<!-- MOUSEOVER NEEDS TO SHOW INFO ABOUT DATA AND NOT JUST ID -->
+<!-- NEED TO ADD LABELS TO DATA -->
+<!-- FOR SOME REASON, THE COORDINATE PLANE IS UPSIDE DOWN -->
+<!-- QUERIES -->
+<!-- NEED TO CREATE FLEXIBLE SCALING AND GRAPH CENTERING -->
+<!-- PREVENT USER FROM CHOOSING LESS THAN TWO VARIABLES -->
+
+
+<!-- *********** SUGGESTIONS ***************** -->
+<!-- REPLACE TOOLTIP WITH SOME OTHER TOOL TO DISPLAY DATA ON THE SIDE OF SCREEN INSTEAD OF AS A POP UP -->
+
+<!-- ********** BUGS ********** -->
+<!-- ERROR OCCURS IF USER CHOOSES LESS THAN TWO VARIABLES -->
+
+
+
+
+
+
+<!DOCTYPE html>
+<meta charset="utf-8">
+
+<!-- IMPORTED SCRIPTS -->
+<script src="https://d3js.org/d3.v4.min.js"></script>
+<script src="https://unpkg.com/d3-3d/build/d3-3d.min.js"></script>
+
+
+<body>
+
+    <div class="container">
+
+        <h2>College and University Personnel by Year</h2>
+
+        <small>
+            <label for="x-axis">Choose two variables:</label>
+                <input type="checkbox" name="variable" onclick = "return limitCheck()" value="years">Years
+                <input type="checkbox" name="variable" onclick = "return limitCheck()" value="institution">Institution
+                <input type="checkbox" name="variable" onclick = "return limitCheck()" value="staff">Staff
+                <input type="checkbox" name="variable" onclick = "return limitCheck()" value="fields">Fields
+
+            <div id="instbuttons" style="display: none">
+                R1 <input
+                    type="radio"
+                    value="r1"
+                    name="inst"
+                    onChange="inst='r1'; init()"
+                    class="instType"
+                    > &nbsp;|&nbsp;
+                4 year <input
+                    type="radio"
+                    value="fourYear"
+                    name="inst"
+                    onChange="inst='fourYear'; init()"
+                    class="instType"
+                    >&nbsp;|&nbsp;
+                2 year <input
+                    type="radio"
+                    value="twoYear"
+                    name="inst"
+                    onChange="inst='twoYear'; init()"
+                    class="instType"
+                    >&nbsp;|&nbsp;
+                all <input
+                    type="radio"
+                    value="all"
+                    name="inst"
+                    onChange="inst='all'; init()"
+                    class="instType"
+                    checked
+                    >&nbsp;&nbsp;&nbsp;||&nbsp;&nbsp;&nbsp;
+            </div>
+            <div id="staffbuttons" style="display: none">
+                faculty <input
+                    type="radio"
+                    value="r1"
+                    name="staff"
+                    onChange="role='faculty'; init()"
+                    class="staffType"
+                    checked
+                    > &nbsp;|&nbsp;
+                nonfaculty <input
+                    type="radio"
+                    value="fourYear"
+                    name="staff"
+                    onChange="role='nonfaculty'; init()"
+                    class="staffType"
+                    >&nbsp;|&nbsp;
+                postdoc <input
+                    type="radio"
+                    value="twoYear"
+                    name="staff"
+                    onChange="role='postdoc'; init()"
+                    class="staffType"
+                    >&nbsp;|&nbsp;
+            </div>
+            <div id="fieldbuttons" style="display: none">
+                Life Sciences <input
+                    type="radio"
+                    value="FS_Life_sciences"
+                    name="FS"
+                    onChange="fs='FS_Life_sciences'; init()"
+                    class="fs_type"
+                    > &nbsp; | &nbsp;
+                Math/CS <input
+                    type="radio"
+                    value="FS_Mathematics_and_computer_sciences"
+                    name="FS"
+                    onChange="fs='FS_Mathematics_and_computer_sciences'; init()"
+                    class="fs_type"
+                    > &nbsp; | &nbsp;
+                Psych/SocSci <input
+                    type="radio"
+                    value="FS_Psychology_and_social_sciences"
+                    name="FS"
+                    onChange="fs='FS_Psychology_and_social_sciences'; init()"
+                    class="fs_type"
+                    > &nbsp; | &nbsp;
+                Engineering <input
+                    type="radio"
+                    value="FS_Engineering"
+                    name="FS"
+                    onChange="fs='FS_Engineering'; init()"
+                    class="fs_type"
+                    > &nbsp; | &nbsp;
+                Education <input
+                    type="radio"
+                    value="FS_Education"
+                    name="FS"
+                    onChange="fs='FS_Education'; init()"
+                    class="fs_type"
+                    > &nbsp; | &nbsp;
+                Humanities/Arts <input
+                    type="radio"
+                    value="FS_Humanities_and_arts"
+                    name="FS"
+                    onChange="fs='FS_Humanities_and_arts'; init()"
+                    class="fs_type"
+                    > &nbsp; | &nbsp;
+                Others <input
+                    type="radio"
+                    value="FS_Others"
+                    name="FS"
+                    onChange="fs='FS_Others'; init()"
+                    class="fs_type"
+                    > &nbsp; | &nbsp;
+                All <input
+                    type="radio"
+                    value="Total"
+                    name="FS"
+                    onChange="fs='Total'; init()"
+                    class="fs_type"
+                    checked
+                    > &nbsp; | &nbsp;
+            </div>
+            <div id="yearbuttons" style="display: none">
+                2007 <input
+                    type="radio"
+                    value="2007"
+                    name="Year"
+                    onChange="year=0; init()"
+                    class="year_type"
+                    > &nbsp; | &nbsp;
+                2010 <input
+                    type="radio"
+                    value="2010"
+                    name="Year"
+                    onChange="year=1; init()"
+                    class="year_type"
+                    > &nbsp; | &nbsp;
+                2011 <input
+                    type="radio"
+                    value="2011"
+                    name="Year"
+                    onChange="year=2; init()"
+                    class="year_type"
+                    > &nbsp; | &nbsp;
+                2012 <input
+                    type="radio"
+                    value="2012"
+                    name="Year"
+                    onChange="year=3; init()"
+                    class="year_type"
+                    > &nbsp; | &nbsp;
+                2013 <input
+                    type="radio"
+                    value="2013"
+                    name="Year"
+                    onChange="year=4; init()"
+                    class="year_type"
+                    > &nbsp; | &nbsp;
+                2014 <input
+                    type="radio"
+                    value="2014"
+                    name="Year"
+                    onChange="year=5; init()"
+                    class="year_type"
+                    > &nbsp; | &nbsp;
+                2015 <input
+                    type="radio"
+                    value="2015"
+                    name="Year"
+                    onChange="year=6; init()"
+                    class="year_type"
+                    > &nbsp; | &nbsp;
+                2016 <input
+                    type="radio"
+                    value="2016"
+                    name="Year"
+                    onChange="year=7; init()"
+                    class="year_type"
+                    > &nbsp; | &nbsp;
+                2017 <input
+                    type="radio"
+                    value="2017"
+                    name="Year"
+                    onChange="year=8; init()"
+                    class="year_type"
+                    checked
+                    > &nbsp; | &nbsp;
+            </div>
+            <div id="warning" style="display: none; color: crimson">
+                <br>
+                <b>You must choose two variables!</b>
+            </div>
+        </small>
+        <hr>
+
+        <div id="viz">
+        </div>
+
+    </div><!-- container -->
+
+    <div id="image" style="display: block">
+        <svg width="960" height="500"></svg>
+    </div>
+
+    <!-- trying to commit under my github account: sunnyako>
+    <!--   THIS IS THE UPDATE BUTTON IN THE CORNER -->
+    <style type="text/css">
+
+        .button {
+            position: absolute;
+            right: 10px;
+            top: 10px;
+        }
+
+        div.tooltip{
+            pointer-events: none;
+        }
+
+    </style>
+    <div id="s" style="visibility: visible">
+    <button class = "button" onClick = "setUp();">update</button>
+    <!-- END OF THE UPDATE BUTTON IN THE CORNER -->
+
+
+    <!-- start of the javascript to create the cubes themselves and work with data -->
+    <script src="3d_script.js"></script>
+</body>
