@@ -33,6 +33,8 @@
 
         // ---------------------- IMAGE VARIABLES -------------------------
         console.log("Starting the script")
+        //Initially hide the raw information button
+        document.getElementById("further_analysis").click();
 
 
         var tooltipSVG = d3.select('#tooltipTT');
@@ -936,19 +938,37 @@
             console.log("The very last step")
         }
 
+        /**
+        * Called when button for further analysis is clicked
+        * Clicked to display or remove raw information for a cube
+        **/
+    
+        function display_raw_information() {
+          var x = document.getElementById('rawdata');
+          if (x.style.display === "none") {
+            x.style.display = "block";
+          } else {
+            x.style.display = "none";
+          }
+        }
+
 
         /**
         * THIS IS A FUNCTION CALLED DRAW_iNFORMATION
         * THIS IS THE NEW TOOLTIP THAT DRAWS INFO ABOUT EACH CUBE
         * IT TAKES A CUBE OBJECT AND VISIBILITY STRING AS PARAMETERS
         **/
+
         function draw_information(clicked_cube, visibility){
+            //remove raw information display
             var d_button = document.getElementById("further_analysis");
 
             if (visibility === "hidden" && table != null){
                 console.log("removing the table")
                 d_button.style.display = "none"
                 table.selectAll("*").remove();
+                //Remove additional information
+                document.getElementById("further_analysis").click();
             }
             else{
                         
@@ -1090,8 +1110,49 @@
                   });
             }
 
-           console.log("tried to display the text")
-        }
+                /*SHOWS THE RAW DATA FOR EACH CUBE
+                    
+                    Rows
+                    (5) [{…}, {…}, {…}, {…}, {…}]
+                    0: {data: "Total Jobs", information: "29002"}
+                    1: {data: "Job Role", information: "faculty"}
+                    2: {data: "Field Type", information: "Total"}
+                    3: {data: "Years", information: "2007"}
+                    4: {data: "Institution", information: "fourYear"}
+                    length: 5
+                    __proto__: Array(0)
+                    */
+
+                    let ajaxData =
+
+                    {staff:rows[1]['information'],
+                     field:rows[2]['information'],
+                     year:rows[3]['information'],
+                     inst:rows[4]['information']}
+                    console.log('ajaxData='+JSON.stringify(ajaxData,3))
+
+                    formdata = new FormData()
+                    formdata.set('year',ajaxData['year'])
+                    formdata.set('staff',ajaxData['staff'])
+                    formdata.set('inst',ajaxData['inst'])
+                    formdata.set('field',ajaxData['field'])
+                    axios({method:'post',url:'/rawdata',
+                        data:formdata})
+                      .then((response) => {
+                        console.log("processing axios request")
+                        console.log(response.data);
+                        console.log(response.status);
+                        console.log(response.statusText);
+                        console.log(response.headers);
+                        console.log(response.config);
+                        document.getElementById('rawdata').innerHTML = response.data
+                      });
+
+		          document.getElementById('rawdata').innerHTML = JSON.stringify(rows,2)
+                  console.log("height dilemma", "'" + tpr[0] + "'")        
+
+               console.log("tried to display the cube info")
+            }
 
         }
 

@@ -289,10 +289,9 @@
         
         <!-- Button for making furtger queries to the database
         CURRENTLY DOES NOTHIN ON CLICK.-->
-        <button id = "further_analysis" class = "button" onClick = "" style="display: none">First 10 Jobs</button>
+        <button id = "further_analysis" class = "button" onClick = display_raw_information() style="display: none">First 10 Jobs</button>
     </div>
-
-
+    
 
     <!-- TOOLTIP
     Notes: The width is set to make sure tooltip svg ends when vizualization begins-->
@@ -324,7 +323,21 @@
     <button class = "button" onClick = "setUp();">update</button>
     <!-- END OF THE UPDATE BUTTON IN THE CORNER -->
 
+    <div id = "rawdata" 
+         style ="
+            height: 33vh;
+            position: fixed; 
+            bottom:0%;
+            width:200; 
+            background-color: #ffccaa; 
+            overflow:scroll
+                 ">
+        This is where the raw data goes ..
+    </div>
+   
     <!-- start of the javascript to create the cubes themselves and work with data -->
-    <script src="3d_script.js"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script src="3di.js"></script>
+
 
 </body>
