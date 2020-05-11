@@ -1,17 +1,17 @@
 <!-- ********** TO DO LIST **************** -->
 <!-- FOR SOME REASON, THE COORDINATE PLANE IS UPSIDE DOWN -->
 <!-- QUERIES -->
-<!-- SCALING? -->
 <!-- BUTTON FOR FURTHER ANALYSIS -->
 <!-- GROWTH VS ABSOLUTE -->
 <!-- REPOSITION TOOLTIP AND LEGEND -->
+<!-- NO AUTO SCALING FOR DATA OTHER THAN STAFF TYPE YET -->
 
 
 <!-- ************** SUGGESTIONS ***************** -->
 
 
 <!-- ******************* BUGS ******************* -->
-<!-- COLORS DO NOT MATCH WITH LEGEND -->
+<!-- ERROR OCCURS WHEN CHOOSING THE NONFACULTY DATA TYPE -->
 
 
 <!DOCTYPE html>
@@ -20,13 +20,13 @@
 <!-- IMPORTED SCRIPTS -->
 <script src="https://d3js.org/d3.v4.min.js"></script>
 <script src="https://unpkg.com/d3-3d/build/d3-3d.min.js"></script>
-
+<script src="https://gka.github.io/d3-jetpack/d3v4+jetpack.js"></script>
 
 <body>
 
     <div class="container">
 
-        <h2>HEJP Job Listing Comparisons</h2>
+        <h2>HEJP Interactive Visualization Tool</h2>
 
         <small>
             <label for="x-axis">Choose two variables:</label>
@@ -34,9 +34,9 @@
                 <input type="checkbox" name="variable" onclick = "return limitCheck()" value="institution">Institution
                 <input type="checkbox" name="variable" onclick = "return limitCheck()" value="staff">Staff
                 <input type="checkbox" name="variable" onclick = "return limitCheck()" value="fields">Fields
-            
+
             <!-- RADIO BUTTON CHOICES CHANGE DEPENDING ON ABOVE OPTIONS -->
-            
+
             <!-- ******************* INSTITUTION TYPE ******************* -->
             <div id="instbuttons" style="display: none">
                 R1 <input
@@ -73,7 +73,7 @@
             <div id="staffbuttons" style="display: none">
                 faculty <input
                     type="radio"
-                    value="r1"
+                    value="faculty"
                     name="staff"
                     onChange="role='faculty'; init()"
                     class="staffType"
@@ -81,14 +81,14 @@
                     > &nbsp;|&nbsp;
                 nonfaculty <input
                     type="radio"
-                    value="fourYear"
+                    value="nonfaculty"
                     name="staff"
                     onChange="role='nonfaculty'; init()"
                     class="staffType"
                     >&nbsp;|&nbsp;
                 postdoc <input
                     type="radio"
-                    value="twoYear"
+                    value="postdoc"
                     name="staff"
                     onChange="role='postdoc'; init()"
                     class="staffType"
@@ -246,12 +246,17 @@
                     class="dataType"
                     >&nbsp;|&nbsp;
             </div>
+            <!-- **************** SCALING **************************** -->
+            <div id="scalediv" style="display: none">
+                Scale <input type="number" id="scale" name="scale" onchange="adjust()" min="1">
+                <input type="checkbox" value="freeze" name="freeze" onchange="freeze()"> Freeze Scale
+            </div>
             <!-- ******************* WARNING ******************* -->
             <div id="warning" style="display: none; color: crimson">
                 <br>
                 <b>You must choose two variables!</b>
             </div>
-            
+
         </small>
         <hr>
 
@@ -260,26 +265,49 @@
 
     </div><!-- container -->
 
+
+
+
+
+
+    <!-- ************************ THIS IS THE DATA VISULIZATION ************************ -->
     <div id="image" style="display: block">
-        <svg width="960" height="500"></svg>
+        <svg width="900" height="500" style="outline-color: black; outline-style: solid; position: absolute; left: 300px"></svg>
+
     </div>
-    
-    <svg viewBox="0 0 240 80" xmlns="http://www.w3.org/2000/svg" id= "svg2">
-        <style>
-            .small { font: italic 10px sans-serif; }
-            .heavy { font: bold 10px sans-serif; }
-            /** 
-            * Note that the color of the text is set with the
-            * fill property, the color property is for HTML only 
-            **/
-            .Rrrrr { font: italic 40px serif; fill: red; }
+
+
+    <!-- DATA TABLE DISPLAYED WHEN A CUBE IS CLICKED
+    Idea: Make an Accessible SVG table easily manipulated by d3.js-->
+    <div>
+    <svg id = "tooltipTT" width="290" height="500" viewBox="-100 0 300 150" style ="position: absolute;">
+        <style type="text/css">
+            body { font-family: 'Helvetica Neue', Helvetica; font-weight: 300; padding: 20px;}
+            th { text-align: left; }
+            th, td { padding: 0 1em 0.5ex 0;}
+            th.center, td.center { text-align: center; }
+            th.num, td.num { text-align: right; }
+        
+
         </style>
+        
+        </svg> <!-- End of table svg -->
+       <!-- End of table div -->
+        
+        <!-- Button for making furtger queries to the database
+        CURRENTLY DOES NOTHIN ON CLICK.-->
+        <button id = "further_analysis" class = "button" onClick = "" style="display: none">First 10 Jobs</button>
+    </div>
 
-        <text x="20" y="20" class="small"></text>
-    </svg>
 
-    <!-- trying to commit under my github account: sunnyako>
-    <!--   THIS IS THE UPDATE BUTTON IN THE CORNER -->
+
+    <!-- TOOLTIP
+    Notes: The width is set to make sure tooltip svg ends when vizualization begins-->
+
+
+    <!--   THIS IS THE UPDATE BUTTON IN THE CORNER 
+            Includes the button for further analysis that shows up
+            with the tooltip. Diplays the "First 10 Jobs" for the selection. -->
     <style type="text/css">
 
         .button {
@@ -287,16 +315,23 @@
             right: 10px;
             top: 10px;
         }
+    
+         #further_analysis {
+            position: absolute;
+            right: 10px;
+            top: 35px;
+            }
 
         div.tooltip{
             pointer-events: none;
         }
 
     </style>
-    
+
     <button class = "button" onClick = "setUp();">update</button>
     <!-- END OF THE UPDATE BUTTON IN THE CORNER -->
 
     <!-- start of the javascript to create the cubes themselves and work with data -->
     <script src="3d_script.js"></script>
+
 </body>

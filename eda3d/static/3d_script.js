@@ -1,19 +1,29 @@
 /**
     THIS IS THE SCRIPT FOR THE 3D VISUAL.
+
     ------ FUNCTIONS ------
+
     INIT()
     GETRESULT() RETURN STRING[]
     LIMITCHECK() RETURN BOOL
+    ADJUST()
+    ADINPUT(INT)
+    FINDSCALE()
+    FREEZE()
     SETUP()
     GETLENGTH(STRING) RETURN NUMBER
     FIRST(STRING[], INT) RETURN DATA
     SECOND(DATA, STRING, INT) RETURN NUMBER
-    SURVIVEDLEGEND()
+    YCOLORLEGEND()
     PROCESSDATA(DATA, NUMBER)
+    draw_information(clicked_cube, visibility){
     DRAGSTART()
     DRAGGED()
     DRAGEND()
     MAKECUBE(NUMBER, NUMBER, NUMBER) RETURN VERTEX[]
+
+
+    MAKETABLE() IS CURRENTLY NOT BEING USED (DELETE?)
 **/
 
 
@@ -24,7 +34,8 @@
         // ---------------------- IMAGE VARIABLES -------------------------
         console.log("Starting the script")
 
-        var svg2 = d3.select('#svg2');
+
+        var tooltipSVG = d3.select('#tooltipTT');
 
         var svg = d3.select('svg') // SELECTS IN HTML LOCATION OF IMAGE
             .call(d3.drag() // ENVOKES FUNCTION EXACTLY ONCE IN THIS CASE, THE DRAG FUNCTION WHICH CREATES NEW DRAG BEHAVIOR
@@ -37,9 +48,17 @@
             .attr("viewBox", "0 0 600 400") // VIEWBOX ATTRIBUTE MAKES SVG SCALABLE WITH ORIGIN AT 0,0 AND WIDTH 600, HEIGHT 400
             .classed("svg-content-responsive", true); // INSURES THE SVG IS CONTAINED WITHIN THE DIV
 
-        var origin = [505, 300], // THE LOCATION OF THE CENTER OF THE 3D IMAGE
-            scale = 10, // USED TO SCALE THE OBJECT TO SIZE OF IMAGE: CHANGED FROM 20 TO 10 
+        var origin = [405, 300], // THE LOCATION OF THE CENTER OF THE 3D IMAGE
+            scale = 10, // USED TO SCALE THE OBJECT TO SIZE OF IMAGE: CHANGED FROM 20 TO 10
             startAngle = Math.PI / 6,
+
+            // VARIABLES USED IN AUTOSCALING OF DATA
+            max = 0, // MAX OF ALL DATA
+            diviser = 1, // USED TO CHANGE MAX DATA TO SIZE SCALE
+            hasAdjusted = 0, // IF A MANUAL ADJUSTMENT HAS BEEN MADE
+            maxVals = [], // USED TO FIND THE MAX DATA VALUE
+            frozen = 0,
+
             // NEW VARIABLES FOR USE IN GRID
             yLine = [],
             xLine = [],
@@ -52,6 +71,7 @@
         // USED FOR CLICK EVENTS
         var selected = [];
         var arraySize = 0;
+        var table = null;
 
 
 
@@ -128,7 +148,7 @@
             role = 'faculty',
             fs = 'Total',
             year = 8,
-            datatype = 0;
+            datatype = 0; // FOR USE IN CALCULATING GROWTH
 
         // VARIABLES FOR LOOP
         // CAN BE FOUND IN PROCESS DATA FOR MORE FLEXIBILITY
@@ -209,9 +229,39 @@
                 personnel.push(yearData)
             }
 
-            //console.log(yearData.r1.faculty)
-            //console.log("my year data is:", inst);
-            //console.log("Trying out the variables", yearData[inst][role][fs])
+            // ------------------------ SET UP DATA SCALING ---------------------------
+
+            // MAX VALUES OF EACH TYPE
+            maxFac = d3.max(personnel.map((x) => x.all.faculty.Total)) // FACULTY DATA
+            maxNonFac = d3.max(personnel.map((x) => x.all.nonfaculty.Total)) // NON-FACULTY DATA
+            maxPostdoc = d3.max(personnel.map((x) => x.all.postdoc.Total)) // POSTDOC DATA
+
+            // MANUALLY SET SCALE FOR DATA = 0
+            if(maxFac == 0){
+                maxFac == 200000
+            }
+            if(maxFac == 0){
+                maxNonFac == 200000
+            }
+            if(maxFac == 0){
+                maxPostdoc == 200000
+            }
+
+            // ADD MAX OF EACH TYPE TO ARRAY
+            maxVals.push(maxFac) // FACULTY DATA
+            maxVals.push(maxNonFac) // NON-FACULTY DATA
+            maxVals.push(maxPostdoc) // POSTDOC DATA
+
+            // FIND MAXIMUM DATA VALUE
+            for(var i=0; i<maxVals.length; i++){
+                if(max<maxVals[i]){
+                    max = maxVals[i]
+                }
+            }
+
+            console.log(yearData.r1.faculty)
+            console.log("my year data is:", inst);
+            console.log("Trying out the variables", yearData[inst][role][fs])
             console.log("I'm out")
         })
 
@@ -227,11 +277,24 @@
         * IT CREATES THE CUBE AND DRAWS THE SVG
         **/
         function init() {
-            
-            if (group != null) group.remove();
+
+            if (group != null){
+                group.selectAll("*").remove();
+                d3.select(".cubes").selectAll("*").remove();
+            }
+
+            // SET THE SCALE (AUTO OR MANUAL)
+            if(frozen == 0){
+                if(hasAdjusted == 0){
+                    findScale();
+                } else{
+                    hasAdjusted = 0;
+                }
+            }
+
 
             //******* CREATE THE CUBES AND PUSH THEM ********
-            
+
             // ARRAYS OF ELEMENTS FOR EACH OBJECT IN THE IMAGE
             // VERTICES
             cubesData = [];
@@ -250,46 +313,53 @@
             var results = getResult();
             var q = getLength(results[0]);
             var p = getLength(results[1]);
-            
-            var con = [];
+
+            var con = []; // STORES VALUES OF THE YEAR 2007 FOR USE IN CALCULATING GROWTH
 
             for (var z = 0; z < q; z++) {
-                
+
                 firstData = first(results, z); // OBTAIN FIRST VARIABLE'S DATA
                 xattr = xLabel[z] // RETRIEVE X LABEL FOR THE CURRENT CUBE
                 //console.log("ITS OVER HERE");
-                
+
                 for (var x = 0; x < p; x++) {
-                    
+
                     secData = second(firstData, results[1], x); // OBTAIN SECOND VARIABLE'S DATA
 
                     // ------------------------ CUBE ------------------------------
-                    
-                    var y = parseFloat((-1 * (secData) / 10000).toFixed(5)); // NUMBER OF DIGITS TO APPEAR AFTER DECIMAL POINT = 5
+
+                    var y = parseFloat((-1 * (secData) / diviser).toFixed(5)); // NUMBER OF DIGITS TO APPEAR AFTER DECIMAL POINT = 5 (10000)
                     var a = 5 * x - 5*(p/2); // ADJUST SIZE
                     var b = 5 * z - 5*(q/2); // ADJUST SIZE
-                    
+
+                    // ADJUST DATA TO SHOW GROWTH
                     if(datatype == 1){
-                        if(z == 0){
-                            con.push(y);
+                        if(z == 0){ // YEAR 2007
+                            con.push(secData);
+                            y=0;
                         } else{
                             // CALCULATIONS FOR GROWTH GO HERE
-                            // USE THE VALUES IN CON AND THE Y VALUE
+                            // USE THE VALUES IN CON AND SECDATA
                             // TO CALCULATE THE NEW Y FOR GROWTH
+
+                            var val;
+                            val = ((secData-con[x])/con[x])*100
+                            y = (-val)/10
                         }
                     }
 
+                    // MAKE THE CUBE
                     var _cube = makeCube(a, y, b); // MAKE THE CUBE USING BASE (X,Y,Z)
                     _cube.id = 'cube_' + cnt++; // THE NAME OF THE CUBE i.e cube_1
                     _cube.height = y; // RECORDS THE HEIGHT OF THE CUBE
                     ycolor = yLabel[x];
-                    //console.log("ARE WE UNDEFINES?", yLabel)
+                    console.log("ARE WE UNDEFINED?", yLabel)
                     _cube.ycolor = ycolor;
                     _cube.xattr = xattr;
                     cubesData.push(_cube); // ADDS CUBE TO ARRAY
-                    
+
                     // ------------------------ LINES ------------------------------
-                    
+
                     var x_line_edge = 5 * (p - 1)- 5*(p/2) + 5;
                     var y_line_edge = 5 * (q - 1)- 5*(q/2) + 5;
 
@@ -305,7 +375,7 @@
                 yScale3d([yLine]),
                 xScale3d([xLine]),
             ];
-            survivedLegend();
+            ycolorLegend();
 
             //console.log(">>>>>>>>>>>> xLabel: ", xLabel);
             //console.log(">>>>>>>>>>>> yLabel: ", yLabel);
@@ -370,6 +440,93 @@
 
 
         /**
+        * THIS IS A FUNCTION CALLED ADJUST
+        * IT IS CALLED WHEN A MANUAL CHANGE TO THE SCALE HAS BEEN MADE
+        * IT CHANGES THE SCALE OF THE IMAGE BASED ON USER INPUT
+        **/
+        function adjust(){
+            thescale = document.getElementById("scale");
+            if(thescale.value < 1){
+                thescale.value = 1;
+            }
+            diviser = thescale.value;
+            hasAdjusted = 1;
+            init();
+        }
+
+
+
+
+
+
+        /**
+        * THIS IS A FUNCTION CALLED ADINPUT
+        * IT TAKES THE AUTO CALCULATED SCALE AND
+        * PRESENTS IT IN THE SCALE INPUT BOX
+        **/
+        function adInput(div){
+            thescale = document.getElementById("scale");
+            thescale.value = diviser
+        }
+
+
+
+
+
+
+        /**
+        * THIS IS A FUNCTION CALLED FIND SCALE
+        * IT LOOKS AT WHAT VARIABLES ARE CHECKED
+        * AND THEN CALCULATES THE SCALE BASED OFF OF IT
+        **/
+        function findScale(){
+            var a = document.getElementsByName('variable');
+
+            // IF STAFF IS CHECKED
+            if(a[2].checked){
+                diviser = max/scale;
+            }
+            else{
+                var b = document.getElementsByName("staff")
+                if(b[0].checked){ // FACULTY
+                    diviser = maxFac/scale
+                } else if(b[1].checked){ // NONFACULTY
+                    diviser = maxNonFac/scale
+                } else if(b[2].checked){ // POSTDOC
+                    diviser = maxPostdoc/scale
+                }
+            }
+            adInput(diviser)
+        }
+
+
+
+
+
+
+        /**
+        * THIS IS A FUNCTION CALLED FREEZE
+        * IT FREEZES THE SCALE SO THAT IT CANNOT BE CHANGED AT ALL
+        **/
+        function freeze(){
+            var x = document.getElementsByName("freeze")
+            var sc = document.getElementById("scale")
+            if(x[0].checked){
+                sc.disabled = true;
+                frozen = 1;
+            } else{
+                sc.disabled = false;
+                frozen = 0;
+                init();
+            }
+        }
+
+
+
+
+
+
+        /**
         * THIS IS A FUNCTION CALLED SETUP
         * IT MAKES CERTAIN RADIOBOXES VISIBLE DEPENDING ON INPUT
         **/
@@ -381,32 +538,37 @@
             var d5 = document.getElementById("warning");
             var d6 = document.getElementById("image");
             var d7 = document.getElementById("valuebuttons");
+            var d8 = document.getElementById("scalediv");
             var x = document.getElementsByName('variable');
 
             if(checkinput==2){
                if(x[0].checked==false){ //years
                     d4.style.display = "block"
                     d7.style.display = "none"
-                    datatype = 0
+                    datatype = 0 // MAKES SURE TO RESET GROWTH
                 } else{
                     d4.style.display = "none"
                     d7.style.display = "block"
                 }
+
                 if(x[1].checked==false){ //inst
                     d1.style.display = "block"
                 } else{
                     d1.style.display = "none"
                 }
+
                 if(x[2].checked==false){ //staff
                     d2.style.display = "block"
                 } else{
                     d2.style.display = "none"
                 }
+
                 if(x[3].checked==false){ //fields
                     d3.style.display = "block"
                 } else{
                     d3.style.display = "none"
                 }
+                d8.style.display = "block";
                 d6.style.display = "block";
                 d5.style.display = "none";
                 init();
@@ -418,6 +580,7 @@
                 d4.style.display = "none"
                 d6.style.display = "none"
                 d7.style.display = "none"
+                d8.style.display = "none";
             }
         }
 
@@ -518,23 +681,23 @@
 
 
         /**
-        * THIS IS A FUNCTION CALLED SURVIVEDLEGEND
-        * IT DRAWS THE GRAPH LENGEND
+        * THIS IS A FUNCTION CALLED YCOLORLEGEND
+        * IT DRAWS THE GRAPH LEGEND BASED ON THE Y AXIS
         **/
-        function survivedLegend() {
-            
+        function ycolorLegend() {
+
             // stroke
-            s = d3.scaleOrdinal()
+            const s = d3.scaleOrdinal()
                 .domain(yLabel)
                 .range(["#e31a1c","#1f78b4"]);
 
-            //console.log("I'm trying to show the survived legend", s.domain())
+            console.log("I'm trying to show the legend", s.domain())
 
             group = d3.select('svg').append("g")
             .attr("class","legend-group");
 
             var label = getResult()
-            //console.log("LABELSS", label)
+            console.log("LABELS", label)
 
             group.append("text")
                 .text(label[1])
@@ -579,10 +742,10 @@
         * PARAM tt THE DURATION OF TRANSITIONS
         **/
         function processData(data, tt) {
-            //console.log("Is this processed?")
-            
+            console.log("Starting processing...")
+
             // ************************** GRID ***************************** //
-            
+
             /* ----------- X AND Y AXES ----------- */
             var yScale3d = d3._3d()
                 .shape('LINE_STRIP')
@@ -598,7 +761,7 @@
                 .rotateX(-startAngle)
                 .scale(scale);
 
-            
+
             /* -------------- y-Scale -------------- */
             var yScale = svg.selectAll('path.yScale').data(data[1]);
                 yScale
@@ -612,7 +775,7 @@
 
                 yScale.exit().remove();
 
-            
+
             /* --------------- x-Scale --------------- */
             var xScale = svg.selectAll('path.xScale').data(data[2]);
                 xScale
@@ -626,7 +789,7 @@
 
                 xScale.exit().remove();
 
-            
+
             /* -------------- y-Scale Text -------------- */
             var yText = svg.selectAll('text.yText').data(data[1][0]);
                 yText
@@ -647,7 +810,7 @@
                     });
                 yText.exit().remove();
 
-            
+
             /* ----------- x-Scale Text ----------- */
             var xText = svg.selectAll('text.xText').data(data[2][0]);
                 xText
@@ -668,7 +831,7 @@
                     });
                 xText.exit().remove();
 
-            
+
             // ************************** CUBES ***************************** //
 
             var cubes = cubesGroup.selectAll('g.cube').data(data[0], function (d) { return d.id });
@@ -725,6 +888,7 @@
 
                     //IF ANOTHER CUBE IS SELECTED
                     else if(!Object.is(this, selected[0])){
+                        draw_information(d, "hidden")
                         tempColor = this.style.fill;
                         //console.log("another cube is selected", selected[0]);
                         var tempCube = selected[0]
@@ -767,85 +931,172 @@
 
             faces.exit().remove();
 
-
-            /** THIS IS THE NEW TOOLTIP THAT DRAWS INFO ABOUT EACH CUBE **/
-
-            function draw_information(clicked_cube, visibility){
-            
-                var texts = svg2.selectAll('text').data(function(d){
-                    //var _t = clicked_cube.faces.filter(function(d){
-                    //    return clicked_cube.face === 'top';
-                    //});
-                    return [{height: clicked_cube.height}];
-                });
-                var label = getResult()
-                //console.log("LABELSS", label[1])
-
-                texts
-                    .enter()
-                    .append('text')
-                    .attr('class', 'text')
-                    .attr('dy', '-.40em')
-                    .attr('text-anchor', 'middle')
-                    .attr('font-family', 'sans-serif')
-                    .attr('font-weight', 'bolder')
-                    .attr("font-size", "1rem")
-                    .attr('x', function(d){ return (origin[0]-400) + 'px' })
-                    .attr('y', function(d){ return (10) })
-                    .classed('_3d', true)
-                    .merge(texts)
-                    .transition().duration(2000000)
-                    .attr('fill', 'black')
-                    .attr('stroke', 'none')
-                    .attr('x', function(d){ return (origin[0]-400) + 'px'})
-                    .attr('y', function(d){ return (10) + 'px' })
-                    .tween('text', function(d){
-                        var that = d3.select(this);
-                        //All the text that will be displayed
-                        var height = Math.abs(clicked_cube.height)*10000;
-                        //console.log(Math.abs(clicked_cube.height)*10000)
-                        var height_text = "<tspan x='"+(origin[0]-400) +"' dy='1.2em'>" + "Jobs: " + height + "</tspan>"
-                        var role_text = "<tspan x='"+(origin[0]-400) +"' dy='1.2em'>" + "Role: " + role + "</tspan>"
-                        var fields_text = "<tspan x='"+(origin[0]-400) +"' dy='1.2em'>" + "Fields: " + fs + "</tspan>"
-                        var x_text = "<tspan x='"+(origin[0]-400) +"' dy='1.2em'>" + label[0] + ": " +clicked_cube.xattr + "</tspan>"
-                        var y_text = "<tspan x='"+(origin[0]-400) +"' dy='1.2em'>" + label[1] + ": " + clicked_cube.ycolor + "</tspan>"
-                        var inst_text = "<tspan x='"+(origin[0]-400) +"' dy='1.2em'>" + "Institution" + ": " + inst + "</tspan>"
-                        
-                        if(label[0] == "fields" || label[1] == "fields" ){
-                            fields_text = " "
-                        }
-                        if(label[0] == "institution" || label[1] == "institution" ){
-                            inst_text = " "
-                        }
-                        if(label[0] == "staff" || label[1] == "staff" ){
-                            role_text = " "
-                        }
-                        
-                        return function(t){    //VARIABLES RETURNED FOR EACH CUBE
-                            that.html(function (d) {
-                                return y_text
-                                    + x_text
-                                    + fields_text
-                                    + role_text
-                                    +inst_text
-                                    + height_text;
-                            })
-                            .attr("visibility", visibility) //CHANGE VISIBILITY
-                            .attr("fill", "black") //COLOR OF THE TEXT
-                            .attr('dy', '-.8em')
-                        };
-                    });
-                    //console.log("tried to display the text")
-                texts.exit().remove();
-            }
-            
-            //console.log("exiting the svg")
+            console.log("exiting the svg")
             cubes.exit().remove(); //VERY IMPORTANT STEP
 
             /* --------- SORT TEXT & FACES ---------*/
 
             ce.selectAll('._3d').sort(d3._3d().sort);
-            //console.log("The very last step")
+            console.log("The very last step")
+        }
+
+
+        /**
+        * THIS IS A FUNCTION CALLED DRAW_iNFORMATION
+        * THIS IS THE NEW TOOLTIP THAT DRAWS INFO ABOUT EACH CUBE
+        * IT TAKES A CUBE OBJECT AND VISIBILITY STRING AS PARAMETERS
+        **/
+        function draw_information(clicked_cube, visibility){
+            var d_button = document.getElementById("further_analysis");
+
+            if (visibility === "hidden" && table != null){
+                console.log("removing the table")
+                d_button.style.display = "none"
+                table.selectAll("*").remove();
+            }
+            else{
+
+                        d_button.style.display = "block"
+                        var label = getResult()
+
+                        //All the text that will be displayed
+                        var height_id = "Total Jobs"
+                        var height = (Math.abs(clicked_cube.height)*10000).toFixed(0);
+                        var height_text = height
+
+                        var role_id = "Job Role"
+                        var role_text = role
+
+                        var fields_id = "Field Type"
+                        var fields_text = fs
+
+                        var x_id = label[0][0].toUpperCase() + label[0].slice(1)
+                        var x_text = clicked_cube.xattr
+
+                        var y_id = label[1][0].toUpperCase() + label[1].slice(1)
+                        var y_text = clicked_cube.ycolor
+
+                        var inst_id = "Institution"
+                        var inst_text = inst
+
+                        //Deletes duplicate information from x and y fields
+                        if(label[0] == "fields" || label[1] == "fields" ){
+                            fields_text = " "
+                            fields_text = " "
+                            fields_id = " "
+                        }
+
+                        if(label[0] == "institution" || label[1] == "institution" ){
+                            inst_text = " "
+                            inst_text = " "
+                            inst_id = " "
+                        }
+
+                        if(label[0] == "staff" || label[1] == "staff" ){
+                            role_text = " "
+                            role_text = " "
+                            role_id = " "
+                        }
+
+                    //Collects all the possible information about the clicked cube
+                    //if repeated, appears as empty string ""
+                    var tpr = [height_id, role_id, fields_id, x_id, y_id, inst_id]
+                    var tpd = [height_text, role_text, fields_text, x_text, y_text, inst_text]
+                    console.log("All the rows before", tpr)
+
+                    //Remove non-applicable data
+                    function table_dedup(arr) {
+                        for( var i = 0; i < arr.length; i++){
+                            if ( arr[i] === " ") {
+                                arr.splice(i, 1); i--;
+                            }
+                        }
+                    }
+
+                //Remove duplicates from headings and data
+                table_dedup(tpr);
+                table_dedup(tpd);
+                console.log("All the rows after", tpr)
+
+                //we need the variable names to construct the tab;e
+                const varToString = varObj => Object.keys(varObj)[0]
+                const displayName = varToString({ height_id })
+                console.log("new name", displayName)
+
+
+
+            var data_h = ["data"]
+
+
+            const obj = tpr.reduce((o, key) => Object.assign(o, {[key]: tpd[tpr.indexOf(key)]}), {});
+
+            var movies = []
+            for(var x = 0; x<tpr.length; x++){
+                console.log("Pushes")
+                const objs = data_h.reduce((o, key) => Object.assign(o, {[key]: tpr[x]}), {});
+                objs.information = tpd[x]
+                movies.push(objs)
+
+            }
+
+
+
+            const objs = data_h.reduce((o, key) => Object.assign(o, {[key]: tpd[0]}), {});
+            //obj = tpr.reduce((o, key) => Object.assign(o, {"one": tpd[tpr.indexOf(key)]}), {});
+
+
+            //all the possible rows
+
+
+                console.log("Movies", movies)
+                console.log("height dilemma", "'" + tpr[0] + "'")
+
+                var new_columns = []
+
+
+                var columns = [
+                { head: "Data", cl: 'center', html: d3.f('data') },
+                { head: "Information", cl: 'center',html: d3.f('information') }
+                ];
+
+            console.log("Starting Table")
+
+            table = d3.select('body')
+                .append("table")
+            console.log("Continuing for Table")
+
+
+            table.append('thead').append('tr')
+                .selectAll('th')
+                .data(columns).enter()
+                .append('th')
+                .attr('class', d3.f('cl'))
+                .text(d3.f('head'));
+
+            // create table body
+            table.append('tbody')
+                .appendMany(movies, 'tr')
+                .appendMany(td_data, 'td')
+                .html(d3.f('html'))
+                .attr('class', d3.f('cl'));
+
+            console.log("appended body")
+
+            function td_data(row, i) {
+                return columns.map(function(c) {
+                    // compute cell values for this specific row
+                    var cell = {};
+                    d3.keys(c).forEach(function(k) {
+                        console.log("KEYS")
+                        cell[k] = typeof c[k] == 'function' ? c[k](row,i) : c[k];
+                    });
+                    return cell;
+                  });
+            }
+
+           console.log("tried to display the text")
+        }
+
         }
 
 
@@ -900,6 +1151,16 @@
         }
 
 
+        /**
+        *THIS FUNCTION MAKES A TABLE THAT DISPLAYS THE DATA FOR EACH CUBE  <----------------------NOT SURE HOW CORRECT THIS IS SO FEEL FREE TO DELETE
+        **/
+        function makeTable() {
+            var tableTT = d3.select("#tooltipTT").selectAll("g");
+            var titles = d3.select("#tooltipTT").selectAll("title").data;
+            //var row_info = d3.select("#tooltipTT").selectAll("cubeInfo");
+            console.log("Made the table: sanity check :)")
+
+        }
 
 
 
@@ -923,5 +1184,11 @@
                 { x: x + 1, y: y, z: z - 1 }, // BACK  TOP RIGHT
             ];
         }
+
+
+
+
+
+
 
         //d3.selectAll('button').on('click', init); // RERUNS INIT WITH BUTTON PRESS
