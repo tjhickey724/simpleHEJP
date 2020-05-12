@@ -35,6 +35,7 @@
         console.log("Starting the script")
         //Initially hide the raw information button
         document.getElementById("further_analysis").click();
+        var clicked = false;
 
 
         var tooltipSVG = d3.select('#tooltipTT');
@@ -187,7 +188,7 @@
 
 
 
-        d3.json("dataN.json", function (d) { // DATA.JSON IS PASSED INTO FUNCTION THROUGH PARAM d
+        d3.json("data.json", function (d) { // DATA.JSON IS PASSED INTO FUNCTION THROUGH PARAM d
 
             console.log("I'm in ")
 
@@ -951,6 +952,7 @@
           var x = document.getElementById('rawdata');
           if (x.style.display === "none") {
             x.style.display = "block";
+            clicked = true;
           } else {
             x.style.display = "none";
           }
@@ -966,14 +968,18 @@
         function draw_information(clicked_cube, visibility){
             //remove raw information display
             var d_button = document.getElementById("further_analysis");
+            
 
             if (visibility === "hidden" && table != null){
                 console.log("removing the table")
                 d_button.style.display = "none"
                 table.selectAll("*").remove();
+                //document.getElementById("further_analysis").click();
                 //Remove additional information
-                document.getElementById("further_analysis").click();
             }
+
+                
+            
             else{
 
                         d_button.style.display = "block"
@@ -1048,31 +1054,25 @@
             var data_h = ["data"]
 
 
-            const obj = tpr.reduce((o, key) => Object.assign(o, {[key]: tpd[tpr.indexOf(key)]}), {});
+            
 
-            var movies = []
+            var rows = []
             for(var x = 0; x<tpr.length; x++){
                 console.log("Pushes")
                 const objs = data_h.reduce((o, key) => Object.assign(o, {[key]: tpr[x]}), {});
                 objs.information = tpd[x]
-                movies.push(objs)
+                rows.push(objs)
 
             }
 
 
 
-            const objs = data_h.reduce((o, key) => Object.assign(o, {[key]: tpd[0]}), {});
-            //obj = tpr.reduce((o, key) => Object.assign(o, {"one": tpd[tpr.indexOf(key)]}), {});
-
-
+         
             //all the possible rows
 
 
-                console.log("Movies", movies)
-                console.log("height dilemma", "'" + tpr[0] + "'")
-
-                var new_columns = []
-
+                console.log("All rows", rows)
+    
 
                 var columns = [
                 { head: "Data", cl: 'center', html: d3.f('data') },
@@ -1095,7 +1095,7 @@
 
             // create table body
             table.append('tbody')
-                .appendMany(movies, 'tr')
+                .appendMany(rows, 'tr')
                 .appendMany(td_data, 'td')
                 .html(d3.f('html'))
                 .attr('class', d3.f('cl'));
@@ -1113,8 +1113,7 @@
                     return cell;
                   });
             }
-
-                /*SHOWS THE RAW DATA FOR EACH CUBE
+                                    /*SHOWS THE RAW DATA FOR EACH CUBE
                     
                     Rows
                     (5) [{…}, {…}, {…}, {…}, {…}]
@@ -1156,6 +1155,9 @@
                   console.log("height dilemma", "'" + tpr[0] + "'")        
 
                console.log("tried to display the cube info")
+
+                 
+
             }
 
         }
