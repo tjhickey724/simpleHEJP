@@ -26,7 +26,7 @@
 
     <div class="container">
 
-        <h2>HEJP Job Listing Comparisons</h2>
+        <h2>HEJP Interactive Visualization Tool</h2>
 
         <small>
             <label for="x-axis">Choose two variables:</label>
@@ -108,6 +108,13 @@
                     value="FS_Mathematics_and_computer_sciences"
                     name="FS"
                     onChange="fs='FS_Mathematics_and_computer_sciences'; init()"
+                    class="fs_type"
+                    > &nbsp; | &nbsp;
+                PhysicalScience <input
+                    type="radio"
+                    value="FS_Physical_sciences_and_earth_sciences"
+                    name="FS"
+                    onChange="fs='FS_Physical_sciences_and_earth_sciences'; init()"
                     class="fs_type"
                     > &nbsp; | &nbsp;
                 Psych/SocSci <input
@@ -273,25 +280,33 @@
     <!-- DATA TABLE DISPLAYED WHEN A CUBE IS CLICKED
     Idea: Make an Accessible SVG table easily manipulated by d3.js-->
     <div>
-    <svg id = "tooltipTT" width="290" height="500" viewBox="-100 0 300 150" style ="position: absolute;>"
+    <svg id = "tooltipTT" width="290" height="500" viewBox="-100 0 300 150" style ="position: absolute;">
         <style type="text/css">
             body { font-family: 'Helvetica Neue', Helvetica; font-weight: 300; padding: 20px;}
             th { text-align: left; }
             th, td { padding: 0 1em 0.5ex 0;}
             th.center, td.center { text-align: center; }
             th.num, td.num { text-align: right; }
+        
+
         </style>
+        
         </svg> <!-- End of table svg -->
        <!-- End of table div -->
-
+        
+        <!-- Button for making furtger queries to the database
+        CURRENTLY DOES NOTHIN ON CLICK.-->
+        <button id = "further_analysis" class = "button" onClick = display_raw_information() style="display: none">Further Analysis</button>
     </div>
+    
 
-<hr>
     <!-- TOOLTIP
     Notes: The width is set to make sure tooltip svg ends when vizualization begins-->
 
 
-    <!--   THIS IS THE UPDATE BUTTON IN THE CORNER -->
+    <!--   THIS IS THE UPDATE BUTTON IN THE CORNER 
+            Includes the button for further analysis that shows up
+            with the tooltip. Diplays the "First 10 Jobs" for the selection. -->
     <style type="text/css">
 
         .button {
@@ -299,6 +314,12 @@
             right: 10px;
             top: 10px;
         }
+    
+         #further_analysis {
+            position: absolute;
+            right: 10px;
+            top: 35px;
+            }
 
         div.tooltip{
             pointer-events: none;
@@ -309,22 +330,21 @@
     <button class = "button" onClick = "setUp();">update</button>
     <!-- END OF THE UPDATE BUTTON IN THE CORNER -->
 
-
     <div id = "rawdata" 
-style ="
-height: 33vh;
-    position: fixed; 
-    bottom:0%;
-    width:100%; 
-    background-color: #ffccaa; 
-    overflow:scroll
-">
-This is where the raw data goes ..
-</div>
-
-
+         style ="
+            height: 33vh;
+            position: fixed; 
+            bottom:0%;
+            max-width: 268px; 
+            background-color: #99e7ff; 
+            overflow:scroll
+                 ">
+        This is where the raw data goes ...
+    </div>
+   
     <!-- start of the javascript to create the cubes themselves and work with data -->
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
     <script src="3di.js"></script>
+
 
 </body>

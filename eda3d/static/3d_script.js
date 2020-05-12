@@ -188,7 +188,7 @@
 
 
 
-        d3.json("data.json", function (d) { // DATA.JSON IS PASSED INTO FUNCTION THROUGH PARAM d
+        d3.json("dataN.json", function (d) { // DATA.JSON IS PASSED INTO FUNCTION THROUGH PARAM d
 
             console.log("I'm in ")
 

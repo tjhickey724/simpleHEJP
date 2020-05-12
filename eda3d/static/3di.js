@@ -22,11 +22,21 @@
     DRAGEND()
     MAKECUBE(NUMBER, NUMBER, NUMBER) RETURN VERTEX[]
 
+
+    MAKETABLE() IS CURRENTLY NOT BEING USED (DELETE?)
 **/
+
+
+
+
 
 
         // ---------------------- IMAGE VARIABLES -------------------------
         console.log("Starting the script")
+        //Initially hide the raw information button
+        document.getElementById("further_analysis").click();
+        var clicked = false;
+
 
         var tooltipSVG = d3.select('#tooltipTT');
 
@@ -67,6 +77,10 @@
         var table = null;
 
 
+
+
+
+
         // ------------------------ DATA VARIABLES ---------------------------
 
         var datas; // THE DATA TO BE USED IN VISUALIZATION
@@ -80,6 +94,9 @@
             .rotateX(-startAngle) // ROTATION OF CUBES ON Y-AXIS
             .origin(origin) // POSITIONS OBJECT IN 3D AREA AROUND ORIGIN
             .scale(scale); // FITS SIZE OF SHAPE TO IMAGE
+
+
+
 
 
 
@@ -101,6 +118,9 @@
 
 
 
+
+
+
         // ------------------------ OTHER VARIABLES ---------------------------
 
         var color = d3.scaleOrdinal(d3.schemeCategory20); // AN ARRAY OF 20 COLORS REPRESENTED AS HEX NUMBERS WITHIN AN ORDINAL SCALE OBJECT
@@ -114,6 +134,9 @@
             alpha = 0,
             beta = 0;
         var checkinput = 0;
+
+
+
 
 
 
@@ -135,6 +158,7 @@
         var years;
         var fields = ['FS_Life_sciences',
                       'FS_Mathematics_and_computer_sciences',
+                      'FS_Physical_sciences_and_earth_sciences',
                       'FS_Psychology_and_social_sciences',
                       'FS_Engineering',
                       'FS_Education',
@@ -143,6 +167,7 @@
                       'Total'];
         var fields_names = ['Life Sciences',
                       'Mathematics and Computer Sciences',
+		      'Physical Sciences and Earth Sciences',
                       'Psychology and Social Sciences',
                       'Engineering',
                       'Education',
@@ -156,19 +181,21 @@
         var faculty = ['faculty',
                        'nonfaculty',
                        'postdoc'];
-
         // ------------------------ VARIABLES END ---------------------------
+
+
+
 
 
 
         d3.json("dataN.json", function (d) { // DATA.JSON IS PASSED INTO FUNCTION THROUGH PARAM d
 
-            console.log("I'm in and processint dataN.json ")
+            console.log("I'm in ")
 
             years = "2007 2010 2011 2012 2013 2014 2015 2016 2017".split(" ") // CREATES ARRAY YEARS
             const numYears = years.length // SIZE OF YEARS
 
-            console.log(numYears)
+            console.log('numYears= '+numYears)
 
             for (var i = 0; i < numYears; i++) { // LOOPS THROUGH THE ARRAY YEARS
 
@@ -200,9 +227,8 @@
                     },
                     Year: year
                 }
-		          console.log("year data for "+year)
-		          console.log(JSON.stringify(yearData,2))
-                
+		console.log(`i=${i} year=${year}`)
+		console.log(JSON.stringify(yearData,2))
                 personnel.push(yearData)
             }
 
@@ -243,6 +269,10 @@
         })
 
         //****************** END OF PROCESSING JSON *********************
+
+
+
+
 
 
         /**
@@ -293,7 +323,7 @@
 
                 firstData = first(results, z); // OBTAIN FIRST VARIABLE'S DATA
                 xattr = xLabel[z] // RETRIEVE X LABEL FOR THE CURRENT CUBE
-                console.log("ITS OVER HERE");
+                //console.log("ITS OVER HERE");
 
                 for (var x = 0; x < p; x++) {
 
@@ -341,7 +371,7 @@
                 }
 
             }
-            console.log(cubesData.length);
+            //console.log(cubesData.length);
 
             var allData = [
                 cubes3D(cubesData),
@@ -350,10 +380,13 @@
             ];
             ycolorLegend();
 
-            console.log(">>>>>>>>>>>> xLabel: ", xLabel);
-            console.log(">>>>>>>>>>>> yLabel: ", yLabel);
+            //console.log(">>>>>>>>>>>> xLabel: ", xLabel);
+            //console.log(">>>>>>>>>>>> yLabel: ", yLabel);
             processData(allData, 1000); // DRAW THE SVG
         }
+
+
+
 
 
 
@@ -381,6 +414,10 @@
         }
 
 
+
+
+
+
         /**
         * THIS IS A FUNCTION CALLED LIMIT CHECK
         * IT LIMITS THE NUMBER OF CHECKBOXES THAT CAN BE CHECKED AT A TIME
@@ -402,6 +439,9 @@
 
 
 
+
+
+
         /**
         * THIS IS A FUNCTION CALLED ADJUST
         * IT IS CALLED WHEN A MANUAL CHANGE TO THE SCALE HAS BEEN MADE
@@ -419,6 +459,9 @@
 
 
 
+
+
+
         /**
         * THIS IS A FUNCTION CALLED ADINPUT
         * IT TAKES THE AUTO CALCULATED SCALE AND
@@ -428,6 +471,8 @@
             thescale = document.getElementById("scale");
             thescale.value = diviser
         }
+
+
 
 
 
@@ -459,6 +504,9 @@
 
 
 
+
+
+
         /**
         * THIS IS A FUNCTION CALLED FREEZE
         * IT FREEZES THE SCALE SO THAT IT CANNOT BE CHANGED AT ALL
@@ -475,6 +523,9 @@
                 init();
             }
         }
+
+
+
 
 
 
@@ -539,6 +590,8 @@
 
 
 
+
+
         /**
         * THIS IS A FUNCTION CALLED GETLENGTH
         * IT TAKES A STRING NAME OF DATA AS INPUT
@@ -558,6 +611,8 @@
                 return years.length;
             }
         }
+
+
 
 
 
@@ -598,6 +653,9 @@
 
 
 
+
+
+
         /**
         * THIS IS A FUNCTION CALLED SECOND
         * IT TAKES A DATA OBJECT
@@ -619,6 +677,9 @@
                 return first[fields[z]]
             }
         }
+
+
+
 
 
 
@@ -674,6 +735,9 @@
 
 
 
+
+
+
         /**
         * THIS IS A FUNCTION CALLED PROCESSDATA
         * THIS FUNCTION DRAWS THE SVG AND DECIDES APPEARANCE
@@ -691,7 +755,7 @@
                 .origin(origin)
                 .rotateY(startAngle)
                 .rotateX(-startAngle)
-                .scale(scale);
+                .scale(scale*0.01);  // TJH added *0.01
 
             var xScale3d = d3._3d()
                 .shape('LINE_STRIP')
@@ -779,13 +843,17 @@
                 .enter()
                 .append('g')
                 .attr('class', 'cube')
-                .attr('fill', function (d) { console.log("MY COLOR SHOULD BE", d.ycolor);
+                .attr('fill', function (d) { //console.log("MY COLOR SHOULD BE", d.ycolor);
                                             return color(d.ycolor);
                                            })
                 .attr('stroke', function (d) { return d3.color(color(d.ycolor)).darker(2);})
                 .merge(cubes)
                 .sort(cubes3D.sort)
 
+                /** THIS IS THE INFO ON THE PREVIOUS TOOLTIP
+                    .html('<div style="font-size: 2rem; font-weight: bold">'+ d.id +'</div>')
+                    .style('left', (origin[0]-400) + 'px')
+                    .style('top', (300) + 'px') ***/
 
             // ---------------------  NEW ON-CLICK OPTIONS --------------------- //
 
@@ -798,7 +866,7 @@
                         // console.log("This cube color is selected", temp_colors[0]);
                         selected[0] = this
                         arraySize = 1;
-                        console.log("This cube is selected", selected);
+                        //console.log("This cube is selected", selected);
 
                         //SELECT THE CURRENT CUBE
                         d3.select(this)
@@ -818,14 +886,14 @@
                         d3.select(this)
                             .style('fill', tempColor)
                         arraySize = 0;
-                        console.log("This cube is selected again", selected[0]);
+                        //console.log("This cube is selected again", selected[0]);
                     }
 
                     //IF ANOTHER CUBE IS SELECTED
                     else if(!Object.is(this, selected[0])){
                         draw_information(d, "hidden")
                         tempColor = this.style.fill;
-                        console.log("another cube is selected", selected[0]);
+                        //console.log("another cube is selected", selected[0]);
                         var tempCube = selected[0]
 
                         //the text is hidden automatically
@@ -875,6 +943,20 @@
             console.log("The very last step")
         }
 
+        /**
+        * Called when button for further analysis is clicked
+        * Clicked to display or remove raw information for a cube
+        **/
+    
+        function display_raw_information() {
+          var x = document.getElementById('rawdata');
+          if (x.style.display === "none") {
+            x.style.display = "block";
+            clicked = true;
+          } else {
+            x.style.display = "none";
+          }
+        }
 
 
         /**
@@ -882,13 +964,25 @@
         * THIS IS THE NEW TOOLTIP THAT DRAWS INFO ABOUT EACH CUBE
         * IT TAKES A CUBE OBJECT AND VISIBILITY STRING AS PARAMETERS
         **/
+
         function draw_information(clicked_cube, visibility){
+            //remove raw information display
+            var d_button = document.getElementById("further_analysis");
+            
 
             if (visibility === "hidden" && table != null){
                 console.log("removing the table")
+                d_button.style.display = "none"
                 table.selectAll("*").remove();
+                //document.getElementById("further_analysis").click();
+                //Remove additional information
             }
-                else{
+
+                
+            
+            else{
+
+                        d_button.style.display = "block"
                         var label = getResult()
 
                         //All the text that will be displayed
@@ -931,14 +1025,12 @@
                         }
 
                     //Collects all the possible information about the clicked cube
-                    //holds the Indormation column for each row. tpr = total possible rows
+                    //if repeated, appears as empty string ""
                     var tpr = [height_id, role_id, fields_id, x_id, y_id, inst_id]
-                    
-                    //holds the Data column. tdp = total possible data
                     var tpd = [height_text, role_text, fields_text, x_text, y_text, inst_text]
                     console.log("All the rows before", tpr)
 
-                    //Remove non-applicable data from Data and Information columns
+                    //Remove non-applicable data
                     function table_dedup(arr) {
                         for( var i = 0; i < arr.length; i++){
                             if ( arr[i] === " ") {
@@ -947,74 +1039,81 @@
                         }
                     }
 
-                    //Remove duplicates from Headings and Data
-                    table_dedup(tpr);
-                    table_dedup(tpd);
-                    //make sure deduplication occurs
-                    console.log("All the rows after", tpr)
-                    
+                //Remove duplicates from headings and data
+                table_dedup(tpr);
+                table_dedup(tpd);
+                console.log("All the rows after", tpr)
 
-                    /** START BUILDING THE TABLE **/
-                    
-                    //the headings for the table
-                    var data_h = ["data"]
-
-                    //create rows for the table    
-                    var rows = []
-                    for(var x = 0; x<tpr.length; x++){
-                        console.log("Creating table info")
-                        const obj = data_h.reduce((o, key) => Object.assign(o, {[key]: tpr[x]}), {});
-                        obj.information = tpd[x]
-                        rows.push(obj)
-
-                    }
-
-                    //all the possible rows
-                console.log("Rows", rows)
+                //we need the variable names to construct the tab;e
+                const varToString = varObj => Object.keys(varObj)[0]
+                const displayName = varToString({ height_id })
+                console.log("new name", displayName)
 
 
-                //Create columns for the table
+
+            var data_h = ["data"]
+
+
+            
+
+            var rows = []
+            for(var x = 0; x<tpr.length; x++){
+                console.log("Pushes")
+                const objs = data_h.reduce((o, key) => Object.assign(o, {[key]: tpr[x]}), {});
+                objs.information = tpd[x]
+                rows.push(objs)
+
+            }
+
+
+
+         
+            //all the possible rows
+
+
+                console.log("All rows", rows)
+    
+
                 var columns = [
-                    { head: "Data", cl: 'center', html: d3.f('data') },
-                    { head: "Information", cl: 'center',html: d3.f('information') }
-                    ];
+                { head: "Data", cl: 'center', html: d3.f('data') },
+                { head: "Information", cl: 'center',html: d3.f('information') }
+                ];
 
-                console.log("Starting Table")
+            console.log("Starting Table")
 
-                table = d3.select('body')
-                    .append("table")
-                console.log("Continuing for Table")
+            table = d3.select('body')
+                .append("table")
+            console.log("Continuing for Table")
 
 
-                table.append('thead').append('tr')
-                    .selectAll('th')
-                    .data(columns).enter()
-                    .append('th')
-                    .attr('class', d3.f('cl'))
-                    .text(d3.f('head'));
+            table.append('thead').append('tr')
+                .selectAll('th')
+                .data(columns).enter()
+                .append('th')
+                .attr('class', d3.f('cl'))
+                .text(d3.f('head'));
 
-                // create table body
-                table.append('tbody')
-                    .appendMany(rows, 'tr')
-                    .appendMany(td_data, 'td')
-                    .html(d3.f('html'))
-                    .attr('class', d3.f('cl'));
+            // create table body
+            table.append('tbody')
+                .appendMany(rows, 'tr')
+                .appendMany(td_data, 'td')
+                .html(d3.f('html'))
+                .attr('class', d3.f('cl'));
 
-                console.log("appended body")
+            console.log("appended body")
 
-                function td_data(row, i) {
-                    return columns.map(function(c) {
-                        // compute cell values for this specific row
-                        var cell = {};
-                        d3.keys(c).forEach(function(k) {
-                            console.log("KEYS")
-                            cell[k] = typeof c[k] == 'function' ? c[k](row,i) : c[k];
-                        });
-                        return cell;
-                      });
-                }
-                
-                    /*SHOWS THE RAW DATA FOR EACH CUBE
+            function td_data(row, i) {
+                return columns.map(function(c) {
+                    // compute cell values for this specific row
+                    var cell = {};
+                    d3.keys(c).forEach(function(k) {
+                        console.log("KEYS")
+                        cell[k] = typeof c[k] == 'function' ? c[k](row,i) : c[k];
+                    });
+                    return cell;
+                  });
+            }
+                                    /*SHOWS THE RAW DATA FOR EACH CUBE
                     
                     Rows
                     (5) [{…}, {…}, {…}, {…}, {…}]
@@ -1056,9 +1155,16 @@
                   console.log("height dilemma", "'" + tpr[0] + "'")        
 
                console.log("tried to display the cube info")
+
+                 
+
             }
 
         }
+
+
+
+
 
 
         /**
@@ -1069,6 +1175,10 @@
             mx = d3.event.x;
             my = d3.event.y;
         }
+
+
+
+
 
 
         /**
@@ -1088,6 +1198,10 @@
             ];
             processData(data, 0);
         }
+
+
+
+
 
 
         /**
@@ -1112,6 +1226,9 @@
         }
 
 
+
+
+
         /**
         * THIS IS A FUNCTION CALLED MAKECUBE
         * IT CREATES THE VERTICES OF A SINGLE CUBE
@@ -1130,6 +1247,11 @@
                 { x: x + 1, y: y, z: z - 1 }, // BACK  TOP RIGHT
             ];
         }
+
+
+
+
+
 
 
         //d3.selectAll('button').on('click', init); // RERUNS INIT WITH BUTTON PRESS
